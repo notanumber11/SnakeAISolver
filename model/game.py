@@ -1,3 +1,5 @@
+from random import randint
+
 from model.point import Point
 
 
@@ -17,10 +19,12 @@ class Game:
         self.apple = Point(apple[0], apple[1])
         self.size = size
         self.head = snake[0]
-        if self.size < 3 or not self.is_valid_snake() or not self.is_inside_board(self.apple):
-            raise ValueError("The size is less than 3 or the snake or the apple contain invalid values... ")
 
-    def is_valid_snake(self):
+    def is_valid_game(self):
+        if self.size < 3:
+            return False
+        if not self.is_inside_board(self.apple):
+            return False
         for pos in self.snake:
             if not self.is_inside_board(pos):
                 return False
@@ -58,12 +62,40 @@ class Game:
     def move(self, d: Point):
         if not Game.is_valid_dir(d):
             raise ValueError("Invalid direction: " + str(d))
-        head = Point(self.snake[0].x + d.x, self.snake[0].y + d.y)
-        self.snake.insert(0, head)
-        if head != self.apple:
-            self.snake.pop()
-        self.head = self.snake[0]
+        
+        new_game = self.clone()
+        
+        head = Point(new_game.snake[0].x + d.x, new_game.snake[0].y + d.y)
+        new_game.snake.insert(0, head)
+        # If apple is not eaten remove tail of snake
+        if head != new_game.apple:
+            new_game.snake.pop()
+        else:
+            new_game.apple = new_game.generate_new_apple()
+        new_game.head = new_game.snake[0]
+        return new_game
 
     @staticmethod
     def is_valid_dir(d: Point):
         return d == Game.UP or d == Game.DOWN or d == Game.RIGHT or d == Game.LEFT
+
+    def generate_new_apple(self):
+        holes = self.size * self.size - len(self.snake)
+        if holes == 0:
+            raise ValueError("There are not places for apple, the game is finished !!!")
+        pos = randint(0, holes)
+        for i in range(holes):
+            pos = pos % holes
+            x = pos % self.size
+            y = pos // self.size
+            p = Point(x, y)
+            if p not in self.snake:
+                return p
+            pos += 1
+        raise ValueError("Could not find a new position for apple")
+
+    def clone(self):
+        snake = Point.points_to_ints(self.snake)
+        apple = [self.apple.x, self.apple.y]
+        new_game = Game(self.size, snake, apple)
+        return new_game

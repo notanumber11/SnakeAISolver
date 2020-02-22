@@ -1,13 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from model.point import Point
 from model.game import Game
+from model.point import Point
 
 app = Flask(__name__)
 CORS(app)
 
 snakeObj = Game(0, 0, 0)
+
 
 @app.route('/')
 def hello_world():
@@ -28,6 +29,6 @@ def is_valid_position():
     answer = snakeObj.can_move_to(pos, snakePoints, size)
     return jsonify(answer)
 
+
 if __name__ == '__main__':
     app.run(debug=True)
-

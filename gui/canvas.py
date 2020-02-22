@@ -1,4 +1,3 @@
-
 def create_grid(canvas, size, tile_size, offset_x, offset_y):
     width = tile_size * size
     height = tile_size * size
@@ -19,10 +18,10 @@ def create_grid(canvas, size, tile_size, offset_x, offset_y):
         canvas.create_line([(x0, y0), (x1, y1)], tag='grid_line')
 
 
-def draw_rectangle(canvas, size, i, j, offset_x, offset_y):
+def draw_rectangle(canvas, size, i, j, offset_x, offset_y, color):
     x = offset_x + i * size
     y = offset_y + j * size
     x1 = x + size
     y1 = y + size
-    id = canvas.create_rectangle(x, y, x1, y1, fill="yellow")
+    id = canvas.create_rectangle(x, y, x1, y1, fill=color)
     return id

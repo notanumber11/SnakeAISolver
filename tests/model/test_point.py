@@ -19,16 +19,16 @@ class TestPoint(unittest.TestCase):
         self.assertNotEqual(point1, point5)
 
     def test_values(self):
-        point = Point(1,2)
+        point = Point(1, 2)
         self.assertEqual(point.x, 1)
         self.assertEqual(point.y, 2)
         self.assertNotEqual(point.x, 99)
         self.assertNotEqual(point.y, 99)
 
     def test_hash(self):
-        p1 = Point(1,1)
-        p2 = Point(1,1)
-        p3 = Point(1,2)
+        p1 = Point(1, 1)
+        p2 = Point(1, 1)
+        p3 = Point(1, 2)
         s1 = {p1, p2}
         self.assertEqual(1, len(s1))
         s2 = {p1, p2, p3}
