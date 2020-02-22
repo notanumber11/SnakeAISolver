@@ -15,6 +15,12 @@ class TestGame(unittest.TestCase):
         # The right direction is left to pick the apple
         expected_dir = Game.LEFT
         # Solve the game
-        basicSolver = BasicSolver()
-        next_dir = basicSolver.next_dir(game)
+        basic_solver = BasicSolver()
+        next_dir = basic_solver.next_dir(game)
         self.assertEqual(expected_dir, next_dir)
+
+
+        one = [1, 2, 3]
+        two = [99, 0]
+        three = one + two
+        print(three)

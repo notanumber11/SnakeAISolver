@@ -9,6 +9,8 @@ class Game:
     LEFT = Point(-1, 0)
     RIGHT = Point(1, 0)
 
+    DIRS = [UP, DOWN, LEFT, RIGHT]
+
     def __init__(self, size: int, snake: list, apple: list):
         """
         :param size: Number of cells
@@ -18,7 +20,7 @@ class Game:
         self.snake = Point.ints_to_points(snake)
         self.apple = Point(apple[0], apple[1])
         self.size = size
-        self.head = snake[0]
+        self.head = self.snake[0]
 
     def is_valid_game(self):
         if self.size < 3:
@@ -50,8 +52,8 @@ class Game:
         # Check that we are not hitting ourselves
         # If we are not taking the apple we can move to last position of the snake
         snake_len = len(self.snake) if pos == self.apple else len(self.snake) - 1
-        for point in range(snake_len):
-            if pos == point:
+        for i in range(snake_len):
+            if pos == self.snake[i]:
                 return False
         return True
 
@@ -83,15 +85,12 @@ class Game:
         holes = self.size * self.size - len(self.snake)
         if holes == 0:
             raise ValueError("There are not places for apple, the game is finished !!!")
-        pos = randint(0, holes)
-        for i in range(holes):
-            pos = pos % holes
-            x = pos % self.size
-            y = pos // self.size
+        for i in range(self.size * self.size):
+            x = i % self.size
+            y = i // self.size
             p = Point(x, y)
             if p not in self.snake:
                 return p
-            pos += 1
         raise ValueError("Could not find a new position for apple")
 
     def clone(self):
