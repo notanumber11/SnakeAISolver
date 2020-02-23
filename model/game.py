@@ -11,16 +11,16 @@ class Game:
 
     DIRS = [UP, DOWN, LEFT, RIGHT]
 
-    def __init__(self, size: int, snake: list, apple: list):
+    def __init__(self, size: int, snake: list, apple:list=None):
         """
         :param size: Number of cells
         :param snake: List of positions of the snake [[x0, y0], [x1, y1], ... , [x2, y2]]
         :param apple: Position of the apple [x, y]
         """
-        self.snake = Point.ints_to_points(snake)
-        self.apple = Point(apple[0], apple[1])
         self.size = size
+        self.snake = Point.ints_to_points(snake)
         self.head = self.snake[0]
+        self.apple = Point(apple[0], apple[1]) if apple is not None else self.generate_new_apple()
 
     def is_valid_game(self):
         if self.size < 3:

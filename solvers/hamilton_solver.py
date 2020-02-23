@@ -3,7 +3,6 @@ from model.point import Point
 
 
 class HamiltonSolver:
-
     def solve(self, game: Game):
         games = []
         self.hamilton(game, games, [], game.head)
@@ -30,7 +29,6 @@ class HamiltonSolver:
             new_pos = Point(game.head.x + dir.x, game.head.y + dir.y)
             # If the new pos is the end
             if new_pos == goal and len(visited) == game.size * game.size:
-                print(visited)
                 return True
             if new_pos not in visited and game.can_move_to_pos(new_pos):
                 new_game = game.move(dir)
