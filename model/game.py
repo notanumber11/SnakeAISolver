@@ -84,7 +84,8 @@ class Game:
     def generate_new_apple(self):
         holes = self.size * self.size - len(self.snake)
         if holes == 0:
-            raise ValueError("There are not places for apple, the game is finished !!!")
+            print("Game finished successfully")
+            return None
         for i in range(self.size * self.size):
             x = i % self.size
             y = i // self.size

@@ -11,7 +11,7 @@ class HamiltonSolver:
     def next_game(self, games, pos):
         last = games[-1]
         holes = last.size * last.size - len(last.snake)
-        while holes > 1:
+        while holes > 0:
             ref = games[pos]
             dir = Point(ref.head.x - last.head.x, ref.head.y - last.head.y)
             last = last.move(dir)
@@ -37,3 +37,6 @@ class HamiltonSolver:
         visited.pop()
         games.pop()
         return False
+
+    def __str__(self):
+        return "HamiltonSolver"

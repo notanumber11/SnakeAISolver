@@ -36,4 +36,5 @@ class DFSSolver:
         games.pop()
         return False
 
-
+    def __str__(self):
+        return "DFSSolver"

@@ -12,3 +12,6 @@ class BasicSolver:
 
     def next_dir(self, game):
         return Game.LEFT
+
+    def __str__(self):
+        return "BasicSolver"
