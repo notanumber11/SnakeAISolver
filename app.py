@@ -1,13 +1,13 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from model.game import Game
+from model.game_status import GameStatus
 from model.point import Point
 
 app = Flask(__name__)
 CORS(app)
 
-snakeObj = Game(0, 0, 0)
+snakeObj = GameStatus(0, 0, 0)
 
 
 @app.route('/')

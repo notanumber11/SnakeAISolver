@@ -24,20 +24,29 @@ class GameDrawer:
         dfs_solver = DFSSolver()
         hamilton_solver = HamiltonSolver()
         all_solutions = []
-        self.solve_with_timer(dfs_solver, all_solutions)
-        self.games = all_solutions[0]
 
-    def solve_with_timer(self, solver, solutions, executions=5):
-        time = timeit.timeit(lambda: self.solve(solver, solutions), number=executions)
-        print("{}: Total time (s): {:.2f} Number of executions: {} Avg: {:.2f}".format(solver, time, executions, time / executions))
+        self.slowerGame = 0
+        self.solve_with_timer(hamilton_solver, all_solutions, 1)
+        self.games = all_solutions[self.slowerGame]
+
+        # for i in range(10):
+        #     self.solve(dfs_solver, all_solutions)
+
+    def solve_with_timer(self, solver, solutions, executions=1):
+        time = timeit.repeat(lambda: self.solve(solver, solutions), number=1, repeat=executions)
+        self.slowerGame =  time.index(max(time))
+        print(time)
+        print("Slower game: " + str(self.slowerGame))
+        # print("{}: Total time (s): {:.2f} Number of executions: {} Avg: {:.2f}".format(solver, time, executions, time / executions))
 
     def solve(self, solver, solutions):
-        print(len(solutions))
         solution = solver.solve(self.game)
         solutions.append(solution)
         return solution
 
     def start(self):
+        input("Press Enter to continue...")
+        self.root.lift()
         self.root.after(50, self.render)
         self.root.mainloop()
 
@@ -61,12 +70,12 @@ class GameDrawer:
         # Draw apple
         if game.apple:
             gui.draw_rectangle(self.canvas, self.tile_size, game.apple.x, game.apple.y, self.offset, self.offset,
-                               "green")
+                               "red")
         # Draw snake
         for el in game.snake:
-            id = gui.draw_rectangle(self.canvas, self.tile_size, el.x, el.y, self.offset, self.offset, "yellow")
+            id = gui.draw_rectangle(self.canvas, self.tile_size, el.x, el.y, self.offset, self.offset, "green")
         gui.draw_rectangle(self.canvas, self.tile_size, game.snake[0].x, game.snake[0].y, self.offset, self.offset,
-                           "red")
+                           "yellow")
         # canvas.tag_bind(id, "<Button-1>", lambda u: rectangle_clicked())
 
     def end(self):

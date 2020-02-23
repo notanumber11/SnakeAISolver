@@ -1,9 +1,9 @@
-from model.game import Game
+from model.game_status import GameStatus
 
 
 class BasicSolver:
 
-    def solve(self, game: Game):
+    def solve(self, game: GameStatus):
         games = [game]
         while game.is_valid_game():
             game = game.move(self.next_dir(game))
@@ -11,7 +11,7 @@ class BasicSolver:
         return games
 
     def next_dir(self, game):
-        return Game.LEFT
+        return GameStatus.LEFT
 
     def __str__(self):
         return "BasicSolver"

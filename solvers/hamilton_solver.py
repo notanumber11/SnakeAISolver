@@ -1,11 +1,14 @@
-from model.game import Game
+from model.game_status import GameStatus
 from model.point import Point
 
 
 class HamiltonSolver:
-    def solve(self, game: Game):
+    def solve(self, game: GameStatus):
         games = []
-        self.hamilton(game, games, [], game.head)
+        result = self.hamilton(game, games, [], game.head)
+        if not result:
+            print("Hamilton could not find a valid path")
+            return [game]
         return self.next_game(games, 0)
 
     def next_game(self, games, pos):
@@ -20,11 +23,11 @@ class HamiltonSolver:
             pos += 1
         return games
 
-    def hamilton(self, game: Game, games: list, visited: list, goal: Point):
+    def hamilton(self, game: GameStatus, games: list, visited: list, goal: Point):
         visited.append(game.head)
         games.append(game)
 
-        for dir in Game.DIRS:
+        for dir in GameStatus.DIRS:
             # Is a valid direction move
             new_pos = Point(game.head.x + dir.x, game.head.y + dir.y)
             # If the new pos is the end
