@@ -79,7 +79,3 @@ class TestGame(unittest.TestCase):
         new_game = new_game.move(Point(1, 0))
         # We have picked the apple so now it is different
         self.assertNotEqual(new_game.apple, game.apple)
-
-
-
-

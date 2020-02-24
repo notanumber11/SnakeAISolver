@@ -1,5 +1,3 @@
-from random import randint
-
 from model.point import Point
 
 
@@ -11,7 +9,7 @@ class GameStatus:
 
     DIRS = [UP, DOWN, LEFT, RIGHT]
 
-    def __init__(self, size: int, snake: list, apple:list=None):
+    def __init__(self, size: int, snake: list, apple: list = None):
         """
         :param size: Number of cells
         :param snake: List of positions of the snake [[x0, y0], [x1, y1], ... , [x2, y2]]
@@ -57,16 +55,26 @@ class GameStatus:
                 return False
         return True
 
+    # 0 0 0 0
+    # 0 1 2 0
+    # 0 0 0 0
+    # 0 X 0 0
+    #
+    # snake = [[2, 1], [1, 1]]
+    # head = [2, 1] = Point(2, 1) where head.x = 2 and head.y = 1
+    # dir = right = [1, 0] = Point(1, 0) where right.x = 1 and right.y = 0
+    # head = [3, 1]
     def can_move_to_dir(self, dir: Point):
-        pos = Point(self.snake[0].x + dir.x, self.snake[0].y + dir.y)
+        head = self.snake[0]
+        pos = Point(head.x + dir.x, head.y + dir.y)
         return self.can_move_to_pos(pos)
 
     def move(self, d: Point):
         if not GameStatus.is_valid_dir(d):
             raise ValueError("Invalid direction: " + str(d))
-        
+
         new_game = self.clone()
-        
+
         head = Point(new_game.snake[0].x + d.x, new_game.snake[0].y + d.y)
         new_game.snake.insert(0, head)
         # If apple is not eaten remove tail of snake
