@@ -1,4 +1,5 @@
 import random
+from typing import List
 
 from model.game_status import GameStatus
 from model.point import Point
@@ -11,7 +12,7 @@ class DFSSolver:
         self.total_counter = 0
         self.dirs = {}
 
-    def solve(self, game_seed: GameStatus):
+    def solve(self, game_seed: GameStatus) -> List[GameStatus]:
         game_statuses = []
         games = []
         self.counter = 0

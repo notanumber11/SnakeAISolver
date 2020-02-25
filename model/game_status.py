@@ -1,3 +1,5 @@
+import random
+
 from model.point import Point
 
 
@@ -90,16 +92,20 @@ class GameStatus:
         return d == GameStatus.UP or d == GameStatus.DOWN or d == GameStatus.RIGHT or d == GameStatus.LEFT
 
     def generate_new_apple(self):
-        holes = self.size * self.size - len(self.snake)
+        grid_size = self.size * self.size
+        holes = grid_size - len(self.snake)
+        hole_pos = random.randint(0, grid_size)
         if holes == 0:
             print("Game finished successfully")
             return None
-        for i in range(self.size * self.size):
-            x = i % self.size
-            y = i // self.size
+        for i in range(grid_size):
+            hole_pos = hole_pos % grid_size
+            x = hole_pos % self.size
+            y = hole_pos // self.size
             p = Point(x, y)
             if p not in self.snake:
                 return p
+            hole_pos += 1
         raise ValueError("Could not find a new position for apple")
 
     def clone(self):

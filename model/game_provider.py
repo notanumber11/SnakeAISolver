@@ -4,6 +4,11 @@ from model.game import Game
 from model.game_seed_creator import *
 from solvers.dfs_solver import DFSSolver
 from solvers.hamilton_solver import HamiltonSolver
+from solvers.random_solver import RandomSolver
+
+dfs_solver = DFSSolver()
+hamilton_solver = HamiltonSolver()
+random_solver = RandomSolver()
 
 
 def timeit(method):
@@ -23,47 +28,37 @@ def timeit(method):
 
 
 def get_games():
-    return get_all_game_types()
-
-
-def get_default_game_hamilton():
-    game_seed = create_default_game_seed()
-    hamilton_solver = HamiltonSolver()
-    game_statuses = hamilton_solver.solve(game_seed)
-    game = Game(game_statuses)
-    return game
+    result = get_random_games(dfs_solver, 100)
+    result = sorted(result, key=lambda x: len(x.game_statuses[-1].snake), reverse=True)
+    return result[0:10]
 
 
 def get_all_game_types():
-    return [get_default_game_dfs(), get_default_game_hamilton()]
+    return [get_default_game(random_solver), get_default_game(dfs_solver), get_default_game(hamilton_solver)]
 
 
-def get_default_game_dfs() -> Game:
+def get_default_game(solver):
     game_seed = create_default_game_seed()
-    dfs_solver = DFSSolver()
-    game_statuses = dfs_solver.solve(game_seed)
-    game = Game(game_statuses)
-    return game
+    game_statuses = solver.solve(game_seed)
+    return Game(game_statuses)
 
 
-def get_random_game_dfs() -> Game:
-    game_seed = create_game_seed(6, 5)
-    dfs_solver = DFSSolver()
-    game_statuses = dfs_solver.solve(game_seed)
-    game = Game(game_statuses)
-    return game
-
-
-def get_default_games_dfs() -> List[Game]:
+def get_default_games(solver, number) -> List[Game]:
     games = []
-    for i in range(9):
-        games.append(get_default_game_dfs())
+    for i in range(number):
+        games.append(get_default_game(solver))
     return games
 
 
+def get_random_game(solver, board_size, snake_size):
+    game_seed = create_game_seed(board_size, snake_size)
+    game_statuses = solver.solve(game_seed)
+    return Game(game_statuses)
+
+
 @timeit
-def get_random_games_dfs() -> List[Game]:
+def get_random_games(solver, number) -> List[Game]:
     games = []
-    for i in range(4):
-        games.append(get_random_game_dfs())
+    for i in range(number):
+        games.append(get_random_game(solver, 6, 5))
     return games

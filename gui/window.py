@@ -11,9 +11,9 @@ class Window:
     def __init__(self, games: List[Game]):
         # Configurable parameters
         self.games = games
-        self.game_size = 6
+        self.game_size = games[0].game_statuses[0].size
         self.tile_size = 40
-        self.cols = 2
+        self.cols = 5
         self.rows = math.ceil(len(self.games) / self.cols)
         # Derived parameters
         self.grid_size = self.game_size * self.tile_size
