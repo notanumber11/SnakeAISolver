@@ -136,3 +136,7 @@ dmypy.json
 
 # ide
 .idea/
+
+#env
+venv37/
+
