@@ -1,3 +1,4 @@
+import math
 import unittest
 
 from model.game_status import GameStatus
@@ -79,3 +80,34 @@ class TestGame(unittest.TestCase):
         new_game = new_game.move(Point(1, 0))
         # We have picked the apple so now it is different
         self.assertNotEqual(new_game.apple, game.apple)
+
+    def test_angle(self):
+        game_status = GameStatus(6, [[0, 0], [1, 0]])
+        # x1>x2 , y1=y2 - Snake should move right
+        apple = Point(4, 0)
+        head = Point(-1, 0)
+        self.assertEqual(0, math.degrees(game_status.get_angle(apple, head)))
+        # x1<x2 , y1=y2 - Snake should move left
+        apple = Point(-4, 0)
+        head = Point(-1, 0)
+        self.assertEqual(180, math.degrees(game_status.get_angle(apple, head)))
+        # x1=x2, y1>y2 - Snake should move up
+        apple = Point(0, 5)
+        head = Point(0, 4)
+        self.assertEqual(90, math.degrees(game_status.get_angle(apple, head)))
+        # x1=x2, y1<y2 - Snake should move down
+        apple = Point(0, -5)
+        head = Point(0, 4)
+        self.assertEqual(-90, math.degrees(game_status.get_angle(apple, head)))
+        # x1>x2, y1>y2 -Snake should move up or right
+        apple = Point(3, 3)
+        head = Point(1, 1)
+        self.assertEqual(45, math.degrees(game_status.get_angle(apple, head)))
+
+
+    def equality_list(self):
+        a = [1, 3]
+        b = [1, 3]
+        c = [1, 4]
+        self.assertEqual(a, b)
+        self.assertNotEqual(b, c)

@@ -12,7 +12,7 @@ class RandomSolver:
     def solve(self, game_seed: GameStatus)-> List[GameStatus]:
         game_status = game_seed
         result = [game_status]
-        prev_dir = Point(game_status.head.x - game_status.snake[1].x, game_status.head.y - game_status.snake[1].y)
+        prev_dir = game_status.prev_dir
         while game_status.is_valid_game():
             dirs = random.sample(GameStatus.DIRS, len(GameStatus.DIRS))
             for dir_ in dirs:

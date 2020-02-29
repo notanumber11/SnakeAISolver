@@ -1,3 +1,4 @@
+import math
 import time
 
 from model.game import Game
@@ -28,10 +29,12 @@ def timeit(method):
 
 
 def get_games():
-    result = get_random_games(dfs_solver, 100)
-    result = sorted(result, key=lambda x: len(x.game_statuses[-1].snake), reverse=True)
-    return result[0:10]
+    result = get_random_games(random_solver, 10)
+    return result
 
+def get_n_best(games: List[Game], n: int):
+    result = sorted(games, key=lambda x: len(x.game_statuses[-1].snake), reverse=True)
+    return result[0:n]
 
 def get_all_game_types():
     return [get_default_game(random_solver), get_default_game(dfs_solver), get_default_game(hamilton_solver)]
@@ -50,7 +53,9 @@ def get_default_games(solver, number) -> List[Game]:
     return games
 
 
-def get_random_game(solver, board_size, snake_size):
+def get_random_game(solver, board_size, snake_size=None):
+    if not snake_size:
+        snake_size = random.randint(2, board_size)
     game_seed = create_game_seed(board_size, snake_size)
     game_statuses = solver.solve(game_seed)
     return Game(game_statuses)

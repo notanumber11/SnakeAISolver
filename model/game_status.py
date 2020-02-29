@@ -1,3 +1,4 @@
+import math
 import random
 
 from model.point import Point
@@ -19,8 +20,10 @@ class GameStatus:
         """
         self.size = size
         self.snake = Point.ints_to_points(snake)
-        self.head = self.snake[0]
         self.apple = Point(apple[0], apple[1]) if apple is not None else self.generate_new_apple()
+        self.head = self.snake[0]
+        self.prev_dir = Point(self.head.x - self.snake[1].x, self.head.y - self.snake[1].y)
+        self.angle_to_apple = self.get_angle(self.head, self.apple)
 
     def is_valid_game(self):
         if self.size < 3:
@@ -75,17 +78,22 @@ class GameStatus:
         if not GameStatus.is_valid_dir(d):
             raise ValueError("Invalid direction: " + str(d))
 
-        new_game = self.clone()
-
-        head = Point(new_game.snake[0].x + d.x, new_game.snake[0].y + d.y)
-        new_game.snake.insert(0, head)
+        # Create a new game status as deep copy
+        # The constructor expects as argument lists of integer instead of points
+        new_snake = []
+        for p in self.snake:
+            new_snake.append([p.x, p.y])
+        new_apple = [self.apple.x, self.apple.y]
+        new_head = [self.snake[0].x + d.x, self.snake[0].y + d.y]
+        new_snake.insert(0, new_head)
         # If apple is not eaten remove tail of snake
-        if head != new_game.apple:
-            new_game.snake.pop()
+        if new_head != new_apple:
+            new_snake.pop()
         else:
-            new_game.apple = new_game.generate_new_apple()
-        new_game.head = new_game.snake[0]
-        return new_game
+            new_apple_point = self.generate_new_apple()
+            new_apple = [new_apple_point.x, new_apple_point.y]
+        new_game_status = GameStatus(self.size, new_snake, new_apple)
+        return new_game_status
 
     @staticmethod
     def is_valid_dir(d: Point):
@@ -108,8 +116,6 @@ class GameStatus:
             hole_pos += 1
         raise ValueError("Could not find a new position for apple")
 
-    def clone(self):
-        snake = Point.points_to_ints(self.snake)
-        apple = [self.apple.x, self.apple.y]
-        new_game = GameStatus(self.size, snake, apple)
-        return new_game
+    def get_angle(self, apple: Point, head: Point):
+        angle = math.atan2(apple.y - head.y, apple.x - head.x)
+        return angle
