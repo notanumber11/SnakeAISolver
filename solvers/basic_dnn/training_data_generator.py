@@ -1,13 +1,10 @@
 import csv
 import math
 
-import constants
-from model.game_seed_creator import create_game_seed
+from model import game_provider
 from model.game_status import GameStatus
-import model.game_provider as game_provider
-from solvers.dfs_solver import DFSSolver
+from solvers.basic_dnn import constants
 from solvers.random_solver import RandomSolver
-import pandas as pd
 
 
 def is_apple_closer(current: GameStatus, next: GameStatus):
@@ -21,8 +18,6 @@ def normalize(val, min, max):
 
 
 def generate_training_data(grid_size, samples=100):
-    input_features = ["up", "down", "left", "right", "up available", "down available", "left available", "right available",
-                "angle to apple", "reward"]
     output = {
         "eating": 0.7,
         "closer": 0.1,
@@ -32,7 +27,8 @@ def generate_training_data(grid_size, samples=100):
     solver = RandomSolver()
     # solver = DFSSolver()
     training_data = []
-    while len(training_data) < samples:
+    enough_samples = False
+    while not enough_samples:
         game = game_provider.get_random_game(solver, grid_size)
         for i in range(1, len(game.game_statuses)):
             # Computations based on current game
@@ -70,19 +66,11 @@ def generate_training_data(grid_size, samples=100):
                     if row[i] == 1 and row[i+4] == 1:
                         next_.is_valid_game()
                         raise ValueError("Something wrong with game state")
-            training_data.append(
-                row)
+            training_data.append(row)
+            if len(training_data) >= samples:
+                enough_samples = True
+                break
 
     print("Training data has been generated...")
-    create_csv(input_features, training_data)
-    # To test we try with each dir for the neural net and take the one with better output
+    constants.create_csv(constants.LABELS, training_data, constants.TRAINING_DATA_BASIC_DNN)
 
-
-def create_csv(labels, data):
-    with open(constants.DATA_DIR + "training_data.csv", 'w', newline='') as file:
-        writer = csv.writer(file, delimiter="\t")
-        writer.writerows(data)
-    pass
-
-
-generate_training_data(6, 1000)

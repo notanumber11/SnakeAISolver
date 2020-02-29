@@ -21,7 +21,3 @@ class GameDrawer:
         gui.draw_rectangle(canvas, tile_size, game_status.snake[0].x, game_status.snake[0].y, offset_x, offset_y,
                            "yellow")
         # canvas.tag_bind(id, "<Button-1>", lambda u: rectangle_clicked())
-        return self.render()
-
-    def render(self):
-        pass
