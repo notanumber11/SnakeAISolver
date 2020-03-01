@@ -3,6 +3,7 @@ import time
 
 from model.game import Game
 from model.game_seed_creator import *
+from solvers.basic_dnn.basic_dnn_solver import BasicDnnSolver
 from solvers.dfs_solver import DFSSolver
 from solvers.hamilton_solver import HamiltonSolver
 from solvers.random_solver import RandomSolver
@@ -10,7 +11,7 @@ from solvers.random_solver import RandomSolver
 dfs_solver = DFSSolver()
 hamilton_solver = HamiltonSolver()
 random_solver = RandomSolver()
-
+basic_dnn_solver = BasicDnnSolver()
 
 def timeit(method):
     def timed(*args, **kw):
@@ -29,7 +30,7 @@ def timeit(method):
 
 
 def get_games():
-    result = get_random_games(random_solver, 10)
+    result = get_random_games(basic_dnn_solver, 10)
     return result
 
 def get_n_best(games: List[Game], n: int):

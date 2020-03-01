@@ -13,10 +13,6 @@ def is_apple_closer(current: GameStatus, next: GameStatus):
     return dist_next < dist_curr
 
 
-def normalize(val, min, max):
-    return (val - min) / (max - min)
-
-
 def generate_training_data(grid_size, samples=100):
     output = {
         "eating": 0.7,
@@ -39,7 +35,7 @@ def generate_training_data(grid_size, samples=100):
             down_available = 1.0 if current.can_move_to_dir(GameStatus.DOWN) else 0.0
             left_available = 1.0 if current.can_move_to_dir(GameStatus.LEFT) else 0.0
             right_available = 1.0 if current.can_move_to_dir(GameStatus.RIGHT) else 0.0
-            angle = normalize(current.get_angle(current.apple, current.head), 0, 6.28)
+            angle = constants.normalize_rad_angle(current.get_angle(current.apple, current.head))
 
             # Computations based on next game
             next_ = game.game_statuses[i]

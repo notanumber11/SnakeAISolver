@@ -1,4 +1,3 @@
-import math
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -60,7 +59,7 @@ def train_model(model, train_dataset, train_labels):
     return history
 
 
-def plot(history):
+def plot_training_validation(history):
     hist_full = pd.DataFrame(history.history)
     hist_full['epoch'] = history.epoch
     hist = hist_full.tail()
@@ -71,12 +70,12 @@ def plot(history):
     plotter = tfdocs.plots.HistoryPlotter()
     plotter.plot({'Basic': history}, metric="mae")
     plt.ylabel('MAE [MPG]')
-    plt.ylim([0, max(max(hist_full.mae), max(hist_full.val_mae))*1.2])
+    plt.ylim([0, max(max(hist_full.mae), max(hist_full.val_mae)) * 1.2])
     plt.show()
 
     # MSE output
     plotter.plot({'Basic': history}, metric="mse")
-    plt.ylim([0, max(max(hist_full.mse), max(hist_full.val_mse))*1.2])
+    plt.ylim([0, max(max(hist_full.mse), max(hist_full.val_mse)) * 1.2])
     plt.ylabel('MSE [MPG^2]')
     plt.show()
 
@@ -86,3 +85,32 @@ def save_model(model, name: str, samples: int):
     mse = '{:.2E}'.format(mse)
     path = "{}{}_mse_{}_samples_{}".format(constants.DATA_DIR.replace("/", "\\"), name, mse, samples)
     model.save(path)
+
+
+def load_model(path: str):
+    path = path.replace("/", "\\")
+    new_model = tf.keras.models.load_model(path)
+    return new_model
+
+
+def test_model(model, test_dataset, test_labels):
+    print("Testing the model...")
+    loss, mae, mse = model.evaluate(test_dataset, test_labels, verbose=2)
+    print("Testing set MAE: {:.2E} MSE: {:.2E}".format(mae, mse))
+
+    test_predictions = model.predict(test_dataset).flatten()
+    plt.axes(aspect='equal')
+    plt.scatter(test_labels, test_predictions)
+    plt.xlabel('True Values [MPG]')
+    plt.ylabel('Predictions [MPG]')
+    lims = [-1.2, 1.2]
+    plt.xlim(lims)
+    plt.ylim(lims)
+    _ = plt.plot(lims, lims)
+    plt.show()
+
+    error = test_predictions - test_labels
+    plt.hist(error, bins=25)
+    plt.xlabel("Prediction Error")
+    _ = plt.ylabel("Count")
+    plt.show()

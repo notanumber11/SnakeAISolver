@@ -8,7 +8,7 @@ LABELS = ["up", "down", "left", "right", "up available", "down available", "left
           "angle to apple", "reward"]
 
 
-def create_csv(labels: List[str], data:List, name: str) -> None:
+def create_csv(labels: List[str], data: List, name: str) -> None:
     """
     Creates a csv file with the name name_x being x the number of samples
     """
@@ -17,3 +17,9 @@ def create_csv(labels: List[str], data:List, name: str) -> None:
         writer = csv.writer(file, delimiter="\t")
         writer.writerows([labels])
         writer.writerows(data)
+
+
+def normalize_rad_angle(val):
+    min = 0
+    max = 6.28
+    return (val - min) / (max - min)
