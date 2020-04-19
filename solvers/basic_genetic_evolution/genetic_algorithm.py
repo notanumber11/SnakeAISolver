@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from solvers.basic_dnn import utils, training_data_generator
+from solvers.basic_dnn import constants, training_data_generator
 import numpy as np
 
 

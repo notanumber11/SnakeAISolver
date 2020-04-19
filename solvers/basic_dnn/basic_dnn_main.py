@@ -1,5 +1,5 @@
 import solvers.basic_dnn.training_data_generator
-import solvers.basic_dnn.dnn as dnn_solver
+import solvers.basic_dnn.basic_dnn as dnn_solver
 import solvers.basic_dnn.constants
 
 

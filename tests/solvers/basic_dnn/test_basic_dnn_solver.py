@@ -1,6 +1,5 @@
 import unittest
 
-import model
 import solvers.basic_dnn.basic_dnn_solver
 
 

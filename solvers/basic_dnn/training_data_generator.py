@@ -1,8 +1,8 @@
 import math
 
-import model
+import solvers.basic_dnn.constants
+import model.game_provider
 from model.game_status import GameStatus
-from solvers.basic_dnn import utils
 from solvers.random_solver import RandomSolver
 
 
@@ -12,7 +12,7 @@ def is_apple_closer(current: GameStatus, next: GameStatus):
     return dist_next < dist_curr
 
 
-def generate_random_training_data(grid_size, samples: int = 100):
+def generate_random_training_data(grid_size, snake_size, samples: int = 100):
     """
     Generate number of samples for training with the following format:
     ["up", "down", "left", "right", "up available", "down available", "left available", "right available", "angle to apple", "reward"]
@@ -22,10 +22,11 @@ def generate_random_training_data(grid_size, samples: int = 100):
     :param samples: The number of samples to generate
     """
     solver = RandomSolver()
+    game_provider = model.game_provider.GameProvider()
     training_data = []
     enough_samples = False
     while not enough_samples:
-        game = model.game_provider.get_random_game(solver, grid_size)
+        game = game_provider.get_random_game(solver, grid_size, snake_size)
         for i in range(1, len(game.game_statuses)):
             # Computations based on current game
             current = game.game_statuses[i - 1]
@@ -35,7 +36,7 @@ def generate_random_training_data(grid_size, samples: int = 100):
             down_available = 1.0 if current.can_move_to_dir(GameStatus.DOWN) else 0.0
             left_available = 1.0 if current.can_move_to_dir(GameStatus.LEFT) else 0.0
             right_available = 1.0 if current.can_move_to_dir(GameStatus.RIGHT) else 0.0
-            angle = utils.normalize_rad_angle(current.get_angle(current.apple, current.head))
+            angle = solvers.basic_dnn.constants.normalize_rad_angle(current.get_angle(current.apple, current.head))
 
             # Computations based on next game
             next_ = game.game_statuses[i]
@@ -52,7 +53,7 @@ def generate_random_training_data(grid_size, samples: int = 100):
                 break
 
     print("Training data has been generated...")
-    utils.create_csv(utils.LABELS, training_data, utils.TRAINING_DATA_BASIC_DNN)
+    solvers.basic_dnn.constants.create_csv(solvers.basic_dnn.constants.LABELS, training_data, solvers.basic_dnn.constants.TRAINING_DATA_BASIC_DNN)
 
 
 def get_reward(current, next_):
@@ -84,7 +85,7 @@ def get_input_from_game_status(game_status: GameStatus):
     Example for up:
     [1, 0, 0, 0, 1, 1, 0, 0, 0.8]
     """
-    angle = utils.normalize_rad_angle(game_status.get_angle(game_status.apple, game_status.head))
+    angle = solvers.basic_dnn.constants.normalize_rad_angle(game_status.get_angle(game_status.apple, game_status.head))
     available = [1 if game_status.can_move_to_dir(d) else 0 for d in GameStatus.DIRS]
     inputs = []
     for i in range(len(GameStatus.DIRS)):

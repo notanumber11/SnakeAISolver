@@ -1,7 +1,8 @@
 import numpy as np
 
 from model.game_status import GameStatus
-from solvers.basic_dnn import basic_dnn, training_data_generator
+import solvers.basic_dnn.basic_dnn as basic_dnn
+import solvers.basic_dnn.training_data_generator
 
 
 class BasicDnnSolver:
@@ -13,7 +14,7 @@ class BasicDnnSolver:
     def solve(self, game_status: GameStatus):
         game_statuses = [game_status]
         while game_status.is_valid_game():
-            inputs = training_data_generator.get_input_from_game_status(game_status)
+            inputs = solvers.basic_dnn.training_data_generator.get_input_from_game_status(game_status)
             dir = self.get_best_movement(inputs)
             game_status = game_status.move(dir)
             game_statuses.append(game_status)
