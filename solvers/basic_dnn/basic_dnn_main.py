@@ -1,11 +1,12 @@
-from solvers.basic_dnn import training_data_generator, utils
-import solvers.basic_dnn.basic_dnn as dnn_solver
+import solvers.basic_dnn.training_data_generator
+import solvers.basic_dnn.dnn as dnn_solver
+import solvers.basic_dnn.constants
 
 
 def create_basic_dnn_model():
     samples = 1000
-    training_data_generator.generate_training_data(6, samples)
-    path_ = "{}{}_samples_{}.csv".format(utils.DATA_DIR, utils.TRAINING_DATA_BASIC_DNN, samples)
+    solvers.basic_dnn.training_data_generator.generate_random_training_data(6, 5, samples)
+    path_ = "{}{}_samples_{}.csv".format(solvers.basic_dnn.constants.DATA_DIR, solvers.basic_dnn.constants.TRAINING_DATA_BASIC_DNN, samples)
     train_dataset, test_dataset, train_labels, test_labels = dnn_solver.get_data(path_)
     model = dnn_solver.build_model(test_dataset)
     weights_princ = model.layers[1].get_weights()

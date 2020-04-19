@@ -140,3 +140,5 @@ dmypy.json
 #env
 venv37/
 
+# data
+data/
