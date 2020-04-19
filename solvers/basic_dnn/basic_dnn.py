@@ -8,8 +8,8 @@ import tensorflow_docs.plots
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from solvers.basic_dnn import constants
-from solvers.basic_dnn.constants import LABELS
+from solvers.basic_dnn import utils
+from solvers.basic_dnn.utils import LABELS
 
 print(tf.__version__)
 
@@ -33,7 +33,6 @@ def get_data(path):
 
 def build_model(train_dataset):
     model = keras.Sequential([
-        layers.Dense(125, activation='relu', input_shape=[len(train_dataset.keys())]),
         layers.Dense(125, activation='relu', input_shape=[len(train_dataset.keys())]),
         layers.Dense(1)
     ])
@@ -83,7 +82,7 @@ def plot_training_validation(history):
 def save_model(model, name: str, samples: int):
     mse = model.history.history["val_mse"][-1]
     mse = '{:.2E}'.format(mse)
-    path = "{}{}_mse_{}_samples_{}".format(constants.DATA_DIR.replace("/", "\\"), name, mse, samples)
+    path = "{}{}_mse_{}_samples_{}".format(utils.DATA_DIR.replace("/", "\\"), name, mse, samples)
     model.save(path)
 
 

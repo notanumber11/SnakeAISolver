@@ -1,9 +1,8 @@
-import csv
 import math
 
-from model import game_provider
+import model
 from model.game_status import GameStatus
-from solvers.basic_dnn import constants
+from solvers.basic_dnn import utils
 from solvers.random_solver import RandomSolver
 
 
@@ -13,19 +12,20 @@ def is_apple_closer(current: GameStatus, next: GameStatus):
     return dist_next < dist_curr
 
 
-def generate_training_data(grid_size, samples=100):
-    output = {
-        "eating": 0.7,
-        "closer": 0.1,
-        "further": -0.2,
-        "die": -1.0
-    }
+def generate_random_training_data(grid_size, samples: int = 100):
+    """
+    Generate number of samples for training with the following format:
+    ["up", "down", "left", "right", "up available", "down available", "left available", "right available", "angle to apple", "reward"]
+    Example value when decission is go up and we eat the apple in that movement:
+    [1, 0, 0, 0, 1, 1, 0, 0, 0.8, 0.7]
+    :param grid_size: The snake size
+    :param samples: The number of samples to generate
+    """
     solver = RandomSolver()
-    # solver = DFSSolver()
     training_data = []
     enough_samples = False
     while not enough_samples:
-        game = game_provider.get_random_game(solver, grid_size)
+        game = model.game_provider.get_random_game(solver, grid_size)
         for i in range(1, len(game.game_statuses)):
             # Computations based on current game
             current = game.game_statuses[i - 1]
@@ -35,7 +35,7 @@ def generate_training_data(grid_size, samples=100):
             down_available = 1.0 if current.can_move_to_dir(GameStatus.DOWN) else 0.0
             left_available = 1.0 if current.can_move_to_dir(GameStatus.LEFT) else 0.0
             right_available = 1.0 if current.can_move_to_dir(GameStatus.RIGHT) else 0.0
-            angle = constants.normalize_rad_angle(current.get_angle(current.apple, current.head))
+            angle = utils.normalize_rad_angle(current.get_angle(current.apple, current.head))
 
             # Computations based on next game
             next_ = game.game_statuses[i]
@@ -44,29 +44,54 @@ def generate_training_data(grid_size, samples=100):
             down = 1.0 if dir_ == GameStatus.DOWN else 0.0
             left = 1.0 if dir_ == GameStatus.LEFT else 0.0
             right = 1.0 if dir_ == GameStatus.RIGHT else 0.0
-            reward = None
-            if not next_.is_valid_game():
-                reward = output["die"]
-            elif next_.head == current.apple:
-                reward = output["eating"]
-            else:
-                if is_apple_closer(current, next_):
-                    reward = output["closer"]
-                elif not is_apple_closer(current, next_):
-                    reward = output["further"]
-            if not reward:
-                raise ValueError("Result calculated incorrectly...")
+            reward = get_reward(current, next_)
             row = [up, down, left, right, up_available, down_available, left_available, right_available, angle, reward]
-            if reward == output["die"]:
-                for i in range(4):
-                    if row[i] == 1 and row[i+4] == 1:
-                        next_.is_valid_game()
-                        raise ValueError("Something wrong with game state")
             training_data.append(row)
             if len(training_data) >= samples:
                 enough_samples = True
                 break
 
     print("Training data has been generated...")
-    constants.create_csv(constants.LABELS, training_data, constants.TRAINING_DATA_BASIC_DNN)
+    utils.create_csv(utils.LABELS, training_data, utils.TRAINING_DATA_BASIC_DNN)
 
+
+def get_reward(current, next_):
+    reward_values = {
+        "eating": 0.7,
+        "closer": 0.1,
+        "further": -0.2,
+        "die": -1.0
+    }
+    reward = None
+    if not next_.is_valid_game():
+        reward = reward_values["die"]
+    elif next_.head == current.apple:
+        reward = reward_values["eating"]
+    else:
+        if is_apple_closer(current, next_):
+            reward = reward_values["closer"]
+        elif not is_apple_closer(current, next_):
+            reward = reward_values["further"]
+    if not reward:
+        raise ValueError("Reward calculated incorrectly...")
+    return reward
+
+
+def get_input_from_game_status(game_status: GameStatus):
+    """
+    The goal of this method is to create 4 inputs (one per direction) with the following data
+    ["up", "down", "left", "right", "up available", "down available", "left available", "right available", "angle to apple"]
+    Example for up:
+    [1, 0, 0, 0, 1, 1, 0, 0, 0.8]
+    """
+    angle = utils.normalize_rad_angle(game_status.get_angle(game_status.apple, game_status.head))
+    available = [1 if game_status.can_move_to_dir(d) else 0 for d in GameStatus.DIRS]
+    inputs = []
+    for i in range(len(GameStatus.DIRS)):
+        input = [0] * 4
+        input[i] = 1
+        inputs.append(input)
+    for input in inputs:
+        input += available
+        input.append(angle)
+    return inputs

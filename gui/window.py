@@ -28,6 +28,7 @@ class Window:
         self.canvas = tk.Canvas(self.root, height=self.height, width=self.width, bg='white')
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.game_drawer = GameDrawer()
+        self.movements_per_second = 8
 
     def draw(self, games: List[Game]):
         self.canvas.delete("all")
@@ -38,7 +39,7 @@ class Window:
             offset_y = self.offset_y + i * self.game_width
             self.game_drawer.draw(self.canvas, game, self.game_size, self.tile_size,
                                   offset_x, offset_y)
-        self.root.after(100, lambda: self.draw(self.games))
+        self.root.after(int(1000/self.movements_per_second), lambda: self.draw(self.games))
 
     def start(self):
         self.root.after(500, lambda: self.draw(self.games))

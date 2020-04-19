@@ -1,40 +1,42 @@
+from typing import List
+
 from model.game_status import GameStatus
 from model.point import Point
 
 
 class HamiltonSolver:
-    def solve(self, game: GameStatus):
+    def solve(self, game_status: GameStatus) -> List[GameStatus]:
         games = []
-        result = self.hamilton(game, games, [], game.head)
-        if not result:
+        is_hamilton_path_found = self.hamilton(game_status, games, [], game_status.head)
+        if not is_hamilton_path_found:
             print("Hamilton could not find a valid path")
-            return [game]
-        return self.next_game(games, 0)
+            return [game_status]
+        return self.apply_hamilton_path_until_finish_game(games, 0)
 
-    def next_game(self, games, pos):
-        last = games[-1]
-        holes = last.size * last.size - len(last.snake)
+    def apply_hamilton_path_until_finish_game(self, statuses: List[GameStatus], pos: int) -> List[GameStatus]:
+        last_status = statuses[-1]
+        holes = last_status.size * last_status.size - len(last_status.snake)
         while holes > 0:
-            ref = games[pos]
-            dir = Point(ref.head.x - last.head.x, ref.head.y - last.head.y)
-            last = last.move(dir)
-            holes = last.size * last.size - len(last.snake)
-            games.append(last)
+            ref = statuses[pos]
+            dir = Point(ref.head.x - last_status.head.x, ref.head.y - last_status.head.y)
+            last_status = last_status.move(dir)
+            holes = last_status.size * last_status.size - len(last_status.snake)
+            statuses.append(last_status)
             pos += 1
-        return games
+        return statuses
 
-    def hamilton(self, game: GameStatus, games: list, visited: list, goal: Point):
-        visited.append(game.head)
-        games.append(game)
+    def hamilton(self, game_status: GameStatus, games: list, visited: list, goal: Point):
+        visited.append(game_status.head)
+        games.append(game_status)
 
         for dir in GameStatus.DIRS:
             # Is a valid direction move
-            new_pos = Point(game.head.x + dir.x, game.head.y + dir.y)
+            new_pos = Point(game_status.head.x + dir.x, game_status.head.y + dir.y)
             # If the new pos is the end
-            if new_pos == goal and len(visited) == game.size * game.size:
+            if new_pos == goal and len(visited) == game_status.size * game_status.size:
                 return True
-            if new_pos not in visited and game.can_move_to_pos(new_pos):
-                new_game = game.move(dir)
+            if new_pos not in visited and game_status.can_move_to_pos(new_pos):
+                new_game = game_status.move(dir)
                 if self.hamilton(new_game, games, visited, goal):
                     return True
         visited.pop()

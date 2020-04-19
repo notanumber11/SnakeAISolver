@@ -1,9 +1,10 @@
 from gui.window import Window
-from model.game_provider import get_games
+import model.game_provider as game_provider
 
 print("Solving games...")
 
-games = get_games()
+# games = game_provider.get_random_games(game_provider.basic_solver, number_of_games=8, board_size=6, snake_size=2)
+games = game_provider.get_all_game_types()
 input("Press Enter to continue...")
 print("Creating window...")
 window = Window(games)

@@ -36,11 +36,7 @@ class DFSSolver:
         self.counter += 1
         visited.append(game.head)
         games.append(game)
-
-        # dirs = random.sample(GameStatus.DIRS, len(GameStatus.DIRS))
         dirs = self.dirs[game.head.x * 10 + game.head.y]
-        # dirs = GameStatus.DIRS
-
         for dir_ in dirs:
             # Is a valid direction move
             new_pos = Point(game.head.x + dir_.x, game.head.y + dir_.y)

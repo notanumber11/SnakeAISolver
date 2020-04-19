@@ -20,15 +20,19 @@ class GameStatus:
         """
         self.size = size
         self.snake = Point.ints_to_points(snake)
-        self.apple = Point(apple[0], apple[1]) if apple is not None else self.generate_new_apple()
         self.head = self.snake[0]
         self.prev_dir = Point(self.head.x - self.snake[1].x, self.head.y - self.snake[1].y)
-        self.angle_to_apple = self.get_angle(self.head, self.apple)
+        if not self.is_full_finished():
+            self.apple = Point(apple[0], apple[1]) if apple is not None else self.generate_new_apple()
+            self.angle_to_apple = self.get_angle(self.head, self.apple)
+        else:
+            self.apple = None
+            self.angle_to_apple = 0
 
     def is_valid_game(self):
-        if self.size < 3:
-            return False
         if not self.is_inside_board(self.apple):
+            return False
+        if self.size < 3:
             return False
         for pos in self.snake:
             if not self.is_inside_board(pos):
@@ -46,7 +50,6 @@ class GameStatus:
     def can_move_to_pos(self, pos: Point):
         if not self.is_inside_board(pos):
             return False
-
         head = self.snake[0]
         dir = Point(pos.x - head.x, pos.y - head.y)
         if not GameStatus.is_valid_dir(dir):
@@ -70,6 +73,8 @@ class GameStatus:
     # dir = right = [1, 0] = Point(1, 0) where right.x = 1 and right.y = 0
     # head = [3, 1]
     def can_move_to_dir(self, dir: Point):
+        if dir.x + self.prev_dir.x == 0 and dir.y + self.prev_dir.y == 0:
+            return False
         head = self.snake[0]
         pos = Point(head.x + dir.x, head.y + dir.y)
         return self.can_move_to_pos(pos)
@@ -90,8 +95,9 @@ class GameStatus:
         if new_head != new_apple:
             new_snake.pop()
         else:
-            new_apple_point = self.generate_new_apple()
-            new_apple = [new_apple_point.x, new_apple_point.y]
+            # If apple is eaten the new GameStatus will be in charge
+            # of generating the new apple.
+            new_apple = None
         new_game_status = GameStatus(self.size, new_snake, new_apple)
         return new_game_status
 
@@ -99,23 +105,30 @@ class GameStatus:
     def is_valid_dir(d: Point):
         return d == GameStatus.UP or d == GameStatus.DOWN or d == GameStatus.RIGHT or d == GameStatus.LEFT
 
-    def generate_new_apple(self):
+    def is_full_finished(self):
         grid_size = self.size * self.size
         holes = grid_size - len(self.snake)
-        hole_pos = random.randint(0, grid_size)
         if holes == 0:
-            print("Game finished successfully")
-            return None
+            print("Game finished successfully !!!")
+            return True
+        return False
+
+    def generate_new_apple(self):
+        grid_size = self.size * self.size
+        hole_pos = random.randint(0, grid_size)
         for i in range(grid_size):
             hole_pos = hole_pos % grid_size
             x = hole_pos % self.size
             y = hole_pos // self.size
             p = Point(x, y)
             if p not in self.snake:
+                for s in self.snake:
+                    if s.x == p.x and s.y == p.y:
+                        raise ValueError("The error is here...")
                 return p
             hole_pos += 1
         raise ValueError("Could not find a new position for apple")
 
-    def get_angle(self, apple: Point, head: Point):
-        angle = math.atan2(apple.y - head.y, apple.x - head.x)
+    def get_angle(self, head: Point, apple: Point):
+        angle = math.atan2(head.y - apple.y, head.x - apple.x)
         return angle
