@@ -12,7 +12,7 @@ def create_default_game_seed() -> GameStatus:
     return game_seed
 
 
-def create_game_seed(board_size: int, snake_size: int) -> GameStatus:
+def create_random_game_seed(board_size: int, snake_size: int) -> GameStatus:
     snake = _generate_snake(board_size, snake_size)
     game_seed = GameStatus(board_size, snake)
     return game_seed

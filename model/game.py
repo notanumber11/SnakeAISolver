@@ -6,7 +6,6 @@ from model.game_status import GameStatus
 class Game:
     def __init__(self, game_statuses: List[GameStatus]):
         self.solved = False
-        self.tries = 0
         self.game_statuses = game_statuses
 
     def generate_report(self):

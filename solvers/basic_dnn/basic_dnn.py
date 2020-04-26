@@ -13,9 +13,8 @@ from solvers.basic_dnn.constants import LABELS
 print(tf.__version__)
 
 
-def get_data(path):
+def get_data(dataset_path):
     # Read data
-    dataset_path = path
     raw_dataset = pd.read_csv(dataset_path, names=LABELS,
                               na_values="?", header=0,
                               sep='\t', skipinitialspace=True)
