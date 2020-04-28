@@ -132,3 +132,5 @@ class GameStatus:
     def get_angle(self, head: Point, apple: Point):
         angle = math.atan2(head.y - apple.y, head.x - apple.x)
         return angle
+
+

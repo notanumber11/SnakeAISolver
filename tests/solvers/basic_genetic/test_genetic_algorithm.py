@@ -1,13 +1,13 @@
-import math
 import unittest
 
 import numpy
 import numpy as np
 from numpy.testing import assert_raises
 
+from solvers.basic_dnn import basic_dnn, training_data_generator
 from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
 from model.game_seed_creator import create_default_game_seed
-from utils.timing import timeit
+import timeit
 
 
 class GeneticAlgorithmTest(unittest.TestCase):
@@ -23,11 +23,10 @@ class GeneticAlgorithmTest(unittest.TestCase):
         population_genetic = self.ga.get_initial_population_genetic(population_size)
         model_genetic = population_genetic[0]
         layer_0_genetic_size = model_genetic[0].shape
-        layer_1_genetic_size = model_genetic[1].shape
         # Assert
-        self.assertEqual(2, len(population_genetic))
+        self.assertEqual(population_size, len(population_genetic))
+        self.assertTrue(len(population_genetic[0]) == len(self.layers_size) - 2)
         self.assertEqual((9, 125), layer_0_genetic_size)
-        self.assertEqual((125, 1), layer_1_genetic_size)
 
     def test_generate_initial_population_genetic_values(self):
         # Arrange
@@ -45,6 +44,9 @@ class GeneticAlgorithmTest(unittest.TestCase):
         # Test that models generated randomly are different
         assert_raises(AssertionError, numpy.testing.assert_array_equal, population_genetic[0][0],
                       population_genetic[1][0])
+        # All values are between -1 and 1
+        for model_genetic in population_genetic:
+            self.assertTrue(((-1 <= model_genetic[0]) & (model_genetic[0] <= 1)).all())
 
     def test_evaluate_population(self):
         # Arrange
@@ -56,21 +58,42 @@ class GeneticAlgorithmTest(unittest.TestCase):
         # Assert
         self.assertEqual(len(population_with_fitness), population_size)
         # Population is sorted by fitness
-        for i in range(0, population_size - 1):
-            self.assertGreaterEqual(population_with_fitness[i][0], population_with_fitness[i + 1][0])
+        self.assertTrue(all(population_with_fitness[0][0] >= x[0] for x in population_with_fitness))
+
+    def test_evaluate_model(self):
+        population_size = 1
+        self.ga.get_initial_population_genetic(population_size)
+        default_games = [create_default_game_seed()]
+        game_statuses = [create_default_game_seed()]
+        self.ga.evaluate_model(game_statuses, self.ga.model)
+        # self.assertTrue(False)
+
+    def test_evaluate_model_different_results(self):
+        population_size = 5
+        game_seeds_size = 1
+        population_genetic = self.ga.get_initial_population_genetic(population_size)
+        game_seeds = [create_default_game_seed() for i in range(game_seeds_size)]
+        models_evaluated = []
+        for model_genetic in population_genetic:
+            for layer_index in range(len(model_genetic)):
+                model_genetic[layer_index] = np.random.uniform(low=-1, high=1, size=model_genetic[layer_index].shape)
+                # model_genetic[layer_index] = np.zeros(model_genetic[layer_index].shape)
+            self.ga._set_model_weights(self.ga.model, model_genetic)
+            r = self.ga.evaluate_model(game_seeds, self.ga.model)
+            models_evaluated.append(r)
+        self.assertFalse(all(x == models_evaluated[0] for x in models_evaluated))
 
     def test_selection(self):
         # Arrange
-        population_size = 6
+        population_size = 10
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_initial_population_genetic(population_size)
         population_with_fitness = self.ga.evaluate_population(population_genetic, game_statuses)
-        threshold = 0.5
-        first_excluded_model = population_with_fitness[int(len(population_with_fitness) * threshold) + 1]
+        threshold = 0.4
         # Act
         selected_pairs = self.ga.selection(threshold, population_with_fitness)
         # Assert
-        self.assertEqual(len(selected_pairs), math.ceil(population_size / 2))
+        self.assertEqual(len(selected_pairs) * 2, population_size)
 
     def test_couple_crossover_same_parent(self):
         # Arrange
@@ -135,23 +158,23 @@ class GeneticAlgorithmTest(unittest.TestCase):
         model_genetic = [np.ones(size)]
         # mutate 0
         self.ga.mutation(0, model_genetic)
-        for i in range(len(model_genetic)):
-            np.testing.assert_array_equal(model_genetic[i], np.ones(size))
-        # mutate all
+        for layer_index in range(len(model_genetic)):
+            np.testing.assert_array_equal(model_genetic[layer_index], np.ones(size))
+        # mutate a portion
         self.ga.mutation(0.05, model_genetic)
         equal_count = 0
-        for i in range(len(model_genetic)):
-            for j in range(size):
-                if model_genetic[i][j] == 1:
+        for layer_index in range(len(model_genetic)):
+            for i in range(size):
+                if model_genetic[layer_index][i] == 1:
                     equal_count += 1
         self.assertGreaterEqual(equal_count, 5 * mutation_rate * size)
         self.assertLessEqual(equal_count, size * (1 - mutation_rate / 5))
 
-    def test_execute_iteration(self):
-        games_to_play = 5
+    def test_execute_iteration_with_single_element(self):
+        games_to_play = 2
         population_size = 6
+        # Create a population genetic with the same element repeated
         population_genetic = self.ga.get_initial_population_genetic(1) * population_size
-        # Create a population genetic with the same elements
         selection_threshold = 0.5
         # Do not mutate
         mutation_rate = 0
@@ -162,17 +185,39 @@ class GeneticAlgorithmTest(unittest.TestCase):
             for layer_index in range(len(child)):
                 np.testing.assert_array_equal(child[layer_index], population_genetic[0][layer_index])
 
-    def test_new_weights_modify_predictions(self):
-        population_size = 5
-        game_seeds_size = 1
+    def test_execute_iteration(self):
+        games_to_play = 1
+        population_size = 10
+        # Create a population genetic with the same element
         population_genetic = self.ga.get_initial_population_genetic(population_size)
-        game_seeds = [create_default_game_seed() for i in range(game_seeds_size)]
-        models_evaluated = []
-        for model_genetic in population_genetic:
-            for layer_index in range(len(model_genetic)):
-                # model_genetic[layer_index] = np.zeros(model_genetic[layer_index].shape)
-                model_genetic[layer_index] = np.random.uniform(low=-1, high=1, size=model_genetic[layer_index].shape)
-            self.ga._set_model_weights(self.ga.model, model_genetic)
-            r = self.ga.evaluate_model(game_seeds, self.ga.model)
-            models_evaluated.append(r)
-        self.assertFalse(all(x == models_evaluated[0] for x in models_evaluated))
+        selection_threshold = 0.2
+        mutation_rate = 0.2
+        children, evaluation_result = self.ga.execute_iteration(population_genetic, games_to_play, selection_threshold,
+                                                                mutation_rate)
+        self.assertEqual(len(children), population_size)
+        for child in children:
+            for layer_index in range(len(child)):
+                self.assertTrue(((-1 <= child[layer_index]) & (child[layer_index] <= 1)).all())
+
+    def test_evaluate_population_performance(self):
+        layers_size = [9, 125, 1]
+        population_size = 10
+        ga = GeneticAlgorithm(layers_size)
+        game_statuses = [create_default_game_seed() for i in range(1)]
+        population_genetic = ga.get_initial_population_genetic(population_size)
+        result = timeit.timeit(lambda: ga.evaluate_population(population_genetic, game_statuses), number=1)
+        print(result)
+
+    def test_get_best_movement_performance(self):
+        # Initialize model with random weights
+        population_genetic = self.ga.get_initial_population_genetic(1)
+        game_status = create_default_game_seed()
+        inputs = training_data_generator.get_input_from_game_status(game_status)
+        result = timeit.timeit(lambda: self.ga.get_best_movement(inputs, self.ga.model), number=10)
+        print(result)
+    #
+    # def test_perform_cross_over_per_gen_randomly(self):
+    #     pass
+    #
+    # def test_only_modify_hidden_layer(self):
+    #     pass

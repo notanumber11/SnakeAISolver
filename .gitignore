@@ -139,6 +139,6 @@ dmypy.json
 
 #env
 venv37/
-
+venv2/
 # data
 data/

@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from model.game_seed_creator import create_random_game_seed
+from model.game_seed_creator import create_random_game_seed, create_default_game_seed
 from model.game_status import GameStatus
 from solvers.basic_dnn import training_data_generator
 from utils.timing import timeit
@@ -21,9 +21,14 @@ class GeneticAlgorithm:
         self.number_of_layers = len(self.layers_size)
         self.model = self.build_model()
 
+    @timeit
     def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate):
-        game_statuses = [create_random_game_seed(6, 2) for j in range(games_to_play_per_individual)]
+        # game_statuses = [create_random_game_seed(10, 2) for j in range(games_to_play_per_individual)]
+        game_statuses = [create_default_game_seed() for j in range(games_to_play_per_individual)]
         population_evaluated = self.evaluate_population(population_genetic, game_statuses)
+        best = population_evaluated[0]
+        print("       Best result: Snake length={} - fitness={} with  and number of movements={}"
+              .format(best[0], best[1],best[2]))
         selected_pairs = self.selection(selection_threshold, population_evaluated)
         children = []
         even_masks = []
@@ -53,7 +58,7 @@ class GeneticAlgorithm:
             # For each layer we need to create the original parameters
             # We do not consider bias
             model_genetic = []
-            for j in range(1, self.number_of_layers):
+            for j in range(1, self.number_of_layers - 1):
                 rows = self.layers_size[j - 1]
                 columns = self.layers_size[j]
                 weights = np.random.uniform(low=-1, high=1, size=(rows, columns))
@@ -62,33 +67,30 @@ class GeneticAlgorithm:
         return population_genetic
 
     @timeit
-    def evaluate_population(self, population_genetic: List, game__status_seeds: List[GameStatus]) -> List[list]:
+    def evaluate_population(self, population_genetic: List, game_status_seeds: List[GameStatus]) -> List[list]:
         """
         :param population_genetic: List of population size containing model_genetics. Each model_genetic is a list
         of weights for each layer in the neural network.
         :param game_status_seeds: List of GameStatus that will be used for the initial state of the games that will
         be played by each model_genetic.
-        :return: List sorted descending based on fitness. The list contains [[fitness, snake_length, movements, model_genetics], [...]]
+        :return: List sorted descending based on fitness. The list contains [[snake_length, fitness,  movements, model_genetics], [...]]
         """
         population_evaluated = []
         # For each model genetic we need to perform artificial games and see the performance
         for model_genetic in population_genetic:
             self._set_model_weights(self.model, model_genetic)
-            model_fitness, snake_length, number_of_movements = self.evaluate_model(game__status_seeds, self.model)
-            population_evaluated.append([model_fitness, snake_length, number_of_movements, model_genetic])
+            snake_length, model_fitness, number_of_movements = self.evaluate_model(game_status_seeds, self.model)
+            population_evaluated.append([snake_length, model_fitness, number_of_movements, model_genetic])
         population_evaluated.sort(key=lambda x: x[0], reverse=True)
-        best = population_evaluated[0]
-        print(
-            "     - Best fitness={} with snake length={} and number of movements={}".format(best[0], best[1], best[2]))
         return population_evaluated
 
     def _set_model_weights(self, model, model_genetic):
         weights = model.get_weights()
         # We do not consider bias
-        for i in range(0, len(weights), 2):
-            if weights[i].shape != model_genetic[i // 2].shape:
+        for i in range(0, len(model_genetic)):
+            if weights[i * 2].shape != model_genetic[i].shape:
                 raise ValueError("Error setting model shapes")
-            weights[i] = model_genetic[i // 2]
+            weights[i * 2] = model_genetic[i]
         model.set_weights(weights)
 
     def evaluate_model(self, game_status_seeds: List[GameStatus], model) -> Tuple[int, int, int]:
@@ -97,7 +99,8 @@ class GeneticAlgorithm:
         snake_length: int = 0
         for game_status in game_status_seeds:
             game_statuses = []
-            counter = 250
+            original_counter = game_status.size*game_status.size - len(game_status.snake)
+            counter = original_counter
             while game_status.is_valid_game() and counter > 0:
                 counter -= 1
                 input = training_data_generator.get_input_from_game_status(game_status)
@@ -106,6 +109,9 @@ class GeneticAlgorithm:
                 game_statuses.append(new_game_status)
                 # Evaluate fitness
                 reward = training_data_generator.get_reward(game_status, new_game_status)
+                if reward == 0.7:
+                    original_counter -= 1
+                    counter = original_counter
                 model_fitness += reward
                 # Continue iteration
                 game_status = new_game_status
@@ -113,10 +119,10 @@ class GeneticAlgorithm:
             snake_length += len(game_status.snake)
         snake_length = snake_length // len(game_status_seeds)
         number_of_movements = number_of_movements // len(game_status_seeds)
-        return model_fitness, snake_length, number_of_movements
+        return snake_length, model_fitness, number_of_movements
 
     def get_best_movement(self, input, model):
-        test_predictions = model.predict(input).flatten()
+        test_predictions = model.predict(input, batch_size=4).flatten()
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
 
@@ -134,8 +140,8 @@ class GeneticAlgorithm:
         top_performers = population_evaluated[-number_of_top_performers:]
         pairs = []
         # Ensure we do not lose our best
-        for top in top_performers:
-            pairs.append([top[3], top[3]])
+        # for top in top_performers:
+        #     pairs.append([top[3], top[3]])
         min_fitness = min(map(lambda x: x[0], top_performers))
         total_fitness = sum([x[0] for x in top_performers])
         while len(pairs) < population_size // 2:
@@ -186,11 +192,10 @@ class GeneticAlgorithm:
             layers.Dense(1)
         ])
 
-        optimizer = tf.keras.optimizers.RMSprop(0.001)
-
-        model.compile(loss='mse',
-                      optimizer=optimizer,
-                      metrics=['mae', 'mse'])
+        # optimizer = tf.keras.optimizers.RMSprop(0.001)
+        # model.compile(loss='mse',
+        #               optimizer=optimizer,
+        #               metrics=['mae', 'mse'])
         # model.summary()
         return model
 
@@ -207,14 +212,17 @@ class GeneticAlgorithm:
         return np.fromfunction(lambda i, j: (val + i + j) % 2, shape, dtype=int)
 
     def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1):
-        model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}\\".format(population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual)
+        model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}\\".format(population_size, selection_threshold,
+                                                                           mutation_rate, iterations,
+                                                                           games_to_play_per_individual)
         dir_path = self.DATA_DIR + model_description
-        os.mkdir(dir_path)
+        # os.mkdir(dir_path)
         population_genetic = self.get_initial_population_genetic(population_size)
         # Iterate
         for i in range(iterations):
             print("Iteration: {}".format(i))
-            new_population_genetic, population_evaluated = self.execute_iteration(population_genetic, games_to_play_per_individual,
+            new_population_genetic, population_evaluated = self.execute_iteration(population_genetic,
+                                                                                  games_to_play_per_individual,
                                                                                   selection_threshold, mutation_rate)
             self.save_model(self.model, dir_path, population_evaluated, i)
             population_genetic = new_population_genetic
@@ -222,6 +230,7 @@ class GeneticAlgorithm:
     @timeit
     def save_model(self, model, folder_path: str, population_evaluated, iteration):
         best = population_evaluated[0]
-        file_name = "{}_iterations_fitness_{}_snake_lenght_{}_movements_{}".format(iteration, best[0], best[1], best[2])
+        file_name = "{}_iterations_snake_length_{}_reward_{}_movements_{}".format(iteration, best[0], best[1], best[2])
         full_file_path = folder_path + file_name
+        self._set_model_weights(model, best[3])
         model.save(full_file_path)
