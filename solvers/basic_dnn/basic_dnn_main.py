@@ -33,5 +33,5 @@ def test_model(model, test_dataset, test_labels):
 
 
 if __name__ == '__main__':
-    # load_basic_dnn_model()
+    load_basic_dnn_model()
     create_basic_dnn_model()

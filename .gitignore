@@ -140,5 +140,7 @@ dmypy.json
 #env
 venv37/
 venv2/
+docker/
+
 # data
 data/

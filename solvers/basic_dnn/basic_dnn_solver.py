@@ -9,6 +9,7 @@ class BasicDnnSolver:
 
     def __init__(self):
         path_model = r"C:\Users\Denis\Desktop\SnakePython\data\basic_dnn\mode_basic_dnn_mse_7.12E-03_samples_10000"
+        path_model = r"C:\Users\Denis\Desktop\SnakePython\data\basic_genetic\pop=1000_sel=0.1_mut_0.01_it_50_games_1\18_iterations_snake_length_5_reward_1.2999999999999998_movements_6"
         self.model = basic_dnn.load_model(path_model)
 
     def solve(self, game_status: GameStatus):
