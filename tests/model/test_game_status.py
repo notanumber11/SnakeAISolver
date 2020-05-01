@@ -5,7 +5,7 @@ from model.game_status import GameStatus
 from model.point import Point
 
 
-class TestGame(unittest.TestCase):
+class TestGameStatus(unittest.TestCase):
 
     def test_move_left_down(self):
         # Arrange
@@ -42,7 +42,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(Point.ints_to_points(snake_right), new_game.snake)
         self.assertNotEqual(game.snake, new_game.snake)
 
-    def test_is_valid_input(self):
+    def test_is_valid_game(self):
         size = 2
         snake_start = [[13, 2], [2, 2], [1, 2]]
         apple = [4, 2]
@@ -58,6 +58,12 @@ class TestGame(unittest.TestCase):
         size = 50
         apple = [51, 2]
         self.assertFalse(GameStatus(size, snake_start, apple).is_valid_game())
+        # Can not move backwards when snake is size 2
+        snake_start = [[2, 2], [1, 2]]
+        game = GameStatus(size, snake_start)
+        self.assertFalse(game.can_move_to_dir(GameStatus.LEFT))
+        new_game = game.move(GameStatus.LEFT)
+        self.assertFalse(new_game.is_valid_game())
 
     def test_generate_new_apple(self):
         size = 10
@@ -104,6 +110,36 @@ class TestGame(unittest.TestCase):
         head = Point(1, 1)
         self.assertEqual(45, math.degrees(game_status.get_angle(apple, head)))
 
+    def test_can_not_move(self):
+        # Arrange
+        size = 5
+        snake_start = [[0, 0], [1, 0]]
+        apple = [4, 4]
+        game = GameStatus(size, snake_start, apple)
+        # Can not go backwards
+        self.assertFalse(game.can_move_to_dir(GameStatus.RIGHT))
+        # Crash with left wall
+        self.assertFalse(game.can_move_to_dir(GameStatus.LEFT))
+        # Crash with up wall
+        self.assertFalse(game.can_move_to_dir(GameStatus.UP))
+        # Can move down
+        self.assertTrue(game.can_move_to_dir(GameStatus.DOWN))
+
+    def test_can_not_move_backwards(self):
+        # Arrange
+        size = 5
+        snake_start = [[2, 2], [2, 3]]
+        game = GameStatus(size, snake_start)
+        self.assertFalse(game.can_move_to_dir(GameStatus.DOWN))
+        snake_start = [[2, 2], [2, 1]]
+        game = GameStatus(size, snake_start)
+        self.assertFalse(game.can_move_to_dir(GameStatus.UP))
+        snake_start = [[2, 2], [3, 2]]
+        game = GameStatus(size, snake_start)
+        self.assertFalse(game.can_move_to_dir(GameStatus.RIGHT))
+        snake_start = [[2, 2], [1, 2]]
+        game = GameStatus(size, snake_start)
+        self.assertFalse(game.can_move_to_dir(GameStatus.LEFT))
 
     def equality_list(self):
         a = [1, 3]

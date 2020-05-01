@@ -58,7 +58,8 @@ def get_input_from_game_status(game_status: GameStatus):
     Example for up:
     [1, 0, 0, 0, 1, 1, 0, 0, 0.8]
     """
-    angle = int(solvers.basic_dnn.constants.normalize_rad_angle(game_status.get_angle(game_status.apple, game_status.head))*100)
+    angle = solvers.basic_dnn.constants.normalize_rad_angle(game_status.get_angle(game_status.apple, game_status.head))
+    angle = round(angle,2)
     available = [1 if game_status.can_move_to_dir(d) else 0 for d in GameStatus.DIRS]
     inputs = []
     for i in range(len(GameStatus.DIRS)):

@@ -8,6 +8,7 @@ from model.game import Game
 from solvers.dfs_solver import DFSSolver
 from solvers.hamilton_solver import HamiltonSolver
 from solvers.random_solver import RandomSolver
+from solvers.basic_genetic.basic_genetic_solver import BasicGeneticSolver
 
 
 class GameProvider:
@@ -18,15 +19,20 @@ class GameProvider:
         self.random_solver = RandomSolver()
         self.basic_solver = solvers.basic_solver.BasicSolver()
         self.basic_dnn = solvers.basic_dnn.basic_dnn_solver.BasicDnnSolver()
-        self.all_solvers = [self.random_solver, self.basic_solver, self.dfs_solver, self.basic_dnn,
+        self.basic_genetic = solvers.basic_genetic.basic_genetic_solver.BasicGeneticSolver()
+        self.all_solvers = [self.random_solver,
+                            self.basic_solver,
+                            self.dfs_solver,
+                            self.basic_dnn,
+                            self.basic_genetic,
                             self.hamilton_solver]
 
     def get_n_best(self, games: List[Game], n: int):
         result = sorted(games, key=lambda x: len(x.game_statuses[-1].snake), reverse=True)
         return result[0:n]
 
-    def get_all_game_types(self):
-        return [self._get_default_game(solver) for solver in self.all_solvers]
+    def get_all_game_types(self, n=1):
+        return [self._get_default_game(solver) for i in range(n) for solver in self.all_solvers]
 
     def _get_default_game(self, solver):
         game_seed = model.game_seed_creator.create_default_game_seed()

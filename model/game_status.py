@@ -28,8 +28,11 @@ class GameStatus:
         else:
             self.apple = None
             self.angle_to_apple = 0
+        self._valid_game = True
 
     def is_valid_game(self):
+        if not self._valid_game:
+            return False
         if not self.is_inside_board(self.apple):
             return False
         if self.size < 3:
@@ -98,7 +101,10 @@ class GameStatus:
             # If apple is eaten the new GameStatus will be in charge
             # of generating the new apple.
             new_apple = None
+
         new_game_status = GameStatus(self.size, new_snake, new_apple)
+        if not self.can_move_to_dir(d):
+            new_game_status._valid_game = False
         return new_game_status
 
     @staticmethod

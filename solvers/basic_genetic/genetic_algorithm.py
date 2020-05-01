@@ -22,14 +22,33 @@ class ModelGeneticEvaluated:
         self.model_genetic = model_genetic
 
     def fitness(self):
-        fitness = (self.snake_length - 2) * self.size * 2 - self.movements
+        fitness = self.snake_length**3 - self.movements
+        if fitness < 0:
+            fitness = 0
         return fitness
 
     def __str__(self):
-        return "Snake length={} - Movements={} - Reward={}".format(self.snake_length, self.movements, self.reward)
+        return "        Fitness={:.2f} - Snake length={:.2f} - Movements={:.2f} - Reward={:.2f}" \
+            .format(self.fitness(), self.snake_length, self.movements, self.reward)
 
     def __repr__(self):
         return self.__str__()
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        if self.snake_length != other.snake_length or self.movements != other.movements \
+                or self.reward != other.reward or self.size != other.size:
+            return False
+        if not self._equal_model_genetic(self.model_genetic, other.model_genetic):
+            return False
+        return True
+
+    def __hash__(self):
+        return int(str(self.x) + str(self.y))
+
+    def _equal_model_genetic(self, a, b):
+        return all(np.array_equal(a[i], b[i]) for i in range(len(a)))
 
 
 class GeneticAlgorithm:
@@ -42,13 +61,14 @@ class GeneticAlgorithm:
 
     @timeit
     def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate):
-        # game_statuses = [create_random_game_seed(10, 2) for j in range(games_to_play_per_individual)]
-        game_statuses = [create_random_game_seed(4, 2) for j in range(games_to_play_per_individual)]
+        game_statuses = [create_random_game_seed(6, 2) for j in range(games_to_play_per_individual)]
+        # Evaluate population
         population_evaluated = self.evaluate_population(population_genetic, game_statuses)
-        best = population_evaluated[0]
-        print(best)
+        # Select best couples
         selected_pairs = self.selection(selection_threshold, population_evaluated)
+        # Reproduce them
         children = self.crossover(selected_pairs)
+        # Introduce mutations
         for i in range(len(children)):
             self.mutation(mutation_rate, children[i])
         return children, population_evaluated
@@ -78,21 +98,20 @@ class GeneticAlgorithm:
         return population_genetic
 
     @timeit
-    def evaluate_population(self, population_genetic: List, game_status_seeds: List[GameStatus]) -> List[
-        ModelGeneticEvaluated]:
+    def evaluate_population(self, population_genetic: List, game_status_seeds: List[GameStatus]) \
+            -> List[ModelGeneticEvaluated]:
         """
         :param population_genetic: List of population size containing model_genetics. Each model_genetic is a list
         of weights for each layer in the neural network.
         :param game_status_seeds: List of GameStatus that will be used for the initial state of the games that will
         be played by each model_genetic.
-        :return: List sorted descending based on fitness. The list contains [[snake_length, fitness,  movements, model_genetics], [...]]
+        :return: List sorted descending based on fitness.
         """
         population_evaluated = []
         # For each model genetic we need to perform artificial games and see the performance
         for model_genetic in population_genetic:
             model_evaluated = self.evaluate_model(game_status_seeds, self.model, model_genetic)
             population_evaluated.append(model_evaluated)
-        population_evaluated.sort(key=lambda x: x.fitness(), reverse=True)
         return population_evaluated
 
     def _set_model_weights(self, model, model_genetic):
@@ -104,38 +123,49 @@ class GeneticAlgorithm:
             weights[i * 2] = model_genetic[i]
         model.set_weights(weights)
 
+    def _get_max_number_of_movements(self, game_status: GameStatus):
+        return game_status.size**2 - len(game_status.snake) + 1
+
     def evaluate_model(self, game_status_seeds: List[GameStatus], model, model_genetic) -> ModelGeneticEvaluated:
         self._set_model_weights(self.model, model_genetic)
-        model_fitness: int = 0
-        number_of_movements: int = 0
-        snake_length: int = 0
         reward = 0
-        size = game_status_seeds[0].size
+        number_of_movements = 0
+        snake_length = 0
         for game_status in game_status_seeds:
-            game_statuses = []
-            original_counter = game_status.size * game_status.size - len(game_status.snake)
-            counter = original_counter
-            while game_status.is_valid_game() and counter > 0:
-                counter -= 1
-                input = training_data_generator.get_input_from_game_status(game_status)
-                dir = self.get_best_movement(input, model)
-                new_game_status = game_status.move(dir)
-                game_statuses.append(new_game_status)
-                # Evaluate fitness
-                reward = training_data_generator.get_reward(game_status, new_game_status)
-                if reward == 0.7:
-                    original_counter -= 1
-                    counter = original_counter
-                model_fitness += reward
-                # Continue iteration
-                game_status = new_game_status
+            # Play one game
+            game_snake_length, game_movements, game_reward = self.play_one_game(game_status, model)
+            # Finish playing one game
+            number_of_movements += game_movements
+            snake_length += game_snake_length
+            reward += game_reward
 
-            number_of_movements += len(game_statuses)
-            snake_length += len(game_status.snake)
+        snake_length /= len(game_status_seeds)
+        number_of_movements /= len(game_status_seeds)
+        reward /= len(game_status_seeds)
+        return ModelGeneticEvaluated(snake_length, number_of_movements, reward, game_status_seeds[0].size, model_genetic)
 
-        snake_length = snake_length // len(game_status_seeds)
-        number_of_movements = number_of_movements // len(game_status_seeds)
-        return ModelGeneticEvaluated(snake_length, number_of_movements, reward, size, model_genetic)
+    def play_one_game(self, game_status_seed: GameStatus, model):
+        game_statuses = []
+        movements_left = self._get_max_number_of_movements(game_status_seed)
+        snake_length = 0
+        accumulated_reward = 0
+        while game_status_seed.is_valid_game() and movements_left > 0:
+            _input = training_data_generator.get_input_from_game_status(game_status_seed)
+            _dir = self.get_best_movement(_input, model)
+            new_game_status = game_status_seed.move(_dir)
+            game_statuses.append(new_game_status)
+            # Evaluate fitness
+            reward = training_data_generator.get_reward(game_status_seed, new_game_status)
+            if reward == 0.7:
+                movements_left = self._get_max_number_of_movements(game_status_seed)
+            accumulated_reward += reward
+            # Continue iteration
+            game_status_seed = new_game_status
+            movements_left -= 1
+        snake_length = len(game_statuses[-1].snake)
+        if movements_left == 0:
+            snake_length = 0
+        return snake_length, len(game_statuses), accumulated_reward
 
     def get_best_movement(self, input, model):
         test_predictions = model.predict(input, batch_size=4).flatten()
@@ -151,21 +181,22 @@ class GeneticAlgorithm:
         :return: A list of pairs of the best evaluated models [[model_evaluated_father, model_evaluated_mother] , [...]]
         model_evaluted = [fitness, model_genetic]
         """
+        population_evaluated.sort(key=lambda x: x.fitness(), reverse=True)
         population_size = len(population_evaluated)
         number_of_top_performers = int(threshold * len(population_evaluated))
-        top_performers = population_evaluated[-number_of_top_performers:]
+        top_performers = population_evaluated[0:number_of_top_performers]
         pairs = []
         # Ensure we do not lose our best
         # for top in top_performers:
         #     pairs.append([top[3], top[3]])
-        min_fitness = min(map(lambda x: x.fitness(), top_performers))
         total_fitness = sum([x.fitness() for x in top_performers])
         while len(pairs) < population_size // 2:
-            pair = self._pair(top_performers, min_fitness, total_fitness)
+            pair = self._pair(top_performers, total_fitness)
             pairs.append(pair)
         return pairs
 
-    def _pair(self, parents: List[ModelGeneticEvaluated], min_fitness: float, total_fitness: float):
+
+    def _pair(self, parents: List[ModelGeneticEvaluated],  total_fitness: float) -> List[ModelGeneticEvaluated]:
         """
 
         :param parents: List of all the model_genetics with fitness
@@ -173,31 +204,32 @@ class GeneticAlgorithm:
         :param total_fitness: sum of all the fitness across the population
         :return: A random couple chosen based on roulete selection
         """
-        pick_1 = random.uniform(min_fitness, total_fitness)
-        pick_2 = random.uniform(min_fitness, total_fitness)
+        pick_1 = random.uniform(0, total_fitness)
+        pick_2 = random.uniform(0, total_fitness)
         return [self._roulette_selection(parents, pick_1), self._roulette_selection(parents, pick_2)]
 
-    def _roulette_selection(self, parents: List[ModelGeneticEvaluated], pick: float) -> List:
+    def _roulette_selection(self, parents: List[ModelGeneticEvaluated], pick: float) -> ModelGeneticEvaluated:
         current = 0
         for parent in parents:
-            current += abs(parent.fitness())
-            if current > pick:
-                return parent.model_genetic
+            current += parent.fitness()
+            if current >= pick:
+                return parent
+        raise ValueError("Error performing roulette selection")
 
-    def crossover(self, selected_pairs, fix_crossover=False):
+    def crossover(self, selected_pairs: List[List[ModelGeneticEvaluated]], fix_crossover=False):
         children = []
         if fix_crossover:
             even_masks = []
             odd_masks = []
-            for layer in selected_pairs[0][0]:
+            for layer in selected_pairs[0][0].model_genetic:
                 even_masks.append(self._mask(layer.shape, True))
                 odd_masks.append(self._mask(layer.shape, False))
             for pair in selected_pairs:
-                children += self._fix_crossover(pair[0], pair[1], even_masks, odd_masks)
+                children += self._fix_crossover(pair[0].model_genetic, pair[1].model_genetic, even_masks, odd_masks)
             return children
         else:
             for pair in selected_pairs:
-                children += self._random_crossover(pair[0], pair[1])
+                children += self._random_crossover(pair[0].model_genetic, pair[1].model_genetic)
             return children
 
     def _fix_crossover(self, model_genetic_father, model_genetic_mother, masks_even, masks_odd):
@@ -272,13 +304,15 @@ class GeneticAlgorithm:
             new_population_genetic, population_evaluated = self.execute_iteration(population_genetic,
                                                                                   games_to_play_per_individual,
                                                                                   selection_threshold, mutation_rate)
-            self.save_model(self.model, dir_path, population_evaluated, i)
+            best = population_evaluated[0]
+            print(best)
+            file_name = "{}_iterations_snake_length_{}_movements_{}reward_{}_".format(i, best.snake_length,
+                                                                                      best.movements, best.reward)
+            self._set_model_weights(self.model, best.model_genetic)
+            self.save_model(self.model, dir_path, file_name)
             population_genetic = new_population_genetic
 
-    @timeit
-    def save_model(self, model, folder_path: str, population_evaluated, iteration):
-        best = population_evaluated[0]
-        file_name = "{}_iterations_snake_length_{}_movements_{}reward_{}_".format(iteration, best.snake_length, best.movements, best.reward)
+    def save_model(self, model, folder_path: str, file_name):
         full_file_path = folder_path + file_name
-        self._set_model_weights(model, best.model_genetic)
+        print("Saving model on: {}".format(full_file_path))
         model.save(full_file_path)
