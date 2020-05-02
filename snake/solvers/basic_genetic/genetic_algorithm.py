@@ -8,7 +8,7 @@ from tensorflow.keras import layers
 from model.game_seed_creator import create_random_game_seed
 from model.game_status import GameStatus
 from solvers.basic_dnn import training_data_generator
-from snake.utils.timing import timeit
+from utils.timing import timeit
 
 
 class ModelGeneticEvaluated:
@@ -51,6 +51,7 @@ class ModelGeneticEvaluated:
 
 class GeneticAlgorithm:
     DATA_DIR = "C:\\Users\\Denis\\Desktop\\SnakePython\\data\\basic_genetic\\"
+    DATA_DIR = "/opt/ml/code/"
 
     def __init__(self, layers_size: List[int]):
         self.layers_size = layers_size

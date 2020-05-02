@@ -1,11 +1,10 @@
-FROM tensorflow/tensorflow:2.0.0a0
+FROM tensorflow/tensorflow:2.2.0rc4-jupyter
 
-RUN pip install sagemaker-containers
-RUN pip install matplotlib
-
+COPY requirements.txt /opt/ml/code/requirements.txt
+RUN pip install -r /opt/ml/code/requirements.txt
 # Copies the training code inside the container
 COPY . /opt/ml/code/
 
 # Defines train.py as script entrypoint
 ENV SAGEMAKER_PROGRAM train.py
-CMD ["python", "/opt/ml/code/solvers/basic_genetic/main_genetic_algorithm.py"]
+CMD ["python", "/opt/ml/code/main_genetic_algorithm.py"]

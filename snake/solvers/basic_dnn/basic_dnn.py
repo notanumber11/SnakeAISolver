@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import tensorflow as tf
-
 from tensorflow import keras
 from tensorflow.keras import layers
 
@@ -46,7 +45,6 @@ def build_model(train_dataset):
 def train_model(model, train_dataset, train_labels):
     import tensorflow_docs as tfdocs
     import tensorflow_docs.modeling
-    import tensorflow_docs.plots
     epochs = 1000
     # The patience parameter is the amount of epochs to check for improvement
     early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
@@ -59,7 +57,6 @@ def train_model(model, train_dataset, train_labels):
 
 def plot_training_validation(history):
     import tensorflow_docs as tfdocs
-    import tensorflow_docs.modeling
     import tensorflow_docs.plots
     hist_full = pd.DataFrame(history.history)
     hist_full['epoch'] = history.epoch
