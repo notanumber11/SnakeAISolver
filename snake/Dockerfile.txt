@@ -1,0 +1,11 @@
+FROM tensorflow/tensorflow:2.0.0a0
+
+RUN pip install sagemaker-containers
+RUN pip install matplotlib
+
+# Copies the training code inside the container
+COPY . /opt/ml/code/
+
+# Defines train.py as script entrypoint
+ENV SAGEMAKER_PROGRAM train.py
+CMD ["python", "/opt/ml/code/solvers/basic_genetic/main_genetic_algorithm.py"]

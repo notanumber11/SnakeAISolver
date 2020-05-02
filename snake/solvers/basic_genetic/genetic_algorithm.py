@@ -1,16 +1,14 @@
-import os
 import random
 from typing import List, Tuple
 
 import numpy as np
-import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from model.game_seed_creator import create_random_game_seed, create_default_game_seed
+from model.game_seed_creator import create_random_game_seed
 from model.game_status import GameStatus
 from solvers.basic_dnn import training_data_generator
-from utils.timing import timeit
+from snake.utils.timing import timeit
 
 
 class ModelGeneticEvaluated:
@@ -295,6 +293,7 @@ class GeneticAlgorithm:
         model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}\\".format(population_size, selection_threshold,
                                                                            mutation_rate, iterations,
                                                                            games_to_play_per_individual)
+        print("Running model: {}".format(model_description))
         dir_path = self.DATA_DIR + model_description
         # os.mkdir(dir_path)
         population_genetic = self.get_initial_population_genetic(population_size)
