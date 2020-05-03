@@ -51,7 +51,7 @@ class ModelGeneticEvaluated:
 
 class GeneticAlgorithm:
     DATA_DIR = "C:\\Users\\Denis\\Desktop\\SnakePython\\data\\basic_genetic\\"
-    #DATA_DIR = "/opt/ml/code/"
+    DATA_DIR = "/opt/ml/model/"
 
     def __init__(self, layers_size: List[int]):
         self.layers_size = layers_size
@@ -167,7 +167,7 @@ class GeneticAlgorithm:
         return snake_length, len(game_statuses), accumulated_reward
 
     def get_best_movement(self, input, model):
-        test_predictions = model.predict(input, batch_size=4).flatten()
+        test_predictions = model.predict(np.array(input), batch_size=4).flatten()
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
 
@@ -309,7 +309,7 @@ class GeneticAlgorithm:
             file_name = "{}_iterations_snake_length_{}_movements_{}reward_{}_".format(i, best.snake_length,
                                                                                       best.movements, best.reward)
             self._set_model_weights(self.model, best.model_genetic)
-            # self.save_model(self.model, dir_path, file_name)
+            self.save_model(self.model, dir_path, file_name)
             population_genetic = new_population_genetic
 
     def save_model(self, model, folder_path: str, file_name):

@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:2.0.0a0-py3
+FROM tensorflow/tensorflow:latest-py3
 
 COPY requirements-unversioned.txt /opt/ml/code/requirements-unversioned.txt
 RUN pip install -r /opt/ml/code/requirements-unversioned.txt
