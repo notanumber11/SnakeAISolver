@@ -1,3 +1,12 @@
+import sys
+print("********************************")
+print("********************************")
+print("Starting Genetic algorithm...")
+print(sys.version)
+print("********************************")
+print("********************************")
+
+
 from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
-FROM tensorflow/tensorflow:2.2.0rc4-jupyter
+FROM tensorflow/tensorflow:latest-py3
 
-COPY requirements.txt /opt/ml/code/requirements.txt
-RUN pip install -r /opt/ml/code/requirements.txt
+COPY requirements-unversioned.txt /opt/ml/code/requirements-unversioned.txt
+RUN pip install -r /opt/ml/code/requirements-unversioned.txt
 # Copies the training code inside the container
 COPY . /opt/ml/code/
 

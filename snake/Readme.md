@@ -3,9 +3,8 @@
 ### Run game
 ````python C:/Users/Denis/Desktop/SnakePython/snake/main.py````
 
-### Run genetic algorithm training
+### Run genetic algorithm training    
 ````python C:/Users/Denis/Desktop/SnakePython/snake/main_genetic_algorithm.py````
-
 
 ### Run tests
 ````python -m unittest discover -s C:/Users/Denis/Desktop/SnakePython/snake/tests -t C:\Users\Denis\Desktop\SnakePython\snake ````
@@ -26,4 +25,7 @@ docker exec -it ba5cb87d16ca  bash
 ```
 ```
 docker cp ba5cb87d16ca:/opt/ml/code/ .
+```
+```
+docker system prune
 ```

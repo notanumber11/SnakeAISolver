@@ -28,7 +28,7 @@ class Window:
         self.canvas = tk.Canvas(self.root, height=self.height, width=self.width, bg='white')
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.game_drawer = GameDrawer()
-        self.movements_per_second = 8
+        self.movements_per_second = 16
 
     def draw(self, games: List[Game]):
         self.canvas.delete("all")
