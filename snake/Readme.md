@@ -11,11 +11,11 @@
 
 ### Docker cheatsheet
 ```
-docker build -t snake -f Dockerfile.txt .
+docker build -t snake_ai -f Dockerfile.txt .
 ```
 
 ```
-docker run snake
+docker run snake_ai
 ```
 ```
 docker ps -q -l

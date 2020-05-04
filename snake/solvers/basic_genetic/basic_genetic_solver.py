@@ -8,7 +8,8 @@ from solvers.basic_dnn import training_data_generator
 class BasicGeneticSolver():
 
     def __init__(self):
-        path_model = r"C:\Users\Denis\Desktop\SnakePython\data\success_genetic\pop=1000_sel=0.1_mut_0.01_it_50_games_1\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
+        path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
+        path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
         self.model = self.load_model(path_model)
 
     def solve(self, game_status: GameStatus):
@@ -16,8 +17,6 @@ class BasicGeneticSolver():
         counter = 1000
         while game_status.is_valid_game() and counter > 0:
             counter -= 1
-            if counter == 0:
-                print("Loop !: {}".format(1000-counter))
             inputs = training_data_generator.get_input_from_game_status(game_status)
             dir = self.get_best_movement(inputs)
             game_status = game_status.move(dir)

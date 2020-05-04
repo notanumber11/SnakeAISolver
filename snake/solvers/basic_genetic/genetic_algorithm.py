@@ -8,51 +8,12 @@ from tensorflow.keras import layers
 from model.game_seed_creator import create_random_game_seed
 from model.game_status import GameStatus
 from solvers.basic_dnn import training_data_generator
+from solvers.basic_genetic.ModelGeneticEvaluated import ModelGeneticEvaluated
+from utils import aws_snake_utils
 from utils.timing import timeit
 
 
-class ModelGeneticEvaluated:
-    def __init__(self, snake_length, movements, reward, size, model_genetic):
-        self.snake_length = snake_length
-        self.movements = movements
-        self.reward = reward
-        self.size = size
-        self.model_genetic = model_genetic
-
-    def fitness(self):
-        fitness = self.snake_length**3 - self.movements
-        if fitness < 0:
-            fitness = 0
-        return fitness
-
-    def __str__(self):
-        return "        Fitness={:.2f} - Snake length={:.2f} - Movements={:.2f} - Reward={:.2f}" \
-            .format(self.fitness(), self.snake_length, self.movements, self.reward)
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __eq__(self, other):
-        if other is None:
-            return False
-        if self.snake_length != other.snake_length or self.movements != other.movements \
-                or self.reward != other.reward or self.size != other.size:
-            return False
-        if not self._equal_model_genetic(self.model_genetic, other.model_genetic):
-            return False
-        return True
-
-    def __hash__(self):
-        return int(str(self.x) + str(self.y))
-
-    def _equal_model_genetic(self, a, b):
-        return all(np.array_equal(a[i], b[i]) for i in range(len(a)))
-
-
 class GeneticAlgorithm:
-    DATA_DIR = "C:\\Users\\Denis\\Desktop\\SnakePython\\data\\basic_genetic\\"
-    DATA_DIR = "/opt/ml/model/"
-
     def __init__(self, layers_size: List[int]):
         self.layers_size = layers_size
         self.number_of_layers = len(self.layers_size)
@@ -123,7 +84,7 @@ class GeneticAlgorithm:
         model.set_weights(weights)
 
     def _get_max_number_of_movements(self, game_status: GameStatus):
-        return game_status.size**2 - len(game_status.snake) + 1
+        return game_status.size ** 2 - len(game_status.snake) + 1
 
     def evaluate_model(self, game_status_seeds: List[GameStatus], model, model_genetic) -> ModelGeneticEvaluated:
         self._set_model_weights(self.model, model_genetic)
@@ -141,7 +102,8 @@ class GeneticAlgorithm:
         snake_length /= len(game_status_seeds)
         number_of_movements /= len(game_status_seeds)
         reward /= len(game_status_seeds)
-        return ModelGeneticEvaluated(snake_length, number_of_movements, reward, game_status_seeds[0].size, model_genetic)
+        return ModelGeneticEvaluated(snake_length, number_of_movements, reward, game_status_seeds[0].size,
+                                     model_genetic)
 
     def play_one_game(self, game_status_seed: GameStatus, model):
         game_statuses = []
@@ -194,8 +156,7 @@ class GeneticAlgorithm:
             pairs.append(pair)
         return pairs
 
-
-    def _pair(self, parents: List[ModelGeneticEvaluated],  total_fitness: float) -> List[ModelGeneticEvaluated]:
+    def _pair(self, parents: List[ModelGeneticEvaluated], total_fitness: float) -> List[ModelGeneticEvaluated]:
         """
 
         :param parents: List of all the model_genetics with fitness
@@ -295,7 +256,7 @@ class GeneticAlgorithm:
                                                                            mutation_rate, iterations,
                                                                            games_to_play_per_individual)
         print("Running model: {}".format(model_description))
-        dir_path = self.DATA_DIR + model_description
+        dir_path = aws_snake_utils.get_training_basic_genetic_output_folder() + model_description
         # os.mkdir(dir_path)
         population_genetic = self.get_initial_population_genetic(population_size)
         # Iterate
