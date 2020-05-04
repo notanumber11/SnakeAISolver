@@ -4,10 +4,10 @@ import numpy
 import numpy as np
 from numpy.testing import assert_raises
 
-from model.game_status import GameStatus
-from solvers.basic_dnn import basic_dnn, training_data_generator
+from game.game_status import GameStatus
+from solvers.training import basic_training_data_generator
 from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
-from model.game_seed_creator import create_default_game_seed
+from game.game_seed_creator import create_default_game_seed
 import timeit
 
 
@@ -305,10 +305,10 @@ class GeneticAlgorithmTest(unittest.TestCase):
         print(result)
 
     def test_get_best_movement_performance(self):
-        # Initialize model with random weights
+        # Initialize game with random weights
         population_genetic = self.ga.get_initial_population_genetic(1)
         game_status = create_default_game_seed()
-        inputs = training_data_generator.get_input_from_game_status(game_status)
+        inputs = basic_training_data_generator.get_input_from_game_status(game_status)
         result = timeit.timeit(lambda: self.ga.get_best_movement(inputs, self.ga.model), number=10)
         print(result)
 

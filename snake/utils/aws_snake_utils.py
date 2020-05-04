@@ -8,6 +8,12 @@ def _is_aws() -> bool:
     if operative_system is not None and "windows" in operative_system.lower():
         running_in_aws = False
     print("Running in aws={}".format(running_in_aws))
+    try:
+        # https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-training-algo-running-container.html
+        aws_env = os.getenv('TRAINING_JOB_NAME')
+        print("The env TRAINING_JOB_NAME is: {}".format(aws_env))
+    except:
+        print("Exception reading TRAINING_JOB_NAME")
     return running_in_aws
 
 
@@ -30,6 +36,6 @@ def get_hyperparameters():
 
 def get_training_basic_genetic_output_folder() -> str:
     if _is_aws():
-        return "/opt/ml/model/"
+        return "/opt/ml/game/"
     else:
         return "C:\\Users\\Denis\\Desktop\\SnakePython\\data\\basic_genetic\\"

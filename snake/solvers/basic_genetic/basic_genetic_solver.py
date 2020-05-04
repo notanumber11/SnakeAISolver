@@ -1,8 +1,8 @@
 import tensorflow as tf
 import numpy as np
 
-from model.game_status import GameStatus
-from solvers.basic_dnn import training_data_generator
+from game.game_status import GameStatus
+from solvers.training import basic_training_data_generator
 
 
 class BasicGeneticSolver():
@@ -14,14 +14,14 @@ class BasicGeneticSolver():
 
     def solve(self, game_status: GameStatus):
         game_statuses = [game_status]
-        counter = game_status.size**4
-        while game_status.is_valid_game() and counter > 0:
-            counter -= 1
-            inputs = training_data_generator.get_input_from_game_status(game_status)
+        max_movements = game_status.size**4
+        while game_status.is_valid_game() and max_movements > 0:
+            max_movements -= 1
+            inputs = basic_training_data_generator.get_input_from_game_status(game_status)
             dir = self.get_best_movement(inputs)
             game_status = game_status.move(dir)
             game_statuses.append(game_status)
-        print("dnn game solved")
+        print("basic genetic game solved")
         return game_statuses
 
     def get_best_movement(self, inputs):

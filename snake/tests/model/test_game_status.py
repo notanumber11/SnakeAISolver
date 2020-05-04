@@ -1,8 +1,8 @@
 import math
 import unittest
 
-from model.game_status import GameStatus
-from model.point import Point
+from game.game_status import GameStatus
+from game.point import Point
 
 
 class TestGameStatus(unittest.TestCase):
@@ -71,7 +71,7 @@ class TestGameStatus(unittest.TestCase):
         apple = [4, 2]
         game = GameStatus(size, snake_start, apple)
         for i in range(1000):
-            new_apple = game.generate_new_apple()
+            new_apple = game._generate_new_apple()
             self.assertFalse(new_apple in game.snake, "The apple: {} is in the snake {}".format(new_apple, game.snake))
 
     def test_clone(self):
@@ -153,4 +153,4 @@ class TestGameStatus(unittest.TestCase):
         snake_start = [[0, 0], [0, 1], [1, 1], [1,0]]
         game = GameStatus(size, snake_start)
         game.is_valid_game()
-        self.assertTrue(True)
+        self.assertTrue(game._is_full_finished())

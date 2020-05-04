@@ -5,10 +5,10 @@ import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from model.game_seed_creator import create_random_game_seed
-from model.game_status import GameStatus
-from solvers.basic_dnn import training_data_generator
-from solvers.basic_genetic.ModelGeneticEvaluated import ModelGeneticEvaluated
+from game.game_seed_creator import create_random_game_seed
+from game.game_status import GameStatus
+from solvers.training import basic_training_data_generator
+from solvers.basic_genetic.model_genetic_evaluated import ModelGeneticEvaluated
 from utils import aws_snake_utils
 from utils.timing import timeit
 
@@ -68,7 +68,7 @@ class GeneticAlgorithm:
         :return: List sorted descending based on fitness.
         """
         population_evaluated = []
-        # For each model genetic we need to perform artificial games and see the performance
+        # For each game genetic we need to perform artificial games and see the performance
         for model_genetic in population_genetic:
             model_evaluated = self.evaluate_model(game_status_seeds, self.model, model_genetic)
             population_evaluated.append(model_evaluated)
@@ -79,7 +79,7 @@ class GeneticAlgorithm:
         # We do not consider bias
         for i in range(0, len(model_genetic)):
             if weights[i * 2].shape != model_genetic[i].shape:
-                raise ValueError("Error setting model shapes")
+                raise ValueError("Error setting game shapes")
             weights[i * 2] = model_genetic[i]
         model.set_weights(weights)
 
@@ -111,12 +111,12 @@ class GeneticAlgorithm:
         snake_length = 0
         accumulated_reward = 0
         while game_status_seed.is_valid_game() and movements_left > 0:
-            _input = training_data_generator.get_input_from_game_status(game_status_seed)
+            _input = basic_training_data_generator.get_input_from_game_status(game_status_seed)
             _dir = self.get_best_movement(_input, model)
             new_game_status = game_status_seed.move(_dir)
             game_statuses.append(new_game_status)
             # Evaluate fitness
-            reward = training_data_generator.get_reward(game_status_seed, new_game_status)
+            reward = basic_training_data_generator.get_reward(game_status_seed, new_game_status)
             if reward == 0.7:
                 movements_left = self._get_max_number_of_movements(game_status_seed)
             accumulated_reward += reward
@@ -233,10 +233,10 @@ class GeneticAlgorithm:
         ])
 
         # optimizer = tf.keras.optimizers.RMSprop(0.001)
-        # model.compile(loss='mse',
+        # game.compile(loss='mse',
         #               optimizer=optimizer,
         #               metrics=['mae', 'mse'])
-        # model.summary()
+        # game.summary()
         return model
 
     def _mask(self, shape: Tuple, mask_even: bool = True):
@@ -255,7 +255,7 @@ class GeneticAlgorithm:
         model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}\\".format(population_size, selection_threshold,
                                                                            mutation_rate, iterations,
                                                                            games_to_play_per_individual)
-        print("Running model: {}".format(model_description))
+        print("Running game: {}".format(model_description))
         dir_path = aws_snake_utils.get_training_basic_genetic_output_folder() + model_description
         # os.mkdir(dir_path)
         population_genetic = self.get_initial_population_genetic(population_size)
@@ -275,5 +275,5 @@ class GeneticAlgorithm:
 
     def save_model(self, model, folder_path: str, file_name):
         full_file_path = folder_path + file_name
-        print("Saving model on: {}".format(full_file_path))
+        print("Saving game on: {}".format(full_file_path))
         model.save(full_file_path)

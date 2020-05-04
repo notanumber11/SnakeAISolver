@@ -4,15 +4,14 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from solvers.basic_dnn import constants
-from solvers.basic_dnn.constants import LABELS
+import solvers.training.basic_training_data_generator
 
 print(tf.__version__)
 
 
 def get_data(dataset_path):
     # Read data
-    raw_dataset = pd.read_csv(dataset_path, names=LABELS,
+    raw_dataset = pd.read_csv(dataset_path, names=solvers.training.basic_training_data_generator.LABELS,
                               na_values="?", header=0,
                               sep='\t', skipinitialspace=True)
 
@@ -81,7 +80,7 @@ def plot_training_validation(history):
 def save_model(model, name: str, samples: int):
     mse = model.history.history["val_mse"][-1]
     mse = '{:.2E}'.format(mse)
-    path = "{}{}_mse_{}_samples_{}".format(constants.DATA_DIR.replace("/", "\\"), name, mse, samples)
+    path = "{}{}_mse_{}_samples_{}".format(solvers.training.basic_training_data_generator.DATA_DIR.replace("/", "\\"), name, mse, samples)
     model.save(path)
 
 
@@ -92,7 +91,7 @@ def load_model(path: str):
 
 
 def test_model(model, test_dataset, test_labels):
-    print("Testing the model...")
+    print("Testing the game...")
     loss, mae, mse = model.evaluate(test_dataset, test_labels, verbose=2)
     print("Testing set MAE: {:.2E} MSE: {:.2E}".format(mae, mse))
 

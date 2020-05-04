@@ -1,8 +1,8 @@
 import random
 from typing import List
 
-from model.game_status import GameStatus
-from model.point import Point
+from game.game_status import GameStatus
+from game.point import Point
 
 
 class DFSSolver:

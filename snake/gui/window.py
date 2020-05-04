@@ -3,7 +3,7 @@ import tkinter as tk
 from typing import List
 
 from gui.game_drawer import GameDrawer
-from model.game import Game
+from game.game import Game
 
 
 class Window:

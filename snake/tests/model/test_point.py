@@ -1,6 +1,6 @@
 import unittest
 
-from model.point import Point
+from game.point import Point
 
 
 class TestPoint(unittest.TestCase):

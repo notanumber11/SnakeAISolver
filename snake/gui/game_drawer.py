@@ -1,7 +1,7 @@
 import tkinter as tk
 
 import gui.canvas_shapes as canvas_shapes
-from model.game import Game
+from game.game import Game
 
 
 class GameDrawer:

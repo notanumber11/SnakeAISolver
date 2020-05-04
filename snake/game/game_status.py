@@ -1,7 +1,7 @@
 import math
 import random
 
-from model.point import Point
+from game.point import Point
 
 
 class GameStatus:
@@ -22,8 +22,8 @@ class GameStatus:
         self.snake = Point.ints_to_points(snake)
         self.head = self.snake[0]
         self.prev_dir = Point(self.head.x - self.snake[1].x, self.head.y - self.snake[1].y)
-        if not self.is_full_finished():
-            self.apple = Point(apple[0], apple[1]) if apple is not None else self.generate_new_apple()
+        if not self._is_full_finished():
+            self.apple = Point(apple[0], apple[1]) if apple is not None else self._generate_new_apple()
             self.angle_to_apple = self.get_angle(self.head, self.apple)
             self._valid_game = True
         else:
@@ -34,16 +34,16 @@ class GameStatus:
     def is_valid_game(self):
         if not self._valid_game:
             return False
-        if not self.is_inside_board(self.apple):
+        if not self._is_inside_board(self.apple):
             return False
         if self.size < 3:
             return False
         for pos in self.snake:
-            if not self.is_inside_board(pos):
+            if not self._is_inside_board(pos):
                 return False
         return len(self.snake) == len(set(self.snake))
 
-    def is_inside_board(self, pos):
+    def _is_inside_board(self, pos):
         # Out of boundaries
         if pos.x > self.size - 1 or pos.x < 0:
             return False
@@ -52,11 +52,11 @@ class GameStatus:
         return True
 
     def can_move_to_pos(self, pos: Point):
-        if not self.is_inside_board(pos):
+        if not self._is_inside_board(pos):
             return False
         head = self.snake[0]
         dir = Point(pos.x - head.x, pos.y - head.y)
-        if not GameStatus.is_valid_dir(dir):
+        if not GameStatus._is_valid_dir(dir):
             return False
 
         # Check that we are not hitting ourselves
@@ -84,7 +84,7 @@ class GameStatus:
         return self.can_move_to_pos(pos)
 
     def move(self, d: Point):
-        if not GameStatus.is_valid_dir(d):
+        if not GameStatus._is_valid_dir(d):
             raise ValueError("Invalid direction: " + str(d))
 
         # Create a new game status as deep copy
@@ -109,10 +109,10 @@ class GameStatus:
         return new_game_status
 
     @staticmethod
-    def is_valid_dir(d: Point):
+    def _is_valid_dir(d: Point):
         return d == GameStatus.UP or d == GameStatus.DOWN or d == GameStatus.RIGHT or d == GameStatus.LEFT
 
-    def is_full_finished(self):
+    def _is_full_finished(self):
         grid_size = self.size * self.size
         holes = grid_size - len(self.snake)
         if holes == 0:
@@ -120,7 +120,7 @@ class GameStatus:
             return True
         return False
 
-    def generate_new_apple(self):
+    def _generate_new_apple(self):
         grid_size = self.size * self.size
         hole_pos = random.randint(0, grid_size)
         for i in range(grid_size):

@@ -1,6 +1,6 @@
 from typing import List
 
-from model.game_status import GameStatus
+from game.game_status import GameStatus
 
 
 class Game:

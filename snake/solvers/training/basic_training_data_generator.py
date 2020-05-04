@@ -1,9 +1,15 @@
 import math
 
-import solvers.basic_dnn.constants
-import model.game_provider
-from model.game_status import GameStatus
+import solvers.training.training_utils
+
+import game.game_provider
+from game.game_status import GameStatus
 from solvers.random_solver import RandomSolver
+
+DATA_DIR = "../data/basic_dnn/"
+TRAINING_DATA_BASIC_DNN = "training_data_basic_dnn"
+LABELS = ["up", "down", "left", "right", "up available", "down available", "left available", "right available",
+          "angle to apple", "reward"]
 
 
 def generate_random_training_data(grid_size, snake_size, samples: int = 100):
@@ -16,24 +22,25 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
     :param samples: The number of samples to generate
     """
     solver = RandomSolver()
-    game_provider = model.game_provider.GameProvider()
+    # game_provider = GameProvider()
     training_data = []
     enough_samples = False
+    game_provider = game.game_provider.GameProvider()
     while not enough_samples:
-        game = game_provider.get_random_game(solver, grid_size, snake_size)
-        for i in range(1, len(game.game_statuses)):
+        _game = game_provider.get_random_game(solver, grid_size, snake_size)
+        for i in range(1, len(_game.game_statuses)):
             # Computations based on current game status
-            current = game.game_statuses[i - 1]
+            current = _game.game_statuses[i - 1]
             if not current.is_valid_game():
                 continue
             up_available = 1.0 if current.can_move_to_dir(GameStatus.UP) else 0.0
             down_available = 1.0 if current.can_move_to_dir(GameStatus.DOWN) else 0.0
             left_available = 1.0 if current.can_move_to_dir(GameStatus.LEFT) else 0.0
             right_available = 1.0 if current.can_move_to_dir(GameStatus.RIGHT) else 0.0
-            angle = solvers.basic_dnn.constants.normalize_rad_angle(current.get_angle(current.apple, current.head))
+            angle = solvers.training.training_utils.normalize_rad_angle(current.get_angle(current.apple, current.head))
 
             # Computations based on decision taken
-            next_ = game.game_statuses[i]
+            next_ = _game.game_statuses[i]
             dir_ = next_.prev_dir
             up = 1.0 if dir_ == GameStatus.UP else 0.0
             down = 1.0 if dir_ == GameStatus.DOWN else 0.0
@@ -47,8 +54,8 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
                 break
 
     print("Training data has been generated...")
-    solvers.basic_dnn.constants.create_csv(solvers.basic_dnn.constants.LABELS, training_data,
-                                           solvers.basic_dnn.constants.TRAINING_DATA_BASIC_DNN)
+    solvers.training.training_utils.create_csv(LABELS, training_data,
+                                               TRAINING_DATA_BASIC_DNN)
 
 
 def get_input_from_game_status(game_status: GameStatus):
@@ -58,8 +65,9 @@ def get_input_from_game_status(game_status: GameStatus):
     Example for up:
     [1, 0, 0, 0, 1, 1, 0, 0, 0.8]
     """
-    angle = solvers.basic_dnn.constants.normalize_rad_angle(game_status.get_angle(game_status.apple, game_status.head))
-    angle = round(angle,2)
+    angle = solvers.training.training_utils.normalize_rad_angle(
+        game_status.get_angle(game_status.apple, game_status.head))
+    angle = round(angle, 2)
     available = [1 if game_status.can_move_to_dir(d) else 0 for d in GameStatus.DIRS]
     inputs = []
     for i in range(len(GameStatus.DIRS)):

@@ -1,6 +1,6 @@
 import unittest
 
-from model.game_status import GameStatus
+from game.game_status import GameStatus
 from solvers.basic_solver import BasicSolver
 
 

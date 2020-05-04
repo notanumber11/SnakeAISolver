@@ -1,10 +1,10 @@
 from typing import List
 
 import utils.timing
-import model.game_seed_creator
+import game.game_seed_creator
 import solvers.basic_solver
 import solvers.basic_dnn.basic_dnn_solver
-from model.game import Game
+from game.game import Game
 from solvers.dfs_solver import DFSSolver
 from solvers.hamilton_solver import HamiltonSolver
 from solvers.random_solver import RandomSolver
@@ -35,11 +35,11 @@ class GameProvider:
         return [self._get_default_game(solver) for i in range(n) for solver in self.all_solvers]
 
     def _get_default_game(self, solver):
-        game_seed = model.game_seed_creator.create_default_game_seed()
+        game_seed = game.game_seed_creator.create_default_game_seed()
         game_statuses = solver.solve(game_seed)
         return Game(game_statuses)
 
-    def get_default_games(self, solver, number) -> model.game_seed_creator.List[Game]:
+    def get_default_games(self, solver, number) -> game.game_seed_creator.List[Game]:
         games = []
         for i in range(number):
             games.append(self._get_default_game(solver))
@@ -47,8 +47,8 @@ class GameProvider:
 
     def get_random_game(self, solver, board_size, snake_size=None):
         if not snake_size:
-            snake_size = model.game_seed_creator.random.randint(2, snake_size)
-        game_seed = model.game_seed_creator.create_random_game_seed(board_size, snake_size)
+            snake_size = game.game_seed_creator.random.randint(2, snake_size)
+        game_seed = game.game_seed_creator.create_random_game_seed(board_size, snake_size)
         game_statuses = solver.solve(game_seed)
         return Game(game_statuses)
 
