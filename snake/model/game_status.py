@@ -25,10 +25,11 @@ class GameStatus:
         if not self.is_full_finished():
             self.apple = Point(apple[0], apple[1]) if apple is not None else self.generate_new_apple()
             self.angle_to_apple = self.get_angle(self.head, self.apple)
+            self._valid_game = True
         else:
+            self._valid_game = False
             self.apple = None
             self.angle_to_apple = 0
-        self._valid_game = True
 
     def is_valid_game(self):
         if not self._valid_game:

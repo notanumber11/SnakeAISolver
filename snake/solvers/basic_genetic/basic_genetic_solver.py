@@ -9,12 +9,12 @@ class BasicGeneticSolver():
 
     def __init__(self):
         path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
-        path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
+        # path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
         self.model = self.load_model(path_model)
 
     def solve(self, game_status: GameStatus):
         game_statuses = [game_status]
-        counter = 1000
+        counter = game_status.size**4
         while game_status.is_valid_game() and counter > 0:
             counter -= 1
             inputs = training_data_generator.get_input_from_game_status(game_status)

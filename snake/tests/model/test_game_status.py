@@ -147,3 +147,10 @@ class TestGameStatus(unittest.TestCase):
         c = [1, 4]
         self.assertEqual(a, b)
         self.assertNotEqual(b, c)
+
+    def test_game_is_able_to_finish_successfully(self):
+        size = 2
+        snake_start = [[0, 0], [0, 1], [1, 1], [1,0]]
+        game = GameStatus(size, snake_start)
+        game.is_valid_game()
+        self.assertTrue(True)
