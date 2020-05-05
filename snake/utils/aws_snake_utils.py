@@ -36,6 +36,6 @@ def get_hyperparameters():
 
 def get_training_basic_genetic_output_folder() -> str:
     if _is_aws():
-        return "/opt/ml/game/"
+        return "/opt/ml/model/"
     else:
         return "..\\data\\basic_genetic\\"
