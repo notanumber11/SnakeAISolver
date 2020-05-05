@@ -9,7 +9,8 @@ class BasicGeneticSolver():
 
     def __init__(self):
         path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
-        # path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
+        path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
+        path_model = r"..\data\basic_genetic\success_genetic\s3\52_iterations_snake_length_36.0_movements_279.0reward_20.49"
         self.model = self.load_model(path_model)
 
     def solve(self, game_status: GameStatus):

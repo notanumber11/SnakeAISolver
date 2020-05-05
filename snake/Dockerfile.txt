@@ -2,6 +2,7 @@ FROM tensorflow/tensorflow:2.0.0a0-py3
 
 COPY requirements-unversioned.txt /opt/ml/code/requirements-unversioned.txt
 RUN pip install -r /opt/ml/code/requirements-unversioned.txt
+RUN pwd
 # Copies the training code inside the container
 COPY . /opt/ml/code/
 

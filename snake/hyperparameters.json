@@ -1,5 +1,5 @@
-{"iterations": "151",
-  "population_size": "1001",
+{"iterations": "25",
+  "population_size": "1000",
   "mutation_rate": "0.11",
   "games_to_play": "1",
   "selection_threshold": "0.11"}

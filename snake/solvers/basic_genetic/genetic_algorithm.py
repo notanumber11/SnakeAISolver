@@ -256,7 +256,7 @@ class GeneticAlgorithm:
                                                                            mutation_rate, iterations,
                                                                            games_to_play_per_individual)
         print("Running game: {}".format(model_description))
-        dir_path = aws_snake_utils.get_training_basic_genetic_output_folder() + model_description
+        dir_path = aws_snake_utils.get_training_output_folder() + model_description
         # os.mkdir(dir_path)
         population_genetic = self.get_initial_population_genetic(population_size)
         # Iterate
