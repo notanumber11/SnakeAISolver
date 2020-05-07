@@ -77,11 +77,6 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.assertFalse(all(x == random_fitness[0] for x in random_fitness))
         self.assertFalse(any(x != fix_fitness[0] for x in fix_fitness))
 
-    def test_get_max_number_of_movements(self):
-        game_status = GameStatus(6, [[2,2], [1,2]])
-        max_number_of_movements = self.ga._get_max_number_of_movements(game_status)
-        self.assertEqual(max_number_of_movements, 35)
-
     def test_selection_sort_population(self):
         # Arrange
         population_size = 10

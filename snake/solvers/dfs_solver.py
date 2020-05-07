@@ -17,9 +17,6 @@ class DFSSolver:
         games = []
         self.counter = 0
         self.total_counter = 0
-        for i in range(game_seed.size):
-            for j in range(game_seed.size):
-                self.dirs[i * 10 + j] = random.sample(GameStatus.DIRS, len(GameStatus.DIRS))
         current_game_status = game_seed
         while self.dfs(current_game_status, games, []):
             # print("It needed {} dfs to find an apple".format(self.counter))
@@ -36,8 +33,7 @@ class DFSSolver:
         self.counter += 1
         visited.append(game.head)
         games.append(game)
-        dirs = self.dirs[game.head.x * 10 + game.head.y]
-        for dir_ in dirs:
+        for dir_ in random.sample(GameStatus.DIRS, len(GameStatus.DIRS)):
             # Is a valid direction move
             new_pos = Point(game.head.x + dir_.x, game.head.y + dir_.y)
             if new_pos not in visited and game.can_move_to_pos(new_pos):

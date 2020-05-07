@@ -11,13 +11,19 @@ class Point:
         return True
 
     def __hash__(self):
-        return int(str(self.x) + str(self.y))
+        return hash((self.x, self.y))
 
     def __str__(self):
         return "[{}, {}]".format(self.x, self.y)
 
     def __repr__(self):
         return self.__str__()
+
+    def __add__(self, o):
+        return Point(self.x + o.x, self.y + o.y)
+
+    def __sub__(self, o):
+        return Point(self.x - o.x, self.y - o.y)
 
     @staticmethod
     def ints_to_points(nums):

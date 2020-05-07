@@ -1,15 +1,15 @@
 import numpy as np
 
 from game.game_status import GameStatus
-import solvers.basic_dnn.basic_dnn as basic_dnn
 import solvers.training.basic_training_data_generator
+from solvers.training import training_utils
 
 
 class BasicDnnSolver:
 
     def __init__(self):
         path_model = r"C:\Users\Denis\Desktop\SnakePython\data\basic_dnn\mode_basic_dnn_mse_7.12E-03_samples_10000"
-        self.model = basic_dnn.load_model(path_model)
+        self.model = training_utils.load_model(path_model)
 
     def solve(self, game_status: GameStatus):
         game_statuses = [game_status]

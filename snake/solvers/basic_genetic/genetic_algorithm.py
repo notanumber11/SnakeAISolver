@@ -14,24 +14,11 @@ from utils.timing import timeit
 
 
 class GeneticAlgorithm:
+
     def __init__(self, layers_size: List[int]):
         self.layers_size = layers_size
         self.number_of_layers = len(self.layers_size)
         self.model = self.build_model()
-
-    @timeit
-    def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate):
-        game_statuses = [create_random_game_seed(6, 2) for j in range(games_to_play_per_individual)]
-        # Evaluate population
-        population_evaluated = self.evaluate_population(population_genetic, game_statuses)
-        # Select best couples
-        selected_pairs = self.selection(selection_threshold, population_evaluated)
-        # Reproduce them
-        children = self.crossover(selected_pairs)
-        # Introduce mutations
-        for i in range(len(children)):
-            self.mutation(mutation_rate, children[i])
-        return children, population_evaluated
 
     def get_initial_population_genetic(self, population_size: int) -> List:
         """
@@ -83,9 +70,6 @@ class GeneticAlgorithm:
             weights[i * 2] = model_genetic[i]
         model.set_weights(weights)
 
-    def _get_max_number_of_movements(self, game_status: GameStatus):
-        return game_status.size ** 2 - len(game_status.snake) + 1
-
     def evaluate_model(self, game_status_seeds: List[GameStatus], model, model_genetic) -> ModelGeneticEvaluated:
         self._set_model_weights(self.model, model_genetic)
         reward = 0
@@ -107,8 +91,7 @@ class GeneticAlgorithm:
 
     def play_one_game(self, game_status_seed: GameStatus, model):
         game_statuses = []
-        movements_left = self._get_max_number_of_movements(game_status_seed)
-        snake_length = 0
+        movements_left = game_status_seed.get_number_of_holes()
         accumulated_reward = 0
         while game_status_seed.is_valid_game() and movements_left > 0:
             _input = basic_training_data_generator.get_input_from_game_status(game_status_seed)
@@ -118,7 +101,7 @@ class GeneticAlgorithm:
             # Evaluate fitness
             reward = basic_training_data_generator.get_reward(game_status_seed, new_game_status)
             if reward == 0.7:
-                movements_left = self._get_max_number_of_movements(game_status_seed)
+                movements_left = game_status_seed.get_number_of_holes()
             accumulated_reward += reward
             # Continue iteration
             game_status_seed = new_game_status
@@ -257,7 +240,6 @@ class GeneticAlgorithm:
                                                                            games_to_play_per_individual)
         print("Running game: {}".format(model_description))
         dir_path = aws_snake_utils.get_training_output_folder() + model_description
-        # os.mkdir(dir_path)
         population_genetic = self.get_initial_population_genetic(population_size)
         # Iterate
         for i in range(iterations):
@@ -272,6 +254,20 @@ class GeneticAlgorithm:
             self._set_model_weights(self.model, best.model_genetic)
             self.save_model(self.model, dir_path, file_name)
             population_genetic = new_population_genetic
+
+    @timeit
+    def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate):
+        game_statuses = [create_random_game_seed(6, 2) for j in range(games_to_play_per_individual)]
+        # Evaluate population
+        population_evaluated = self.evaluate_population(population_genetic, game_statuses)
+        # Select best couples
+        selected_pairs = self.selection(selection_threshold, population_evaluated)
+        # Reproduce them
+        children = self.crossover(selected_pairs)
+        # Introduce mutations
+        for i in range(len(children)):
+            self.mutation(mutation_rate, children[i])
+        return children, population_evaluated
 
     def save_model(self, model, folder_path: str, file_name):
         full_file_path = folder_path + file_name

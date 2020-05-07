@@ -1,4 +1,5 @@
 import csv
+import tensorflow as tf
 from typing import List
 
 import solvers.training.basic_training_data_generator
@@ -19,3 +20,9 @@ def normalize_rad_angle(val):
     min = 0
     max = 6.28
     return (val - min) / (max - min)
+
+
+def load_model(path: str):
+    path = path.replace("/", "\\")
+    new_model = tf.keras.models.load_model(path)
+    return new_model

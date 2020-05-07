@@ -34,16 +34,16 @@ class GameStatus:
     def is_valid_game(self):
         if not self._valid_game:
             return False
-        if not self._is_inside_board(self.apple):
+        if not self.is_inside_board(self.apple):
             return False
         if self.size < 3:
             return False
         for pos in self.snake:
-            if not self._is_inside_board(pos):
+            if not self.is_inside_board(pos):
                 return False
         return len(self.snake) == len(set(self.snake))
 
-    def _is_inside_board(self, pos):
+    def is_inside_board(self, pos):
         # Out of boundaries
         if pos.x > self.size - 1 or pos.x < 0:
             return False
@@ -52,7 +52,7 @@ class GameStatus:
         return True
 
     def can_move_to_pos(self, pos: Point):
-        if not self._is_inside_board(pos):
+        if not self.is_inside_board(pos):
             return False
         head = self.snake[0]
         dir = Point(pos.x - head.x, pos.y - head.y)
@@ -113,12 +113,15 @@ class GameStatus:
         return d == GameStatus.UP or d == GameStatus.DOWN or d == GameStatus.RIGHT or d == GameStatus.LEFT
 
     def _is_full_finished(self):
-        grid_size = self.size * self.size
-        holes = grid_size - len(self.snake)
-        if holes == 0:
+        if self.get_number_of_holes() == 0:
             print("Game finished successfully !!!")
             return True
         return False
+
+    def get_number_of_holes(self) -> int:
+        grid_size = self.size * self.size
+        holes = grid_size - len(self.snake)
+        return holes
 
     def _generate_new_apple(self):
         grid_size = self.size * self.size
@@ -140,4 +143,14 @@ class GameStatus:
         angle = math.atan2(head.y - apple.y, head.x - apple.x)
         return angle
 
+    def __str__(self):
+        board = [["#" for x in range(self.size)] for y in range(self.size)]
+        for row in range(self.size):
+            for column in range(self.size):
+                if Point(row, column) in self.snake:
+                    board[column][row] = "@"
+        board = "{}".format(board).replace("],", "]\n")
+        return board
 
+    def __repr__(self):
+        return self.__str__()

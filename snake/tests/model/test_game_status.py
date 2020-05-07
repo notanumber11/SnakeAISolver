@@ -1,6 +1,7 @@
 import math
 import unittest
 
+from game import game_seed_creator
 from game.game_status import GameStatus
 from game.point import Point
 
@@ -154,3 +155,21 @@ class TestGameStatus(unittest.TestCase):
         game = GameStatus(size, snake_start)
         game.is_valid_game()
         self.assertTrue(game._is_full_finished())
+
+    def test_get_number_of_holes(self):
+        game_status = GameStatus(6, [[2,2], [1,2]])
+        max_number_of_movements = game_status.get_number_of_holes()
+        self.assertEqual(max_number_of_movements, 34)
+
+    def test_print(self):
+        snake = [[1, 2], [2, 2], [3, 2], [4, 2], [5, 2]]
+        apple = [0, 0]
+        board_size = 6
+        game_status = GameStatus(board_size, snake, apple)
+        expected_str = """[['#', '#', '#', '#', '#', '#']
+ ['#', '#', '#', '#', '#', '#']
+ ['#', '@', '@', '@', '@', '@']
+ ['#', '#', '#', '#', '#', '#']
+ ['#', '#', '#', '#', '#', '#']
+ ['#', '#', '#', '#', '#', '#']]"""
+        self.assertEqual(expected_str, game_status.__str__())

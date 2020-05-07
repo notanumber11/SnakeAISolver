@@ -1,17 +1,16 @@
-import tensorflow as tf
 import numpy as np
 
 from game.game_status import GameStatus
-from solvers.training import basic_training_data_generator
+from solvers.training import basic_training_data_generator, training_utils
 
 
-class BasicGeneticSolver():
+class BasicGeneticSolver:
 
     def __init__(self):
         path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
         path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
         path_model = r"..\data\basic_genetic\success_genetic\s3\52_iterations_snake_length_36.0_movements_279.0reward_20.49"
-        self.model = self.load_model(path_model)
+        self.model = training_utils.load_model(path_model)
 
     def solve(self, game_status: GameStatus):
         game_statuses = [game_status]
@@ -29,8 +28,3 @@ class BasicGeneticSolver():
         test_predictions = self.model.predict(inputs).flatten()
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
-
-    def load_model(self, path: str):
-        path = path.replace("/", "\\")
-        new_model = tf.keras.models.load_model(path)
-        return new_model

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class ModelGeneticEvaluated:
     def __init__(self, snake_length, movements, reward, size, model_genetic):
         self.snake_length = snake_length
@@ -9,7 +10,7 @@ class ModelGeneticEvaluated:
         self.model_genetic = model_genetic
 
     def fitness(self):
-        fitness = self.snake_length**3 - self.movements
+        fitness = self.snake_length ** 3 - self.movements
         if fitness < 0:
             fitness = 0
         return fitness

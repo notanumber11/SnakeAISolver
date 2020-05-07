@@ -80,14 +80,9 @@ def plot_training_validation(history):
 def save_model(model, name: str, samples: int):
     mse = model.history.history["val_mse"][-1]
     mse = '{:.2E}'.format(mse)
-    path = "{}{}_mse_{}_samples_{}".format(solvers.training.basic_training_data_generator.DATA_DIR.replace("/", "\\"), name, mse, samples)
+    path = "{}{}_mse_{}_samples_{}".format(solvers.training.basic_training_data_generator.DATA_DIR.replace("/", "\\"),
+                                           name, mse, samples)
     model.save(path)
-
-
-def load_model(path: str):
-    path = path.replace("/", "\\")
-    new_model = tf.keras.models.load_model(path)
-    return new_model
 
 
 def test_model(model, test_dataset, test_labels):
