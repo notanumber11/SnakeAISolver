@@ -47,6 +47,6 @@ class AdvanceGeneticAlgorithm(GeneticAlgorithm):
 
     def get_best_movement(self, _input, model):
         tf.keras.Sequential([model, tf.keras.layers.Softmax()])
-        test_predictions = model.predict([_input])
+        test_predictions = model.predict(np.array(_input))
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
