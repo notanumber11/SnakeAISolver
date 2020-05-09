@@ -1,11 +1,10 @@
 import unittest
+from unittest.mock import MagicMock
 
 import numpy
 import numpy as np
 from numpy.testing import assert_raises
 
-from game.game_status import GameStatus
-from solvers.training import basic_training_data_generator
 from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
 from game.game_seed_creator import create_default_game_seed
 import timeit
@@ -27,7 +26,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
         # Assert
         self.assertEqual(population_size, len(population_genetic))
         self.assertTrue(len(population_genetic[0]) == len(self.layers_size) - 1)
-        self.assertEqual((9, 125), layer_0_genetic_size)
+        self.assertEqual((self.layers_size[0], self.layers_size[1]), layer_0_genetic_size)
 
     def test_generate_initial_population_genetic_values(self):
         # Arrange
@@ -126,16 +125,17 @@ class GeneticAlgorithmTest(unittest.TestCase):
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_initial_population_genetic(population_size)
         population_with_fitness = self.ga.evaluate_population(population_genetic, game_statuses)
-
+        fitness = 10
         for i in range(population_size):
-            population_with_fitness[i].snake_length = 10
+            population_with_fitness[i].fitness = MagicMock(return_value=1)
 
         # One performer has significantly more fitness that the others
-        population_with_fitness[-1].snake_length = population_size ** 10
+        population_with_fitness[-1].fitness = MagicMock(return_value=1000)
+        total_fitness = sum([x.fitness() for x in population_with_fitness])
 
         top = population_with_fitness[-1]
         worst = population_with_fitness[0]
-        boy, girl = self.ga._pair(population_with_fitness, population_size ** 10)
+        boy, girl = self.ga._pair(population_with_fitness, total_fitness)
         self.assertEqual(boy, girl)
         self.assertEqual(boy, top)
         self.assertNotEqual(boy, worst)
@@ -153,7 +153,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
 
         # Each individual has 10% chances of being chosen since all of them share the same fitness
         for i in range(population_size):
-            population_with_fitness[i].snake_length = fitness
+            population_with_fitness[i].fitness = MagicMock(return_value=fitness)
             total_fitness += population_with_fitness[i].fitness()
 
         # If we obtain 100 elements the probability of one individual to be selected is ps = 1-(1/10)^100 ~= 1
@@ -297,14 +297,6 @@ class GeneticAlgorithmTest(unittest.TestCase):
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = ga.get_initial_population_genetic(population_size)
         result = timeit.timeit(lambda: ga.evaluate_population(population_genetic, game_statuses), number=1)
-        print(result)
-
-    def test_get_best_movement_performance(self):
-        # Initialize game with random weights
-        population_genetic = self.ga.get_initial_population_genetic(1)
-        game_status = create_default_game_seed()
-        inputs = basic_training_data_generator.get_input_from_game_status(game_status)
-        result = timeit.timeit(lambda: self.ga.get_best_movement(inputs, self.ga.model), number=10)
         print(result)
 
     #

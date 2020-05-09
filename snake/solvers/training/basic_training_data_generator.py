@@ -18,8 +18,6 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
     ["up", "down", "left", "right", "up available", "down available", "left available", "right available", "angle to apple", "reward"]
     Example value when decision is go up and we eat the apple in that movement:
     [1, 0, 0, 0, 1, 1, 0, 0, 0.8, 0.7]
-    :param grid_size: The snake size
-    :param samples: The number of samples to generate
     """
     solver = RandomSolver()
     # game_provider = GameProvider()

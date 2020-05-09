@@ -166,10 +166,10 @@ class TestGameStatus(unittest.TestCase):
         apple = [0, 0]
         board_size = 6
         game_status = GameStatus(board_size, snake, apple)
-        expected_str = """[['#', '#', '#', '#', '#', '#']
- ['#', '#', '#', '#', '#', '#']
- ['#', '@', '@', '@', '@', '@']
- ['#', '#', '#', '#', '#', '#']
- ['#', '#', '#', '#', '#', '#']
- ['#', '#', '#', '#', '#', '#']]"""
+        expected_str = """[[ X    0    0    0    0    0 ]
+ [ 0    0    0    0    0    0 ]
+ [ 0    H    1    1    1    1 ]
+ [ 0    0    0    0    0    0 ]
+ [ 0    0    0    0    0    0 ]
+ [ 0    0    0    0    0    0 ]]"""
         self.assertEqual(expected_str, game_status.__str__())

@@ -1,7 +1,9 @@
 from typing import List
 
+import solvers
 from game.game_status import GameStatus
 from game.point import Point
+from solvers.training import training_utils
 
 
 class AdvanceTrainingDataGenerator:
@@ -20,27 +22,48 @@ class AdvanceTrainingDataGenerator:
 
     DIR_TO_VECTOR = {
         UP: [1, 0, 0, 0],
-        DOWN:  [0, 1, 0, 0],
+        DOWN: [0, 1, 0, 0],
         LEFT: [0, 0, 1, 0],
         RIGHT: [0, 0, 0, 1]
     }
 
-    # 8 vision lines
-    # distance to wall
-    # is there an apple?*
-    # is there part of the snake?*
-    # * can be either yes/no/distance
-    # 8 directions with 3 variables each:
-    #   a) distance to wall
-    #   b) is snake there boolean
-    #   c) is apple there boolean
-    def __init__(self):
-        pass
+    def get_input_from_game_status(self, game_status: GameStatus) -> List[int]:
+        """
+        The goal of this method is to create the following input data:
+        A vector of dimension 28 that includes 24 inputs for vision and  4 inputs for the direction of the tail of the snake
 
-    def get_input_from_game_status(game_status: GameStatus):
-        pass
+        The 24 inputs for vision are looking at the 8 directions defined by VISION list.
+        Each element on VISION list will have 3 values:
+            - Distance to the wall
+            - Is there an apple
+            - Is there snake body
+        An example for one direction will be: [5, 0, 1] meaning that there is a distance of 5 to the wall, the apple is not
+        in that direction and the body of the snake is.
 
-    def get_body_vision(self, game_status: GameStatus, _dir: Point, snake_set) -> bool:
+        The 4 inputs for tail direction are a vector that indicates if the tail direction with the following boolean values:
+        [IS_GOING_UP, IS_GOING_DOWN, IS_GOING_LEFT, IS_GOING_RIGHT].
+        An example for the tail going down will be: [0, 1, 0, 0].
+        """
+        training_data = []
+        snake_set = set(game_status.snake)
+
+        for i in range(len(self.VISION)):
+            wall_distance = self._get_size_normalize_wall_distance(game_status, self.VISION[i])
+            training_data.append(wall_distance)
+            apple_vision = int(self._get_apple_vision(game_status, self.VISION[i]))
+            training_data.append(apple_vision)
+            body_vision = int(self._get_body_vision(game_status, self.VISION[i], snake_set))
+            training_data.append(body_vision)
+
+        tail_dir = self._get_tail_dir(game_status)
+        training_data += tail_dir
+        return training_data
+
+
+    def _get_size_normalize_wall_distance(self, game_status: GameStatus, _dir: Point):
+        return self._get_wall_distance(game_status, _dir) / (game_status.size - 1)
+
+    def _get_body_vision(self, game_status: GameStatus, _dir: Point, snake_set) -> bool:
         """
         :param _dir:
         :param snake_set: set with snake points
@@ -53,7 +76,7 @@ class AdvanceTrainingDataGenerator:
             new_pos = new_pos + _dir
         return False
 
-    def get_wall_distance(self, game_status: GameStatus, _dir: Point) -> int:
+    def _get_wall_distance(self, game_status: GameStatus, _dir: Point) -> int:
         """
         :param _dir:
         :param snake_set: set with snake points
@@ -66,7 +89,15 @@ class AdvanceTrainingDataGenerator:
             distance += 1
         return distance
 
-    def get_tail_dir(self, game_status: GameStatus):
+    def _get_tail_dir(self, game_status: GameStatus):
         len_s = len(game_status.snake)
-        tail_dir = game_status.snake[len_s-2] - game_status.snake[len_s-1]
+        tail_dir = game_status.snake[len_s - 2] - game_status.snake[len_s - 1]
         return AdvanceTrainingDataGenerator.DIR_TO_VECTOR[tail_dir]
+
+    def _get_apple_vision(self, game_status: GameStatus, _dir: Point):
+        new_pos = game_status.snake[0] + _dir
+        while game_status.is_inside_board(new_pos):
+            if new_pos == game_status.apple:
+                return True
+            new_pos = new_pos + _dir
+        return False

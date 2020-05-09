@@ -7,7 +7,7 @@ from tensorflow.keras import layers
 
 from game.game_seed_creator import create_random_game_seed
 from game.game_status import GameStatus
-from solvers.training import basic_training_data_generator
+from solvers.training import basic_training_data_generator, training_utils
 from solvers.basic_genetic.model_genetic_evaluated import ModelGeneticEvaluated
 from utils import aws_snake_utils
 from utils.timing import timeit
@@ -35,6 +35,7 @@ class GeneticAlgorithm:
         for i in range(population_size):
             # For each layer we need to create the original parameters
             # We do not consider bias
+            # The first layer is the input so we ignore it
             model_genetic = []
             for j in range(1, self.number_of_layers):
                 rows = self.layers_size[j - 1]
@@ -209,19 +210,6 @@ class GeneticAlgorithm:
                         x[...] = random.uniform(-1, 1)
         return model_genetic
 
-    def build_model(self):
-        model = keras.Sequential([
-            layers.Dense(self.layers_size[1], activation='relu', input_shape=[self.layers_size[0]]),
-            layers.Dense(1)
-        ])
-
-        # optimizer = tf.keras.optimizers.RMSprop(0.001)
-        # game.compile(loss='mse',
-        #               optimizer=optimizer,
-        #               metrics=['mae', 'mse'])
-        # game.summary()
-        return model
-
     def _mask(self, shape: Tuple, mask_even: bool = True):
         """
         Example: shape(1, 4), mask_even=True -> [0, 1, 0, 1]
@@ -231,13 +219,13 @@ class GeneticAlgorithm:
         """
         if len(shape) != 2:
             raise ValueError("Only 2 dimensional matrix are supported: {}".format(shape))
-        val = 0 if mask_even else 1
-        return np.fromfunction(lambda i, j: (val + i + j) % 2, shape, dtype=int)
+        width = shape[1]
+        return np.fromfunction(lambda i, j: (i * width + j) % 2 == mask_even, shape, dtype=int)
 
-    def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1):
+    def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1, game_size=6):
         model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}\\".format(population_size, selection_threshold,
                                                                            mutation_rate, iterations,
-                                                                           games_to_play_per_individual)
+                                                                           games_to_play_per_individual,)
         print("Running game: {}".format(model_description))
         dir_path = aws_snake_utils.get_training_output_folder() + model_description
         population_genetic = self.get_initial_population_genetic(population_size)
@@ -246,18 +234,20 @@ class GeneticAlgorithm:
             print("Iteration: {}".format(i))
             new_population_genetic, population_evaluated = self.execute_iteration(population_genetic,
                                                                                   games_to_play_per_individual,
-                                                                                  selection_threshold, mutation_rate)
+                                                                                  selection_threshold, mutation_rate,
+                                                                                  game_size)
             best = population_evaluated[0]
             print(best)
-            file_name = "{}_iterations_snake_length_{}_movements_{}reward_{}_".format(i, best.snake_length,
-                                                                                      best.movements, best.reward)
+            file_name = "{}_iterations_snake_length_{}_movements_{}".format(i, best.snake_length,
+                                                                                      best.movements)
             self._set_model_weights(self.model, best.model_genetic)
-            self.save_model(self.model, dir_path, file_name)
+            training_utils.save_model(self.model, dir_path, file_name)
             population_genetic = new_population_genetic
 
+
     @timeit
-    def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate):
-        game_statuses = [create_random_game_seed(6, 2) for j in range(games_to_play_per_individual)]
+    def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate, game_size=6):
+        game_statuses = [create_random_game_seed(game_size, 2) for j in range(games_to_play_per_individual)]
         # Evaluate population
         population_evaluated = self.evaluate_population(population_genetic, game_statuses)
         # Select best couples
@@ -269,7 +259,18 @@ class GeneticAlgorithm:
             self.mutation(mutation_rate, children[i])
         return children, population_evaluated
 
-    def save_model(self, model, folder_path: str, file_name):
-        full_file_path = folder_path + file_name
-        print("Saving game on: {}".format(full_file_path))
-        model.save(full_file_path)
+    def build_model(self):
+        if len(self.layers_size) < 3:
+            raise ValueError("Incorrect number of layers")
+        layer_lst = [layers.Dense(self.layers_size[1], activation='relu', input_shape=[self.layers_size[0]])]
+        for i in range(2, len(self.layers_size)):
+            layer_lst.append(layers.Dense(self.layers_size[i]))
+
+        model = keras.Sequential(layer_lst)
+
+        # optimizer = tf.keras.optimizers.RMSprop(0.001)
+        # game.compile(loss='mse',
+        #               optimizer=optimizer,
+        #               metrics=['mae', 'mse'])
+        # game.summary()
+        return model

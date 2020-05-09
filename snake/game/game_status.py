@@ -144,12 +144,15 @@ class GameStatus:
         return angle
 
     def __str__(self):
-        board = [["#" for x in range(self.size)] for y in range(self.size)]
+        board = [["0" for x in range(self.size)] for y in range(self.size)]
         for row in range(self.size):
             for column in range(self.size):
                 if Point(row, column) in self.snake:
-                    board[column][row] = "@"
+                    board[column][row] = "1"
+        board[self.apple.y][self.apple.x] = "X"
+        board[self.head.y][self.head.x] = "H"
         board = "{}".format(board).replace("],", "]\n")
+        board = board.replace(","," ").replace('\''," ")
         return board
 
     def __repr__(self):

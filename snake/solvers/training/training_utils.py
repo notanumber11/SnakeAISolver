@@ -26,3 +26,9 @@ def load_model(path: str):
     path = path.replace("/", "\\")
     new_model = tf.keras.models.load_model(path)
     return new_model
+
+
+def save_model(model, folder_path: str, file_name):
+    full_file_path = folder_path + file_name
+    print("Saving game on: {}".format(full_file_path))
+    model.save(full_file_path)

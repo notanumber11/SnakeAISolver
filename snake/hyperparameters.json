@@ -1,5 +1,6 @@
-{"iterations": "25",
+{"iterations": "100",
   "population_size": "1000",
-  "mutation_rate": "0.11",
+  "mutation_rate": "0.02",
   "games_to_play": "1",
-  "selection_threshold": "0.11"}
+  "selection_threshold": "0.1",
+  "game_size": 10}

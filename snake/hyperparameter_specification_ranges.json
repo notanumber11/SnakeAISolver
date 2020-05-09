@@ -68,5 +68,19 @@
 		"IsTunable": false,
 		"IsRequired": true,
 		"DefaultValue": "0.05"
+	},
+	{
+		"Name": "game_size",
+		"Description": "game_size",
+		"Type": "Integer",
+		"Range": {
+			"IntegerParameterRangeSpecification": {
+				"MinValue": "4",
+				"MaxValue": "10"
+			}
+		},
+		"IsTunable": false,
+		"IsRequired": true,
+		"DefaultValue": "6"
 	}
 ]

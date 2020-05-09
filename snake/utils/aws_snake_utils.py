@@ -53,7 +53,7 @@ def get_hyperparameters() -> Dict:
 
 def get_training_output_folder() -> str:
     if _is_local_run():
-        return "..\\data\\basic_genetic\\"
+        return "..\\data\\new_models\\"
     elif _is_aws():
         return "/opt/ml/model/"
     elif _is_container_not_in_aws():
