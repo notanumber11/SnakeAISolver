@@ -7,6 +7,6 @@ RUN pwd
 COPY . /opt/ml/code/
 
 # Defines train.py as script entrypoint
-ENV SAGEMAKER_PROGRAM train_basic_genetic_algorithm.py
+ENV SAGEMAKER_PROGRAM main.py
 
-ENTRYPOINT ["python", "/opt/ml/code/train_basic_genetic_algorithm.py"]
+ENTRYPOINT ["python", "/opt/ml/code/main.py", "train_advanced_genetic"]

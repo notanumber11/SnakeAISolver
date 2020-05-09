@@ -1,13 +1,21 @@
 ### Snake Game - Traditional programming vs IA
 
-### Run game
-````python C:/Users/Denis/Desktop/SnakePython/snake/main.py````
+### The following commands are intended to be run from the snake directory.
 
-### Run genetic algorithm training    
-````python C:/Users/Denis/Desktop/SnakePython/snake/main_genetic_algorithm.py````
+### Run game
+````python main.py game````
+
+### Train basic dnn
+````python main.py train_basic_dnn````
+
+### Train basic genetic
+````python main.py train_basic_genetic````
+
+### Train advance genetic algorithm
+````python main.py train_advanced_genetic````
 
 ### Run tests
-````python -m unittest discover -s C:/Users/Denis/Desktop/SnakePython/snake/tests -t C:\Users\Denis\Desktop\SnakePython\snake ````
+````python -m unittest discover -s tests -t . ````
 
 ### Docker cheatsheet
 ```

@@ -12,6 +12,10 @@ class AdvanceGeneticAlgorithm(GeneticAlgorithm):
     def __init__(self, layers_size: List[int]):
         super().__init__(layers_size)
         self.advance_training_data_generator = AdvanceTrainingDataGenerator()
+        if layers_size[-1] < 2:
+            raise ValueError("AdvanceGeneticAlgorithm expects the output layer to be >1 since it uses classification {}"
+                             .format(layers_size))
+
 
     def evaluate_model(self, game_status_seeds: List[GameStatus], model, model_genetic) -> AdvanceModelGeneticEvaluated:
         self._set_model_weights(self.model, model_genetic)
@@ -40,8 +44,9 @@ class AdvanceGeneticAlgorithm(GeneticAlgorithm):
         game = Game(game_statuses, is_loop)
         return game
 
-    def get_best_movement(self, input, model):
+
+    def get_best_movement(self, _input, model):
         tf.keras.Sequential([model, tf.keras.layers.Softmax()])
-        test_predictions = model.predict(input)
+        test_predictions = model.predict([_input])
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
