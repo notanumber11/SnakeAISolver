@@ -10,7 +10,10 @@ from game.game_status import GameStatus
 from solvers.training import basic_training_data_generator, training_utils
 from solvers.basic_genetic.model_genetic_evaluated import ModelGeneticEvaluated
 from utils import aws_snake_utils
+from utils.snake_logger import get_module_logger
 from utils.timing import timeit
+
+LOGGER = get_module_logger(__name__)
 
 
 class GeneticAlgorithm:
@@ -222,31 +225,35 @@ class GeneticAlgorithm:
         width = shape[1]
         return np.fromfunction(lambda i, j: (i * width + j) % 2 == mask_even, shape, dtype=int)
 
-    def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1, game_size=6):
+    def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1,
+            game_size=6):
         model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}\\".format(population_size, selection_threshold,
                                                                            mutation_rate, iterations,
-                                                                           games_to_play_per_individual,)
-        print("Running game: {}".format(model_description))
+                                                                           games_to_play_per_individual)
+        LOGGER.info("Running game: {}".format(model_description))
         dir_path = aws_snake_utils.get_training_output_folder() + model_description
         population_genetic = self.get_initial_population_genetic(population_size)
         # Iterate
         for i in range(iterations):
-            print("Iteration: {}".format(i))
+
+            LOGGER.info("Running iteration: {}".format(i))
             new_population_genetic, population_evaluated = self.execute_iteration(population_genetic,
                                                                                   games_to_play_per_individual,
                                                                                   selection_threshold, mutation_rate,
                                                                                   game_size)
             best = population_evaluated[0]
-            print(best)
-            file_name = "{}_iterations_snake_length_{}_movements_{}".format(i, best.snake_length,
-                                                                                      best.movements)
+            LOGGER.info(best)
+            file_name = "{:.2f}_iterations_fitness_{:.2f}_snake_length_{:.2f}_movements_{:.2f}".format(i,
+                                                                                       best.fitness(),
+                                                                                       best.snake_length,
+                                                                                       best.movements)
             self._set_model_weights(self.model, best.model_genetic)
             training_utils.save_model(self.model, dir_path, file_name)
             population_genetic = new_population_genetic
 
-
     @timeit
-    def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate, game_size=6):
+    def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate,
+                          game_size=6):
         game_statuses = [create_random_game_seed(game_size, 2) for j in range(games_to_play_per_individual)]
         # Evaluate population
         population_evaluated = self.evaluate_population(population_genetic, game_statuses)

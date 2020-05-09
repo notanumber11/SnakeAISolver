@@ -30,8 +30,6 @@ class AdvanceModelGeneticEvaluated:
         return all(np.array_equal(a[i], b[i]) for i in range(len(a)))
 
     def fitness(self):
-        fitness = self.snake_length ** 3 - self.movements
-
         fitness = self.movements + (2**self.apples + 500*self.apples**2.1) - (0.25 * self.movements**1.3 * self.apples**1.2)
         if fitness < 0:
             fitness = 0

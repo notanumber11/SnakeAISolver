@@ -3,6 +3,9 @@ import tensorflow as tf
 from typing import List
 
 import solvers.training.basic_training_data_generator
+from utils.snake_logger import get_module_logger
+
+LOGGER = get_module_logger(__name__)
 
 
 def create_csv(labels: List[str], data: List, name: str) -> None:
@@ -30,5 +33,5 @@ def load_model(path: str):
 
 def save_model(model, folder_path: str, file_name):
     full_file_path = folder_path + file_name
-    print("Saving game on: {}".format(full_file_path))
+    LOGGER.info("Saving game on: {}".format(full_file_path))
     model.save(full_file_path)

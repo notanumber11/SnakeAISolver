@@ -2,7 +2,9 @@ import math
 import random
 
 from game.point import Point
+from utils.snake_logger import get_module_logger
 
+LOGGER = get_module_logger(__name__)
 
 class GameStatus:
     UP = Point(0, -1)
@@ -114,7 +116,7 @@ class GameStatus:
 
     def _is_full_finished(self):
         if self.get_number_of_holes() == 0:
-            print("Game finished successfully !!!")
+            LOGGER.info("Game finished successfully !!!")
             return True
         return False
 

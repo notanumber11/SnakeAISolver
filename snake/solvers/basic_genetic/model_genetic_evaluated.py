@@ -16,7 +16,7 @@ class ModelGeneticEvaluated:
         return fitness
 
     def __str__(self):
-        return "        Fitness={:.2f} - Snake length={:.2f} - Movements={:.2f} - Reward={:.2f}" \
+        return "    Fitness={:.2f} - Snake length={:.2f} - Movements={:.2f} - Reward={:.2f}" \
             .format(self.fitness(), self.snake_length, self.movements, self.reward)
 
     def __repr__(self):
