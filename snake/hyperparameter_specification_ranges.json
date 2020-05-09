@@ -11,7 +11,7 @@
 		},
 		"IsTunable": false,
 		"IsRequired": true,
-		"DefaultValue": "2"
+		"DefaultValue": "1"
 	},
 	{
 		"Name": "population_size",
@@ -39,18 +39,12 @@
 		},
 		"IsTunable": false,
 		"IsRequired": true,
-		"DefaultValue": "100"
+		"DefaultValue": "150"
 	},
 	{
 		"Name": "selection_threshold",
 		"Description": "selection_threshold",
-		"Type": "Integer",
-		"Range": {
-			"IntegerParameterRangeSpecification": {
-				"MinValue": "0.01",
-				"MaxValue": "0.99"
-			}
-		},
+		"Type": "Continuous",
 		"IsTunable": false,
 		"IsRequired": true,
 		"DefaultValue": "0.1"
@@ -58,16 +52,10 @@
 	{
 		"Name": "mutation_rate",
 		"Description": "mutation_rate",
-		"Type": "Integer",
-		"Range": {
-			"IntegerParameterRangeSpecification": {
-				"MinValue": "0.05",
-				"MaxValue": "0.99"
-			}
-		},
+		"Type": "Continuous",
 		"IsTunable": false,
 		"IsRequired": true,
-		"DefaultValue": "0.05"
+		"DefaultValue": "0.01"
 	},
 	{
 		"Name": "game_size",

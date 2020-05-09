@@ -28,7 +28,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('type', choices=['game', 'train_basic_dnn', 'train_basic_genetic', 'train_advanced_genetic'],
                         type=str.lower)
-    args = parser.parse_args()
+    # To not fail with the default argument train provided by AWS
+    # https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-training-algo-dockerfile.html
+    args, unknown = parser.parse_known_args()
     if args.type == "game":
         game()
     if args.type == "train_basic_dnn":

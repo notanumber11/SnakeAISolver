@@ -27,17 +27,19 @@ class AdvanceGeneticAlgorithm(GeneticAlgorithm):
         # Average the results from all games
         return AdvanceModelGeneticEvaluated(games, model_genetic)
 
-    def play_one_game(self, game_status_seed: GameStatus, model):
+    def play_one_game(self, current_game_status: GameStatus, model):
         game_statuses = []
-        movements_left = game_status_seed.get_number_of_holes()
-        while game_status_seed.is_valid_game() and movements_left > 0:
-            _input = [self.advance_training_data_generator.get_input_from_game_status(game_status_seed)]
+        movements_left = current_game_status.get_number_of_holes()
+        while current_game_status.is_valid_game() and movements_left > 0:
+            _input = [self.advance_training_data_generator.get_input_from_game_status(current_game_status)]
             _dir = self.get_best_movement(_input, model)
-            new_game_status = game_status_seed.move(_dir)
+            new_game_status = current_game_status.move(_dir)
             game_statuses.append(new_game_status)
             # Continue iteration
-            game_status_seed = new_game_status
             movements_left -= 1
+            if current_game_status.apple != new_game_status.apple:
+                movements_left = current_game_status.get_number_of_holes()
+            current_game_status = new_game_status
 
         # The game was in a loop
         is_loop = True if movements_left == 0 else False

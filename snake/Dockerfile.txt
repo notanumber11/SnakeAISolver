@@ -6,7 +6,7 @@ RUN pwd
 # Copies the training code inside the container
 COPY . /opt/ml/code/
 
-# Defines train.py as script entrypoint
+# Defines main.py as script entrypoint
 ENV SAGEMAKER_PROGRAM main.py
 
 ENTRYPOINT ["python", "/opt/ml/code/main.py", "train_advanced_genetic"]

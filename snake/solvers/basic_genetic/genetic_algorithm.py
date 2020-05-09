@@ -158,7 +158,7 @@ class GeneticAlgorithm:
             current += parent.fitness()
             if current >= pick:
                 return parent
-        raise ValueError("Error performing roulette selection")
+        raise ValueError("Error performing roulette selection with pick={} and parents={}".format(pick, parents))
 
     def crossover(self, selected_pairs: List[List[ModelGeneticEvaluated]], fix_crossover=False):
         children = []
