@@ -60,19 +60,22 @@ class GeneticAlgorithmTest(unittest.TestCase):
 
     def test_evaluate_model(self):
         population_size = 20
-        game_seeds_size = 1
         population_genetic = self.ga.get_initial_population_genetic(population_size)
-        game_seeds = [create_default_game_seed() for i in range(game_seeds_size)]
+        game_seed = create_default_game_seed()
         random_fitness = []
         fix_fitness = []
-        for model_genetic in population_genetic:
-            for layer_index in range(len(model_genetic)):
-                model_genetic[layer_index] = np.random.uniform(low=-1, high=1, size=model_genetic[layer_index].shape)
-                model_evaluated = self.ga.evaluate_model(game_seeds, self.ga.model, model_genetic)
-                random_fitness.append(model_evaluated.fitness())
-                model_genetic[layer_index] = np.zeros(model_genetic[layer_index].shape)
-                model_evaluated = self.ga.evaluate_model(game_seeds, self.ga.model, model_genetic)
-                fix_fitness.append(model_evaluated.fitness())
+        # Random model creates different results with different fitness
+        for i in range(population_size):
+            model_genetic = self.ga.get_initial_population_genetic(1)[0]
+            model_evaluated = self.ga.evaluate_model([game_seed], self.ga.model, model_genetic)
+            random_fitness.append(model_evaluated.fitness())
+        # Fix model creates the same results
+        model_genetic = self.ga.get_initial_population_genetic(1)[0]
+        self.ga._set_model_weights(self.ga.model, model_genetic)
+        for i in range(100):
+            model_evaluated = self.ga.evaluate_model([game_seed], self.ga.model, model_genetic)
+            fix_fitness.append(model_evaluated.fitness())
+
         self.assertFalse(all(x == random_fitness[0] for x in random_fitness))
         self.assertFalse(any(x != fix_fitness[0] for x in fix_fitness))
 
