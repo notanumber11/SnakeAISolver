@@ -19,7 +19,7 @@ class AdvanceModelGeneticEvaluated:
                 self.size += game.game_statuses[-1].size
             self.snake_length += len(game.game_statuses[-1].snake)
             self.apples += (self.snake_length - len(game.game_statuses[0].snake))
-            self.movements += len(game.game_statuses)
+            self.movements += len(game.game_statuses) - 1
             self.size += game.game_statuses[-1].size
         self.snake_length /= len(games)
         self.movements /= len(games)
@@ -30,9 +30,13 @@ class AdvanceModelGeneticEvaluated:
         return all(np.array_equal(a[i], b[i]) for i in range(len(a)))
 
     def fitness(self):
+        movements = self.movements / self.size**2 * 100
+        apples = self.apples / self.size**2 * 100
+        fitness = movements + apples**2/movements + apples**2.5 - (0.1 * movements)**2
+        return fitness
+
+    def other_fitness(self):
         fitness = self.movements + (2**self.apples + 500*self.apples**2.1) - (0.25 * self.movements**1.3 * self.apples**1.2)
-        if fitness < 0:
-            fitness = 0
         return fitness
 
     def __str__(self):

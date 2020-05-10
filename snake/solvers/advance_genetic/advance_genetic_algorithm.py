@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from game.game import Game
 from game.game_status import GameStatus
-from solvers.advance_genetic.advanced_genetic_model_evaluated import AdvanceModelGeneticEvaluated
+from solvers.advance_genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
 from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
 from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
 
@@ -28,7 +28,7 @@ class AdvanceGeneticAlgorithm(GeneticAlgorithm):
         return AdvanceModelGeneticEvaluated(games, model_genetic)
 
     def play_one_game(self, current_game_status: GameStatus, model):
-        game_statuses = []
+        game_statuses = [current_game_status]
         movements_left = current_game_status.get_number_of_holes()
         while current_game_status.is_valid_game() and movements_left > 0:
             _input = [self.advance_training_data_generator.get_input_from_game_status(current_game_status)]
