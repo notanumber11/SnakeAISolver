@@ -15,12 +15,14 @@ class AdvanceModelGeneticEvaluated:
         for game in games:
             if game.was_stack_in_loop:
                 self.snake_length += 0
+                self.apples += 0
                 self.movements += 0
                 self.size += game.game_statuses[-1].size
-            self.snake_length += len(game.game_statuses[-1].snake)
-            self.apples += (self.snake_length - len(game.game_statuses[0].snake))
-            self.movements += len(game.game_statuses) - 1
-            self.size += game.game_statuses[-1].size
+            else:
+                self.snake_length += len(game.game_statuses[-1].snake)
+                self.apples += (self.snake_length - len(game.game_statuses[0].snake))
+                self.movements += len(game.game_statuses) - 1
+                self.size += game.game_statuses[-1].size
         self.snake_length /= len(games)
         self.movements /= len(games)
         self.size /= len(games)
