@@ -24,7 +24,7 @@ class BasicDnnSolver:
         return game_statuses
 
     def get_best_movement(self, inputs):
-        test_predictions = self.model.predict(inputs).flatten()
+        test_predictions = self.model.__call__(np.array(inputs))
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
 

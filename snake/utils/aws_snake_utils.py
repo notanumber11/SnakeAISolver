@@ -15,7 +15,7 @@ def _is_aws() -> bool:
 def get_running_environment():
     if _is_aws():
         return "Running container in AWS sagemaker"
-    if _is_local_run():
+    if is_local_run():
         return "Running code in local run"
     if _is_container_not_in_aws():
         return "Running container in Linux"
@@ -30,7 +30,7 @@ def _get_hyperparameters(path: str) -> Dict:
     return data
 
 
-def _is_local_run():
+def is_local_run():
     operative_system = os.getenv('OS')
     if operative_system is not None and "windows" in operative_system.lower():
         return True
@@ -38,11 +38,11 @@ def _is_local_run():
 
 
 def _is_container_not_in_aws():
-    return not _is_aws() and not _is_local_run()
+    return not _is_aws() and not is_local_run()
 
 
 def get_hyperparameters() -> Dict:
-    if _is_local_run():
+    if is_local_run():
         return _get_hyperparameters("hyperparameters.json")
     elif _is_aws():
         return _get_hyperparameters("/opt/ml/input/config/hyperparameters.json")
@@ -52,7 +52,7 @@ def get_hyperparameters() -> Dict:
 
 
 def get_training_output_folder() -> str:
-    if _is_local_run():
+    if is_local_run():
         return "..\\data\\new_models\\"
     elif _is_aws():
         return "/opt/ml/model/"

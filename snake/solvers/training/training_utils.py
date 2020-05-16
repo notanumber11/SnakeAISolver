@@ -35,3 +35,4 @@ def save_model(model, folder_path: str, file_name):
     full_file_path = folder_path + file_name
     LOGGER.info("Saving game on: {}".format(full_file_path))
     model.save(full_file_path)
+    return full_file_path

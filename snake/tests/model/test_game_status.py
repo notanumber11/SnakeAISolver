@@ -154,7 +154,7 @@ class TestGameStatus(unittest.TestCase):
         snake_start = [[0, 0], [0, 1], [1, 1], [1,0]]
         game = GameStatus(size, snake_start)
         game.is_valid_game()
-        self.assertTrue(game._is_full_finished())
+        self.assertTrue(game.is_full_finished())
 
     def test_get_number_of_holes(self):
         game_status = GameStatus(6, [[2,2], [1,2]])

@@ -5,6 +5,7 @@ import game.game_seed_creator
 import solvers.basic_solver
 import solvers.basic_dnn.basic_dnn_solver
 from game.game import Game
+import solvers.advance_genetic.advance_genetic_solver as ag
 from solvers.dfs_solver import DFSSolver
 from solvers.hamilton_solver import HamiltonSolver
 from solvers.random_solver import RandomSolver
@@ -20,11 +21,13 @@ class GameProvider:
         self.basic_solver = solvers.basic_solver.BasicSolver()
         self.basic_dnn = solvers.basic_dnn.basic_dnn_solver.BasicDnnSolver()
         self.basic_genetic = solvers.basic_genetic.basic_genetic_solver.BasicGeneticSolver()
+        self.advance_genetic = ag.AdvanceGeneticSolver()
         self.all_solvers = [self.random_solver,
                             self.basic_solver,
                             self.dfs_solver,
                             self.basic_dnn,
                             self.basic_genetic,
+                            self.advance_genetic,
                             self.hamilton_solver]
 
     def get_n_best(self, games: List[Game], n: int):
@@ -32,6 +35,9 @@ class GameProvider:
         return result[0:n]
 
     def get_all_game_types(self, n=1):
+        return [self.get_random_game(solver, 6, 4) for i in range(n) for solver in self.all_solvers]
+
+    def get_all_game_types_default(self, n=1):
         return [self._get_default_game(solver) for i in range(n) for solver in self.all_solvers]
 
     def _get_default_game(self, solver):

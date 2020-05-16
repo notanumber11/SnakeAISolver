@@ -1,31 +1,47 @@
+import os
+
 import numpy as np
 
 from game.game_status import GameStatus
-from solvers.training import basic_training_data_generator, training_utils
+from solvers.training import training_utils
+import solvers.training.advance_training_data_generator
 
 
-class BasicGeneticSolver:
+class AdvanceGeneticSolver:
 
-    def __init__(self):
-        path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
-        path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
-        path_model = r"..\data\basic_genetic\success_genetic\s3\52_iterations_snake_length_36.0_movements_279.0reward_20.49"
-        path_model = r"C:\Users\Denis\Desktop\SnakePython\data\new_models\aws_vision\1682.00_iterations_fitness_7490.47_snake_length_26.00_mov"
+    def __init__(self, path_model = None):
+        if path_model is None:
+            path_model = r"..\data\new_models\aws_vision\1682.00_iterations_fitness_7490.47_snake_length_26.00_mov"
+            path_model = self.get_last_model_from_path(
+                 r"C:\Users\Denis\Desktop\SnakePython\data\new_models\pop=500_sel=0.1_mut_0.0125_it_10000_games_1_game_size_6\\")
+        print("path model is: " + path_model)
         self.model = training_utils.load_model(path_model)
+        self.ag = solvers.training.advance_training_data_generator.AdvanceTrainingDataGenerator()
 
-    def solve(self, game_status: GameStatus):
-        game_statuses = [game_status]
-        max_movements = game_status.size**4
-        while game_status.is_valid_game() and max_movements > 0:
-            max_movements -= 1
-            inputs = basic_training_data_generator.get_input_from_game_status(game_status)
-            dir = self.get_best_movement(inputs)
-            game_status = game_status.move(dir)
-            game_statuses.append(game_status)
-        print("basic genetic game solved")
+    def get_last_model_from_path(self, path):
+        subfolders = [str(f.path) for f in os.scandir(path) if f.is_dir()]
+        subfolders.sort(key=lambda folder: float(folder.split("\\")[-1].split("_")[0]))
+        return subfolders[-1]
+
+    def solve(self, current_game_status: GameStatus):
+        game_statuses = [current_game_status]
+        movements_left = current_game_status.get_number_of_holes()
+        while current_game_status.is_valid_game() and movements_left > 0:
+            movements_left -= 1
+            input = [self.ag.get_input_from_game_status(current_game_status)]
+            _dir = self.get_best_movement(input, self.model)
+            new_game_status = current_game_status.move(_dir)
+            game_statuses.append(new_game_status)
+            if current_game_status.apple != new_game_status.apple:
+                movements_left = new_game_status.get_number_of_holes()
+            if movements_left == 0:
+                print("loop time !")
+            current_game_status = new_game_status
+        print("advance genetic game solved")
         return game_statuses
 
-    def get_best_movement(self, inputs):
-        test_predictions = self.model.__call__(np.array(inputs))
-        max_index = np.argmax(test_predictions)
-        return GameStatus.DIRS[max_index]
+    def get_best_movement(self, _input, model):
+        test_predictions = model.__call__(np.array(_input))
+        max_index = np.argmax(test_predictions[0])
+        result = GameStatus.DIRS[max_index]
+        return result

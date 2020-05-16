@@ -24,7 +24,7 @@ class GameStatus:
         self.snake = Point.ints_to_points(snake)
         self.head = self.snake[0]
         self.prev_dir = Point(self.head.x - self.snake[1].x, self.head.y - self.snake[1].y)
-        if not self._is_full_finished():
+        if not self.is_full_finished():
             self.apple = Point(apple[0], apple[1]) if apple is not None else self._generate_new_apple()
             self.angle_to_apple = self.get_angle(self.head, self.apple)
             self._valid_game = True
@@ -114,7 +114,7 @@ class GameStatus:
     def _is_valid_dir(d: Point):
         return d == GameStatus.UP or d == GameStatus.DOWN or d == GameStatus.RIGHT or d == GameStatus.LEFT
 
-    def _is_full_finished(self):
+    def is_full_finished(self):
         if self.get_number_of_holes() == 0:
             LOGGER.info("Game finished successfully !!!")
             return True

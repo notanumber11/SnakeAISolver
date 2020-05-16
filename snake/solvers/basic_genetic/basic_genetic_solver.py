@@ -6,10 +6,12 @@ from solvers.training import basic_training_data_generator, training_utils
 
 class BasicGeneticSolver:
 
-    def __init__(self):
-        path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
-        path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
-        path_model = r"..\data\basic_genetic\success_genetic\s3\52_iterations_snake_length_36.0_movements_279.0reward_20.49"
+    def __init__(self, path_model = None):
+        if path_model == None:
+            path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
+            path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
+            path_model = r"..\data\basic_genetic\success_genetic\s3\52_iterations_snake_length_36.0_movements_279.0reward_20.49"
+            print("path model is: " + path_model)
         self.model = training_utils.load_model(path_model)
 
     def solve(self, game_status: GameStatus):
@@ -25,6 +27,6 @@ class BasicGeneticSolver:
         return game_statuses
 
     def get_best_movement(self, inputs):
-        test_predictions = self.model.predict(inputs).flatten()
+        test_predictions = self.model.__call__(np.array(inputs))
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]

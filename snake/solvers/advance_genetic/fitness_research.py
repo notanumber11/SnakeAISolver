@@ -4,7 +4,6 @@ import pandas as pd
 from game.game import Game
 from game.game_status import GameStatus
 from solvers.advance_genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
-from solvers.basic_genetic.model_genetic_evaluated import ModelGeneticEvaluated
 
 
 class FitnessResearch:
@@ -18,14 +17,12 @@ class FitnessResearch:
         game_status = GameStatus(6, snake, apple)
         game = Game([game_status])
         advance_model_evaluated = AdvanceModelGeneticEvaluated([game], None)
-        basic_model_evaluated = ModelGeneticEvaluated(None, None, None, None, None)
-        apples = [1,2,5,10,15,20]
+        apples = [1, 2, 5, 10, 15, 20]
         movements = [1, 5, 10, 20, 30]
-        self.fitness_grow(apples, movements, len(game_status.snake), advance_model_evaluated, basic_model_evaluated)
+        self.fitness_grow(apples, movements, len(game_status.snake), advance_model_evaluated)
 
     def fitness_grow(self, apples, movements, initial_size,
-                     advance_model: AdvanceModelGeneticEvaluated,
-                     basic_model: ModelGeneticEvaluated):
+                     advance_model: AdvanceModelGeneticEvaluated):
 
         apples = apples
         advance_fitness_dict = {}
@@ -40,14 +37,12 @@ class FitnessResearch:
             for mov in movements:
                 advance_model.apples = eaten_apples
                 advance_model.movements = mov
-                basic_model.snake_length = eaten_apples + initial_size
-                basic_model.movements = mov
 
                 # Advance fitness
                 advance_fitness = advance_model.fitness()
                 advance_fitness_dict["movs_" + str(mov)] += [advance_fitness]
                 # Basic fitness
-                basic_fitness = basic_model.fitness()
+                basic_fitness = advance_model.basic_fitness()
                 basic_fitness_dict["movs_" + str(mov)] += [basic_fitness]
                 # Other fitness
                 other_fitness = advance_model.other_fitness()
@@ -64,11 +59,12 @@ class FitnessResearch:
         self.plot(apples, other_fitness_dict, "Other fitness")
         self.plot(apples, basic_fitness_dict, "Basic fitness")
 
-    def plot(self, apples, fitness_dict, title):
+    def plot(self, x_axis, fitness_dict, title):
         dataframe = pd.DataFrame(
             fitness_dict,
-            index=apples)
-        dataframe.plot.line(logy=True, title=title)
+            index=x_axis)
+        ax = dataframe.plot.line(logy=True, title=title)
+        ax.set_xticks(x_axis)
         plt.show()
 
 if __name__ == '__main__':

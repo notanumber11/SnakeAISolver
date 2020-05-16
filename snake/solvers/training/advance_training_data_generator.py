@@ -1,9 +1,7 @@
 from typing import List
 
-import solvers
 from game.game_status import GameStatus
 from game.point import Point
-from solvers.training import training_utils
 
 
 class AdvanceTrainingDataGenerator:
@@ -61,7 +59,7 @@ class AdvanceTrainingDataGenerator:
 
 
     def _get_size_normalize_wall_distance(self, game_status: GameStatus, _dir: Point):
-        return self._get_wall_distance(game_status, _dir) / (game_status.size - 1)
+        return round(self._get_wall_distance(game_status, _dir) / (game_status.size - 1), 2)
 
     def _get_body_vision(self, game_status: GameStatus, _dir: Point, snake_set) -> bool:
         """

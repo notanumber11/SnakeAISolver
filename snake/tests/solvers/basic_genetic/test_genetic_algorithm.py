@@ -25,7 +25,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
         layer_0_genetic_size = model_genetic[0].shape
         # Assert
         self.assertEqual(population_size, len(population_genetic))
-        self.assertTrue(len(population_genetic[0]) == len(self.layers_size) - 1)
+        self.assertEqual(len(population_genetic[0]) / 2, len(self.layers_size) - 1)
         self.assertEqual((self.layers_size[0], self.layers_size[1]), layer_0_genetic_size)
 
     def test_generate_initial_population_genetic_values(self):
@@ -89,10 +89,10 @@ class GeneticAlgorithmTest(unittest.TestCase):
         threshold = 0.2
         # Act
         self.assertNotEqual(population_with_fitness, sorted_population_with_fitness)
-        self.ga.selection(threshold, population_with_fitness)
+        self.ga.elitism_selection(threshold, population_with_fitness)
         self.assertEqual(population_with_fitness, sorted_population_with_fitness)
 
-    def test_selection(self):
+    def test_elitism_selection(self):
         # Arrange
         population_size = 10
         game_statuses = [create_default_game_seed() for i in range(1)]
@@ -105,11 +105,10 @@ class GeneticAlgorithmTest(unittest.TestCase):
         worst_performers = sorted_population_with_fitness[number_of_top_performers:]
 
         # Act
-        selected_pairs = self.ga.selection(threshold, population_with_fitness)
-        selected_individuals = [individual for pair in selected_pairs for individual in pair]
+        selected_individuals = self.ga.elitism_selection(threshold, population_with_fitness)
 
         # Assert
-        self.assertEqual(len(selected_pairs) * 2, population_size)
+        self.assertEqual(len(selected_individuals), population_size * threshold)
         # All the worst performers are not included in the selected pairs
         self.assertTrue(all(
             population_with_fitness[number_of_top_performers].fitness() <= individual.fitness() for individual in
@@ -174,52 +173,13 @@ class GeneticAlgorithmTest(unittest.TestCase):
         population_genetic = self.ga.get_initial_population_genetic(population_size)
         parent_model_genetic = population_genetic[0]
         mother_model_genetic = population_genetic[0]
-        even_masks = []
-        odd_masks = []
-        for layer in parent_model_genetic:
-            even_masks.append(self.ga._mask(layer.shape, True))
-            odd_masks.append(self.ga._mask(layer.shape, False))
-
         # Act
-        children_fix = self.ga._fix_crossover(parent_model_genetic, mother_model_genetic, even_masks, odd_masks)
         children_random = self.ga._random_crossover(parent_model_genetic, mother_model_genetic)
 
         # Assert
         for layer_index in range(len(parent_model_genetic)):
             np.testing.assert_array_equal(parent_model_genetic[layer_index], mother_model_genetic[layer_index])
-            np.testing.assert_array_equal(parent_model_genetic[layer_index], children_fix[0][layer_index])
             np.testing.assert_array_equal(parent_model_genetic[layer_index], children_random[0][layer_index])
-
-    def test_fix_crossover(self):
-        # Arrange
-        population_size = 2
-        population_genetic = self.ga.get_initial_population_genetic(population_size)
-        parent_model_genetic = population_genetic[0]
-        mother_model_genetic = population_genetic[1]
-        even_masks = []
-        odd_masks = []
-        for layer in parent_model_genetic:
-            even_masks.append(self.ga._mask(layer.shape, True))
-            odd_masks.append(self.ga._mask(layer.shape, False))
-
-        # Act
-        children = self.ga._fix_crossover(parent_model_genetic, mother_model_genetic, even_masks, odd_masks)
-
-        # Assert
-        child_a = children[0]
-        child_b = children[1]
-        for layer_index in range(len(parent_model_genetic)):
-            flat_parent_layer = parent_model_genetic[layer_index].flat
-            flat_mother_layer = mother_model_genetic[layer_index].flat
-            flat_a_child = child_a[layer_index].flat
-            flat_b_child = child_b[layer_index].flat
-            for i in range(len(flat_parent_layer)):
-                if i % 2 == 1:
-                    self.assertEqual(flat_parent_layer[i], flat_a_child[i])
-                    self.assertEqual(flat_mother_layer[i], flat_b_child[i])
-                else:
-                    self.assertEqual(flat_parent_layer[i], flat_b_child[i])
-                    self.assertEqual(flat_mother_layer[i], flat_a_child[i])
 
     def test_random_crossover(self):
         population_size = 2
@@ -239,12 +199,6 @@ class GeneticAlgorithmTest(unittest.TestCase):
                 return
         # Ensure that we execute the loop
         self.assertTrue(False)
-
-    def test_mask(self):
-        mask_even = np.array([[0, 1, 0], [1, 0, 1]])
-        mask_odd = np.array([[1, 0, 1], [0, 1, 0]])
-        np.testing.assert_array_equal(mask_even, self.ga._mask(mask_even.shape, True))
-        np.testing.assert_array_equal(mask_odd, self.ga._mask(mask_odd.shape, False))
 
     def test_mutation(self):
         size = 1000
@@ -272,10 +226,11 @@ class GeneticAlgorithmTest(unittest.TestCase):
         selection_threshold = 0.5
         # Do not mutate
         mutation_rate = 0
-        children, evaluation_result = self.ga.execute_iteration(population_genetic, games_to_play, selection_threshold,
-                                                                mutation_rate)
-        self.assertEqual(len(children), population_size)
-        for child in children:
+        new_generation, top_population = self.ga.execute_iteration(population_genetic, games_to_play,
+                                                                   selection_threshold,
+                                                                   mutation_rate, population_size)
+        self.assertEqual(len(new_generation), population_size)
+        for child in new_generation:
             for layer_index in range(len(child)):
                 np.testing.assert_array_equal(child[layer_index], population_genetic[0][layer_index])
 
@@ -287,21 +242,24 @@ class GeneticAlgorithmTest(unittest.TestCase):
         selection_threshold = 0.2
         mutation_rate = 0.2
         children, evaluation_result = self.ga.execute_iteration(population_genetic, games_to_play, selection_threshold,
-                                                                mutation_rate)
-        # self.assertEqual(len(children), population_size)
-        # for child in children:
-        #     for layer_index in range(len(child)):
-        #         self.assertTrue(((-1 <= child[layer_index]) & (child[layer_index] <= 1)).all())
+                                                                mutation_rate, population_size)
 
-    def test_evaluate_population_performance(self):
-        layers_size = [9, 125, 1]
+
+    def test_with_plus_parents_crossover(self):
+        games_to_play = 1
         population_size = 10
-        ga = GeneticAlgorithm(layers_size)
-        game_statuses = [create_default_game_seed() for i in range(1)]
-        population_genetic = ga.get_initial_population_genetic(population_size)
-        result = timeit.timeit(lambda: ga.evaluate_population(population_genetic, game_statuses), number=1)
-        print(result)
+        selection_threshold = 0.1
+        mutation_rate = 0.05
+        # Create a population genetic with the same element
+        population_genetic = self.ga.get_initial_population_genetic(population_size)
 
-    #
-    # def test_only_modify_hidden_layer(self):
-    #     pass
+        new_generation_models, top_population = self.ga.execute_iteration(population_genetic, games_to_play,
+                                                                          selection_threshold,
+                                                                          mutation_rate, population_size)
+        top_population_models = [modelEvaluated.model_genetic for modelEvaluated in top_population]
+
+        for top in top_population_models:
+            self.assertTrue(any(self.equal_model_genetic(top, new_model) for new_model in new_generation_models))
+
+    def equal_model_genetic(self, a, b):
+        return all(np.array_equal(a[i], b[i]) for i in range(len(a)))

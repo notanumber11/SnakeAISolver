@@ -17,12 +17,25 @@ LOGGER.info("*******************************************")
 import argparse
 
 
+def show_solver(solver,  board_size, snake_size, number_of_games=6):
+    from gui.window import Window
+    from game.game_provider import GameProvider
+    LOGGER.info("Showing solver...")
+    game_provider = GameProvider()
+    games = game_provider.get_random_games(solver, number_of_games, board_size, snake_size)
+    LOGGER.info("Creating window...")
+    window = Window(games)
+    window.should_close_automatically = 3000
+    window.start()
+
+
 def game():
     from gui.window import Window
     from game.game_provider import GameProvider
     LOGGER.info("Solving games...")
     game_provider = GameProvider()
-    games = game_provider.get_all_game_types()
+    #games = game_provider.get_all_game_types()
+    games = game_provider.get_random_games(game_provider.advance_genetic, 6, 6, 2)
     input("Press Enter to continue...")
     LOGGER.info("Creating window...")
     window = Window(games)

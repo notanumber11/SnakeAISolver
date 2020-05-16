@@ -29,8 +29,10 @@ class Window:
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.game_drawer = GameDrawer()
         self.movements_per_second = 16
+        self.should_close_automatically = 0
 
     def draw(self, games: List[Game]):
+
         self.canvas.delete("all")
         for pos, game in enumerate(games):
             i = pos // self.cols
@@ -40,6 +42,8 @@ class Window:
             self.game_drawer.draw(self.canvas, game, self.game_size, self.tile_size,
                                   offset_x, offset_y)
         self.root.after(int(1000/self.movements_per_second), lambda: self.draw(self.games))
+        if all(game.is_finished() for game in games) and self.should_close_automatically != 0:
+            self.root.after(self.should_close_automatically, lambda: self.end())
 
     def start(self):
         self.root.after(500, lambda: self.draw(self.games))
@@ -48,3 +52,4 @@ class Window:
 
     def end(self):
         self.root.destroy()
+

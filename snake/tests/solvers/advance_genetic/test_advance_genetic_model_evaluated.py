@@ -5,14 +5,12 @@ import pandas as pd
 from game.game import Game
 from game.game_status import GameStatus
 from solvers.advance_genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
-from solvers.basic_genetic.model_genetic_evaluated import ModelGeneticEvaluated
 
 
 class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
 
-
     def test_me_parameters(self):
-        snake = [[1,0], [2,0]]
+        snake = [[1, 0], [2, 0]]
         apple = [0, 0]
         game_status = GameStatus(6, snake, apple)
         new_game_status = game_status.move(GameStatus.LEFT)
@@ -21,6 +19,20 @@ class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
         self.assertEqual(1, me.movements)
         self.assertEqual(3, me.snake_length)
         self.assertEqual(1, me.apples)
+
+    def test_me_parameters_when_loop(self):
+        snake = [[1, 0], [2, 0]]
+        apple = [0, 0]
+        game_status = GameStatus(6, snake, apple)
+        new_game_status = game_status.move(GameStatus.LEFT)
+        game = Game([game_status, new_game_status])
+        game.was_stack_in_loop = True
+        me = AdvanceModelGeneticEvaluated([game], None)
+        self.assertEqual(1, me.movements)
+        self.assertEqual(0, me.snake_length)
+        self.assertEqual(0, me.apples)
+        self.assertEqual(6, me.size)
+        self.assertLessEqual(me.fitness(), 10)
 
     def test_research_fitness_function(self):
         snake = [[1, 0], [2, 0]]
