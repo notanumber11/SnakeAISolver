@@ -167,57 +167,6 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.assertEqual(number_of_pairs_to_generate * 2, len(result))
         self.assertTrue(all(el in result for el in population_with_fitness))
 
-    def test_couple_crossover_same_parent(self):
-        # Arrange
-        population_size = 1
-        population_genetic = self.ga.get_initial_population_genetic(population_size)
-        parent_model_genetic = population_genetic[0]
-        mother_model_genetic = population_genetic[0]
-        # Act
-        children_random = self.ga._random_crossover(parent_model_genetic, mother_model_genetic)
-
-        # Assert
-        for layer_index in range(len(parent_model_genetic)):
-            np.testing.assert_array_equal(parent_model_genetic[layer_index], mother_model_genetic[layer_index])
-            np.testing.assert_array_equal(parent_model_genetic[layer_index], children_random[0][layer_index])
-
-    def test_random_crossover(self):
-        population_size = 2
-        population_genetic = self.ga.get_initial_population_genetic(population_size)
-        parent_model_genetic = population_genetic[0]
-        mother_model_genetic = population_genetic[1]
-        children = self.ga._random_crossover(parent_model_genetic, mother_model_genetic)
-
-        for child in children:
-            for layer_index in range(len(parent_model_genetic)):
-                parent_array = parent_model_genetic[layer_index]
-                mother_array = mother_model_genetic[layer_index]
-                child_array = child[layer_index]
-                equal_to_father = np.sum(np.where(parent_array == child_array, 1, 0))
-                equal_to_mother = np.sum(np.where(mother_array == child_array, 1, 0))
-                self.assertEqual(np.prod(parent_array.shape), equal_to_father + equal_to_mother)
-                return
-        # Ensure that we execute the loop
-        self.assertTrue(False)
-
-    def test_mutation(self):
-        size = 1000
-        mutation_rate = 0.05
-        model_genetic = [np.ones(size)]
-        # mutate 0
-        self.ga.mutation(0, model_genetic)
-        for layer_index in range(len(model_genetic)):
-            np.testing.assert_array_equal(model_genetic[layer_index], np.ones(size))
-        # mutate a portion
-        self.ga.mutation(0.05, model_genetic)
-        equal_count = 0
-        for layer_index in range(len(model_genetic)):
-            for i in range(size):
-                if model_genetic[layer_index][i] == 1:
-                    equal_count += 1
-        self.assertGreaterEqual(equal_count, 5 * mutation_rate * size)
-        self.assertLessEqual(equal_count, size * (1 - mutation_rate / 5))
-
     def test_execute_iteration_with_single_element(self):
         games_to_play = 2
         population_size = 6
@@ -240,12 +189,26 @@ class GeneticAlgorithmTest(unittest.TestCase):
         # Create a population genetic with the same element
         population_genetic = self.ga.get_initial_population_genetic(population_size)
         selection_threshold = 0.2
-        mutation_rate = 0.2
+        mutation_rate = 1
         children, evaluation_result = self.ga.execute_iteration(population_genetic, games_to_play, selection_threshold,
                                                                 mutation_rate, population_size)
 
 
-    def test_with_plus_parents_crossover(self):
+    def test_mutate(self):
+        population_genetic = [[np.ones(10)] for i in range(10)]
+        self.ga.mutate(population_genetic, 1)
+        for model_genetic in population_genetic:
+            for chromosome in model_genetic:
+                equal = np.array_equal(chromosome, np.ones(10))
+                self.assertFalse(equal, msg="Some chromosomes did not change")
+        population_genetic = [[np.ones(10)] for i in range(10)]
+        self.ga.mutate(population_genetic, 0)
+        for model_genetic in population_genetic:
+            for chromosome in model_genetic:
+                equal = np.array_equal(chromosome, np.ones(10))
+                self.assertTrue(equal, msg="Chromosomes change with 0 mutation rate")
+
+    def test_with_plus_parents(self):
         games_to_play = 1
         population_size = 10
         selection_threshold = 0.1

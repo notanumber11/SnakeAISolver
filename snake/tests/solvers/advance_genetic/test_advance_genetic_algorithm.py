@@ -60,18 +60,8 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
     def test_absolute_distances(self):
         pass
 
-    def test_with_bias(self):
+    def direction_as_input(self):
         pass
 
-    def test_with_SPX(self):
-        pass
-
-    def test_with_SBX(self):
-        pass
-
-    def test(self):
-        # mutation gaussian ?
-        pass
-
-    def test_no_parent_mutation(self):
+    def no_binary_vission(self):
         pass

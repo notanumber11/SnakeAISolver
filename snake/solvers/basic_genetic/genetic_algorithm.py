@@ -10,7 +10,8 @@ from game.game_seed_creator import create_random_game_seed
 from game.game_status import GameStatus
 from main import show_solver
 from solvers.advance_genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
-from solvers.advance_genetic.advance_genetic_solver import AdvanceGeneticSolver
+from solvers.advance_genetic.crossover import random_crossover
+from solvers.advance_genetic.mutation import uniform_mutation, gaussian_mutation
 from solvers.basic_genetic.basic_genetic_solver import BasicGeneticSolver
 from solvers.training import basic_training_data_generator as training_generator, training_utils
 from utils import aws_snake_utils
@@ -117,29 +118,25 @@ class GeneticAlgorithm:
     def crossover(self, top_performers: List[AdvanceModelGeneticEvaluated], number_of_children):
         total_fitness = sum([x.fitness() for x in top_performers])
         children = []
+        cross_type = {
+            "random": 0.25,
+            "single_point_binary": 0.25,
+            "simulated_binary": 0.5
+        }
+        options = list(cross_type.keys())
+        probabilities = list(cross_type.values())
         while len(children) <= number_of_children:
             pair = self._pair(top_performers, total_fitness)
-            children += self._random_crossover(pair[0].model_genetic, pair[1].model_genetic)
+            choice = np.random.choice(options, p=probabilities)
+            if choice == "random":
+                children += random_crossover(pair[0].model_genetic, pair[1].model_genetic)
+            elif choice == "simulated_binary":
+                children += random_crossover(pair[0].model_genetic, pair[1].model_genetic)
+            elif choice == "single_point_binary":
+                children += random_crossover(pair[0].model_genetic, pair[1].model_genetic)
+            else:
+                raise ValueError("Invalid crossover choice: " + choice)
         return children[:number_of_children]
-
-    def _random_crossover(self, model_genetic_father, model_genetic_mother):
-        child_a, child_b = [], []
-        for layer_index in range(len(model_genetic_father)):
-            layer_father , layer_mother = model_genetic_father[layer_index] , model_genetic_mother[layer_index]
-            mask_a = np.random.choice([0, 1], size=layer_father.shape)
-            mask_b = np.where(mask_a < 1, 1, 0)
-            layer_a = layer_father * mask_a + layer_mother * mask_b
-            layer_b = layer_mother * mask_a + layer_father * mask_b
-            child_a.append(layer_a)
-            child_b.append(layer_b)
-        return [child_a, child_b]
-
-    def mutation(self, mutation_rate, model_genetic):
-        for layer_index in range(len(model_genetic)):
-            chromosome = model_genetic[layer_index]
-            mutation_array = np.random.random(chromosome.shape) < mutation_rate
-            chromosome[mutation_array] = random.uniform(-1, 1)
-        return model_genetic
 
     def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1,
             game_size=6):
@@ -193,11 +190,26 @@ class GeneticAlgorithm:
         number_of_children = population_size - len(top_population)
         children = self.crossover(top_population, number_of_children)
         # Introduce mutations
-        for i in range(len(children)):
-            self.mutation(mutation_rate, children[i])
+        self.mutate(children, mutation_rate)
 
         new_generation_models = children + top_population_models
         return new_generation_models, top_population
+
+    def mutate(self, children, mutation_rate):
+        mut_type = {
+            "uniform": 0.33,
+            "gaussian": 0.67
+        }
+        options = list(mut_type.keys())
+        probabilities = list(mut_type.values())
+        for i in range(len(children)):
+            choice = np.random.choice(options, p=probabilities)
+            if choice == "uniform":
+                uniform_mutation(children[i], mutation_rate)
+            elif choice == "gaussian":
+                gaussian_mutation(children[i], mutation_rate)
+            else:
+                raise ValueError("Incorrect choice: " + choice)
 
     def build_model(self):
         tf.keras.backend.set_floatx('float64')

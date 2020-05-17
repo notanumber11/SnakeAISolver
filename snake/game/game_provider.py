@@ -9,7 +9,7 @@ import solvers.advance_genetic.advance_genetic_solver as ag
 from solvers.dfs_solver import DFSSolver
 from solvers.hamilton_solver import HamiltonSolver
 from solvers.random_solver import RandomSolver
-from solvers.basic_genetic.basic_genetic_solver import BasicGeneticSolver
+import solvers.basic_genetic.basic_genetic_solver
 
 
 class GameProvider:
