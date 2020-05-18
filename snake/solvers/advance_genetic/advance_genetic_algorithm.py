@@ -4,7 +4,6 @@ import numpy as np
 import tensorflow as tf
 
 from game.game_status import GameStatus
-from main import show_solver
 from solvers.advance_genetic.advance_genetic_solver import AdvanceGeneticSolver
 from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
 from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
@@ -33,4 +32,5 @@ class AdvanceGeneticAlgorithm(GeneticAlgorithm):
 
     def show_current_best_model(self, iteration, path, game_size):
         if aws_snake_utils.is_local_run() and iteration % 25 == 0:
+            from gui.gui_starter import show_solver
             show_solver(AdvanceGeneticSolver(path), game_size, 3, 6)

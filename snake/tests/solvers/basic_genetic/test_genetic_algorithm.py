@@ -127,7 +127,6 @@ class GeneticAlgorithmTest(unittest.TestCase):
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_initial_population_genetic(population_size)
         population_with_fitness = self.ga.evaluate_population(population_genetic, game_statuses)
-        fitness = 10
         for i in range(population_size):
             population_with_fitness[i].fitness = MagicMock(return_value=1)
 

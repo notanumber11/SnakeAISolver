@@ -65,3 +65,6 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
 
     def no_binary_vission(self):
         pass
+
+    def use_hyperparemeters_as_setting_and_track_experiments(self):
+        pass

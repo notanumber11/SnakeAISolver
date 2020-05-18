@@ -45,10 +45,10 @@ def get_hyperparameters() -> Dict:
     if is_local_run():
         return _get_hyperparameters("hyperparameters.json")
     elif _is_aws():
-        return _get_hyperparameters("/opt/ml/input/config/hyperparameters.json")
+        return _get_hyperparameters("/opt/ml/input/config/3_result.json")
     elif _is_container_not_in_aws():
-        return _get_hyperparameters("/opt/ml/code/hyperparameters.json")
-    raise ValueError("Could not find valid path for hyperparameters.json")
+        return _get_hyperparameters("/opt/ml/code/3_result.json")
+    raise ValueError("Could not find valid path for 3_result.json")
 
 
 def get_training_output_folder() -> str:

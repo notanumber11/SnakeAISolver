@@ -12,16 +12,9 @@ class AdvanceGeneticSolver:
     def __init__(self, path_model = None):
         if path_model is None:
             path_model = r"..\data\new_models\aws_vision\1682.00_iterations_fitness_7490.47_snake_length_26.00_mov"
-            path_model = self.get_last_model_from_path(
-                 r"C:\Users\Denis\Desktop\SnakePython\data\new_models\pop=500_sel=0.1_mut_0.0125_it_10000_games_1_game_size_6\\")
         print("path model is: " + path_model)
         self.model = training_utils.load_model(path_model)
         self.ag = solvers.training.advance_training_data_generator.AdvanceTrainingDataGenerator()
-
-    def get_last_model_from_path(self, path):
-        subfolders = [str(f.path) for f in os.scandir(path) if f.is_dir()]
-        subfolders.sort(key=lambda folder: float(folder.split("\\")[-1].split("_")[0]))
-        return subfolders[-1]
 
     def solve(self, current_game_status: GameStatus):
         game_statuses = [current_game_status]

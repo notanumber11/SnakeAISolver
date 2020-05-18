@@ -8,7 +8,6 @@ from tensorflow.keras import layers
 from game.game import Game
 from game.game_seed_creator import create_random_game_seed
 from game.game_status import GameStatus
-from main import show_solver
 from solvers.advance_genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
 from solvers.advance_genetic.crossover import random_crossover
 from solvers.advance_genetic.mutation import uniform_mutation, gaussian_mutation
@@ -47,7 +46,6 @@ class GeneticAlgorithm:
             weights[i] = model_genetic[i]
         model.set_weights(weights)
 
-    @timeit
     def evaluate_population(self, population_genetic: List, game_status_seeds: List[GameStatus]) \
             -> List[AdvanceModelGeneticEvaluated]:
         population_evaluated = []
@@ -159,12 +157,11 @@ class GeneticAlgorithm:
                                                                                   )
             best = population_evaluated[0]
             LOGGER.info(best)
-            file_name = "{:.2f}_iterations_fitness_{:.2f}_snake_length_{:.2f}_movements_{:.2f}_game_size_{:.2f}" \
+            file_name = "{:.2f}_iterations_fitness_{:.2f}_snake_length_{:.2f}_movements_{:.2f}" \
                 .format(i,
                         best.fitness(),
                         best.snake_length,
-                        best.movements,
-                        game_size)
+                        best.movements)
             self._set_model_weights(self.model, best.model_genetic)
             path = training_utils.save_model(self.model, dir_path, file_name)
             self.show_current_best_model(i, path, game_size)
@@ -174,6 +171,7 @@ class GeneticAlgorithm:
 
     def show_current_best_model(self, iteration, path, game_size):
         if aws_snake_utils.is_local_run() and iteration % 25 == 0:
+            from gui.gui_starter import show_solver
             show_solver(BasicGeneticSolver(path), game_size, 3, 6)
 
     @timeit

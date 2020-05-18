@@ -1,6 +1,7 @@
 import os
 import sys
 
+from gui.gui_starter import get_last_model_from_path, game
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
@@ -11,40 +12,15 @@ LOGGER.info(sys.version)
 LOGGER.info("The current directory is: {}".format(os.getcwd()))
 LOGGER.info("The args passed are: {}".format(sys.argv[1:]))
 from utils import aws_snake_utils
+
 LOGGER.info("The running environment is: {}".format(aws_snake_utils.get_running_environment()))
 LOGGER.info("*******************************************")
 
 import argparse
 
-
-def show_solver(solver,  board_size, snake_size, number_of_games=6):
-    from gui.window import Window
-    from game.game_provider import GameProvider
-    LOGGER.info("Showing solver...")
-    game_provider = GameProvider()
-    games = game_provider.get_random_games(solver, number_of_games, board_size, snake_size)
-    LOGGER.info("Creating window...")
-    window = Window(games)
-    window.should_close_automatically = 3000
-    window.start()
-
-
-def game():
-    from gui.window import Window
-    from game.game_provider import GameProvider
-    LOGGER.info("Solving games...")
-    game_provider = GameProvider()
-    #games = game_provider.get_all_game_types()
-    games = game_provider.get_random_games(game_provider.advance_genetic, 6, 6, 2)
-    input("Press Enter to continue...")
-    LOGGER.info("Creating window...")
-    window = Window(games)
-    window.start()
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('type', choices=['game', 'train_basic_dnn', 'train_basic_genetic', 'train_advanced_genetic'],
+    parser.add_argument('type', choices=['game', 'train_basic_dnn', 'train_basic_genetic', 'train_advanced_genetic', 'best'],
                         type=str.lower)
     # To not fail with the default argument train provided by AWS
     # https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-training-algo-dockerfile.html
@@ -66,3 +42,9 @@ if __name__ == '__main__':
         from train_genetic_algorithm import train_advance_genetic
 
         train_advance_genetic()
+
+    if args.type == "best":
+        from solvers.advance_genetic.advance_genetic_solver import AdvanceGeneticSolver
+        from gui.gui_starter import show_solver
+        solver = AdvanceGeneticSolver(get_last_model_from_path(r"C:\Users\Denis\Desktop\SnakePython\data\new_models\pop=1000_sel=0.1_mut_0.02_it_10000_games_1_game_size_8"))
+        show_solver(solver, 6, 2, 6)
