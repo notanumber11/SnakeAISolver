@@ -2,6 +2,9 @@
 
 ### The following commands are intended to be run from the snake directory.
 
+### Install dependencies
+``` pip install -r requirements.txt ```
+
 ### Run game
 ````python main.py game````
 

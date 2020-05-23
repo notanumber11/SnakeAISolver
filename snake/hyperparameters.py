@@ -1,5 +1,4 @@
 import json
-from collections import namedtuple
 
 
 class HyperParameters:
