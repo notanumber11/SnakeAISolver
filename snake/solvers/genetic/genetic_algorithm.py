@@ -198,16 +198,15 @@ class GeneticAlgorithm:
             "uniform": 0.33,
             "gaussian": 0.67
         }
+        mut_function = {
+            "uniform": uniform_mutation,
+            "gaussian": gaussian_mutation
+        }
         options = list(mut_type.keys())
         probabilities = list(mut_type.values())
         for i in range(len(children)):
             choice = np.random.choice(options, p=probabilities)
-            if choice == "uniform":
-                uniform_mutation(children[i], mutation_rate)
-            elif choice == "gaussian":
-                gaussian_mutation(children[i], mutation_rate)
-            else:
-                raise ValueError("Incorrect choice: " + choice)
+            mut_function[choice](children[i], mutation_rate)
 
     def build_model(self):
         tf.keras.backend.set_floatx('float64')
