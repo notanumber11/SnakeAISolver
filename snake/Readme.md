@@ -4,6 +4,7 @@
 
 ### Install dependencies
 ``` pip install -r requirements.txt ```
+Install Tkinter if you need GUI.
 
 ### Run game
 ````python main.py game````
