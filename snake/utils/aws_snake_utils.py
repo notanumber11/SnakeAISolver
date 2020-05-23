@@ -31,8 +31,8 @@ def _get_hyperparameters(path: str) -> Dict:
 
 
 def is_local_run():
-    operative_system = os.getenv('OS')
-    if operative_system is not None and "windows" in operative_system.lower():
+    env_path = os.getenv("Path") if os.getenv("Path") is None else os.getenv("PATH")
+    if env_path is not None and "denis" in env_path.lower():
         return True
     return False
 
@@ -53,7 +53,7 @@ def get_hyperparameters() -> Dict:
 
 def get_training_output_folder() -> str:
     if is_local_run():
-        return "..\\data\\new_models\\"
+        return "models/experiments/"
     elif _is_aws():
         return "/opt/ml/model/"
     elif _is_container_not_in_aws():

@@ -1,4 +1,6 @@
 import csv
+import os
+
 import tensorflow as tf
 from typing import List
 
@@ -26,13 +28,14 @@ def normalize_rad_angle(val):
 
 
 def load_model(path: str):
-    path = path.replace("/", "\\")
+    path = os.path.normpath(path)
     new_model = tf.keras.models.load_model(path)
     return new_model
 
 
 def save_model(model, folder_path: str, file_name):
     full_file_path = folder_path + file_name
+    full_file_path = os.path.normpath(full_file_path)
     LOGGER.info("Saving game on: {}".format(full_file_path))
     model.save(full_file_path)
     return full_file_path

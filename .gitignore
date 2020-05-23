@@ -144,3 +144,4 @@ docker/
 
 # data
 data/
+snake/models/experiments

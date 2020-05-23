@@ -38,6 +38,10 @@ def single_point_binary_crossover(model_genetic_father, model_genetic_mother):
     child_a, child_b = [], []
     for i in range(len(model_genetic_father)):
         layer_father, layer_mother = model_genetic_father[i], model_genetic_mother[i]
+        # Guarantees that if the vector will have 2 dimensions
+        # By default numpy if you use a single row vector return
+        # as shape a single number
+        layer_father, layer_mother = np.atleast_2d(layer_father), np.atleast_2d(layer_mother)
         chromosome_a = layer_father.copy()
         chromosome_b = layer_mother.copy()
 
@@ -50,6 +54,9 @@ def single_point_binary_crossover(model_genetic_father, model_genetic_mother):
 
         chromosome_a[row, :col] = layer_mother[row, :col]
         chromosome_b[row, :col] = layer_father[row, :col]
+        if rows == 1:
+            chromosome_a = chromosome_a.reshape(cols)
+            chromosome_b = chromosome_b.reshape(cols)
         child_a.append(chromosome_a)
         child_b.append(chromosome_b)
     return [child_a, child_b]

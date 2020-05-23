@@ -9,7 +9,7 @@ from game.game import Game
 from game.game_seed_creator import create_random_game_seed
 from game.game_status import GameStatus
 from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
-from solvers.genetic.crossover import random_crossover
+from solvers.genetic.crossover import random_crossover, simulated_binary_crossover, single_point_binary_crossover
 from solvers.genetic.mutation import uniform_mutation, gaussian_mutation
 from solvers.genetic.basic_genetic_solver import BasicGeneticSolver
 from solvers.training import basic_training_data_generator as training_generator, training_utils
@@ -121,19 +121,19 @@ class GeneticAlgorithm:
             "single_point_binary": 0.25,
             "simulated_binary": 0.5
         }
+
+        cross_functions = {
+            "random": random_crossover,
+            "single_point_binary": single_point_binary_crossover,
+            "simulated_binary": simulated_binary_crossover
+        }
         options = list(cross_type.keys())
         probabilities = list(cross_type.values())
         while len(children) <= number_of_children:
             pair = self._pair(top_performers, total_fitness)
             choice = np.random.choice(options, p=probabilities)
-            if choice == "random":
-                children += random_crossover(pair[0].model_genetic, pair[1].model_genetic)
-            elif choice == "simulated_binary":
-                children += random_crossover(pair[0].model_genetic, pair[1].model_genetic)
-            elif choice == "single_point_binary":
-                children += random_crossover(pair[0].model_genetic, pair[1].model_genetic)
-            else:
-                raise ValueError("Invalid crossover choice: " + choice)
+            children += cross_functions[choice](pair[0].model_genetic, pair[1].model_genetic)
+
         return children[:number_of_children]
 
     def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1,

@@ -11,7 +11,7 @@ class AdvanceGeneticSolver:
 
     def __init__(self, path_model = None):
         if path_model is None:
-            path_model = r"models\advance_genetic\1682.00_iterations_fitness_7490.47_snake_length_26.00_mov"
+            path_model = r"models/advance_genetic/1682.00_iterations_fitness_7490.47_snake_length_26.00_mov"
         print("path model is: " + path_model)
         self.model = training_utils.load_model(path_model)
         self.ag = solvers.training.advance_training_data_generator.AdvanceTrainingDataGenerator()
