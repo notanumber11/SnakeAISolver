@@ -138,7 +138,7 @@ class GeneticAlgorithm:
 
     def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1,
             game_size=6):
-        model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}_game_size_{}\\".format(population_size,
+        model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}_game_size_{}/".format(population_size,
                                                                                        selection_threshold,
                                                                                        mutation_rate, iterations,
                                                                                        games_to_play_per_individual,

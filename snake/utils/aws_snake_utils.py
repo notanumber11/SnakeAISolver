@@ -31,7 +31,7 @@ def _get_hyperparameters(path: str) -> Dict:
 
 
 def is_local_run():
-    env_path = os.getenv("Path") if os.getenv("Path") is None else os.getenv("PATH")
+    env_path = os.getenv("Path") if os.getenv("Path") is not None else os.getenv("PATH")
     if env_path is not None and "denis" in env_path.lower():
         return True
     return False
