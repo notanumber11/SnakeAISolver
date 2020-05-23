@@ -1,6 +1,6 @@
-from solvers.advance_genetic.advance_genetic_algorithm import AdvanceGeneticAlgorithm
+from solvers.genetic.advance_genetic_algorithm import AdvanceGeneticAlgorithm
 from utils import aws_snake_utils
-from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
+from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 
 def train_basic_genetic():
     ga = GeneticAlgorithm([9, 125, 1])

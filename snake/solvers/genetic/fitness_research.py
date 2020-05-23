@@ -3,7 +3,7 @@ import pandas as pd
 
 from game.game import Game
 from game.game_status import GameStatus
-from solvers.advance_genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
+from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
 
 
 class FitnessResearch:

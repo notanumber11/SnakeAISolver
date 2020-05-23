@@ -4,8 +4,8 @@ import numpy as np
 import tensorflow as tf
 
 from game.game_status import GameStatus
-from solvers.advance_genetic.advance_genetic_solver import AdvanceGeneticSolver
-from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
+from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
+from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
 from utils import aws_snake_utils
 

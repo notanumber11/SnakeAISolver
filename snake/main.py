@@ -44,7 +44,7 @@ if __name__ == '__main__':
         train_advance_genetic()
 
     if args.type == "best":
-        from solvers.advance_genetic.advance_genetic_solver import AdvanceGeneticSolver
+        from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
         from gui.gui_starter import show_solver
         solver = AdvanceGeneticSolver(get_last_model_from_path(r"C:\Users\Denis\Desktop\SnakePython\data\new_models\pop=1000_sel=0.1_mut_0.02_it_10000_games_1_game_size_8"))
         show_solver(solver, 6, 2, 6)

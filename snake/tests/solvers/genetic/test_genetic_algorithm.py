@@ -5,9 +5,8 @@ import numpy
 import numpy as np
 from numpy.testing import assert_raises
 
-from solvers.basic_genetic.genetic_algorithm import GeneticAlgorithm
+from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 from game.game_seed_creator import create_default_game_seed
-import timeit
 
 
 class GeneticAlgorithmTest(unittest.TestCase):
@@ -131,7 +130,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
             population_with_fitness[i].fitness = MagicMock(return_value=1)
 
         # One performer has significantly more fitness that the others
-        population_with_fitness[-1].fitness = MagicMock(return_value=1000)
+        population_with_fitness[-1].fitness = MagicMock(return_value=10000)
         total_fitness = sum([x.fitness() for x in population_with_fitness])
 
         top = population_with_fitness[-1]

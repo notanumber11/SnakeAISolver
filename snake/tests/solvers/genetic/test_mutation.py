@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from solvers.advance_genetic.mutation import gaussian_mutation, uniform_mutation
+from solvers.genetic.mutation import gaussian_mutation, uniform_mutation
 
 
 class TestMutation(unittest.TestCase):

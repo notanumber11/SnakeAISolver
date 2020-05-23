@@ -1,5 +1,5 @@
 import random
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 from tensorflow import keras
@@ -8,10 +8,10 @@ from tensorflow.keras import layers
 from game.game import Game
 from game.game_seed_creator import create_random_game_seed
 from game.game_status import GameStatus
-from solvers.advance_genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
-from solvers.advance_genetic.crossover import random_crossover
-from solvers.advance_genetic.mutation import uniform_mutation, gaussian_mutation
-from solvers.basic_genetic.basic_genetic_solver import BasicGeneticSolver
+from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
+from solvers.genetic.crossover import random_crossover
+from solvers.genetic.mutation import uniform_mutation, gaussian_mutation
+from solvers.genetic.basic_genetic_solver import BasicGeneticSolver
 from solvers.training import basic_training_data_generator as training_generator, training_utils
 from utils import aws_snake_utils
 from utils.snake_logger import get_module_logger

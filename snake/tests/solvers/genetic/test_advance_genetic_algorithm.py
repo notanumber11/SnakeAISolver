@@ -1,10 +1,9 @@
-from typing import Union, List
 from unittest.mock import MagicMock
 
 from game import game_seed_creator
 from game.game_seed_creator import create_default_game_seed, create_random_game_seed
-from solvers.advance_genetic.advance_genetic_algorithm import AdvanceGeneticAlgorithm
-from tests.solvers.basic_genetic.test_genetic_algorithm import GeneticAlgorithmTest
+from solvers.genetic.advance_genetic_algorithm import AdvanceGeneticAlgorithm
+from tests.solvers.genetic.test_genetic_algorithm import GeneticAlgorithmTest
 
 
 class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):

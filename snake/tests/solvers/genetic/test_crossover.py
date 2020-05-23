@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from solvers.advance_genetic.crossover import simulated_binary_crossover, single_point_binary_crossover, \
+from solvers.genetic.crossover import simulated_binary_crossover, single_point_binary_crossover, \
     random_crossover
 import numpy as np
 

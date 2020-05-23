@@ -2,7 +2,7 @@ import os
 
 from game import game_provider
 from game.game_provider import GameProvider
-from solvers.advance_genetic.advance_genetic_solver import AdvanceGeneticSolver
+from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
