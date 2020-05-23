@@ -8,9 +8,7 @@ class BasicGeneticSolver:
 
     def __init__(self, path_model = None):
         if path_model == None:
-            path_model = r"..\data\basic_genetic\success_genetic\31_iterations_snake_length_24.0_movements_177.0reward_13.899999999999974_"
-            path_model = r"..\data\basic_genetic\success_genetic\33_iterations_snake_length_26.0_movements_180.0reward_17.49999999999999_"
-            path_model = r"..\data\basic_genetic\success_genetic\s3\52_iterations_snake_length_36.0_movements_279.0reward_20.49"
+            path_model = r"models/basic_genetic/52_iterations_snake_length_36.0_movements_279.0reward_20.49"
             print("path model is: " + path_model)
         self.model = training_utils.load_model(path_model)
 

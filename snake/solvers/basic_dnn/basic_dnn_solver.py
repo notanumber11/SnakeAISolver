@@ -8,7 +8,7 @@ from solvers.training import training_utils
 class BasicDnnSolver:
 
     def __init__(self):
-        path_model = r"C:\Users\Denis\Desktop\SnakePython\data\basic_dnn\mode_basic_dnn_mse_7.12E-03_samples_10000"
+        path_model = r"models\basic_dnn\mode_basic_dnn_mse_7.12E-03_samples_10000"
         self.model = training_utils.load_model(path_model)
 
     def solve(self, game_status: GameStatus):
