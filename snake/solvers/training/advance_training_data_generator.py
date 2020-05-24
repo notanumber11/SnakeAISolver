@@ -5,6 +5,9 @@ from game.point import Point
 
 
 class AdvanceTrainingDataGenerator:
+    """
+    To understand the data generated please check AdvanceTrainingDataGeneratorTest
+    """
     LABELS = ["up", "down", "left", "right",
               "angle to apple", "reward"]
 
@@ -25,7 +28,7 @@ class AdvanceTrainingDataGenerator:
         RIGHT: [0, 0, 0, 1]
     }
 
-    def get_input_from_game_status(self, game_status: GameStatus) -> List[int]:
+    def get_input_from_game_status(self, game_status: GameStatus) -> List[float]:
         """
         The goal of this method is to create the following input data:
         A vector of dimension 28 that includes 24 inputs for vision and  4 inputs for the direction of the tail of the snake
@@ -33,8 +36,8 @@ class AdvanceTrainingDataGenerator:
         The 24 inputs for vision are looking at the 8 directions defined by VISION list.
         Each element on VISION list will have 3 values:
             - Distance to the wall
-            - Is there an apple
-            - Is there snake body
+            - Is there an apple (boolean)
+            - Is there snake body (boolean)
         An example for one direction will be: [5, 0, 1] meaning that there is a distance of 5 to the wall, the apple is not
         in that direction and the body of the snake is.
 
@@ -46,20 +49,20 @@ class AdvanceTrainingDataGenerator:
         snake_set = set(game_status.snake)
 
         for i in range(len(self.VISION)):
-            wall_distance = self._get_size_normalize_wall_distance(game_status, self.VISION[i])
+            distance_to_wall = self._get_wall_distance(game_status, self.VISION[i])
+            wall_distance = self._get_normalize_distance(game_status, distance_to_wall)
             training_data.append(wall_distance)
             apple_vision = int(self._get_apple_vision(game_status, self.VISION[i]))
             training_data.append(apple_vision)
             body_vision = int(self._get_body_vision(game_status, self.VISION[i], snake_set))
             training_data.append(body_vision)
 
-        tail_dir = self._get_tail_dir(game_status)
+        tail_dir = self.get_tail_dir(game_status)
         training_data += tail_dir
         return training_data
 
-
-    def _get_size_normalize_wall_distance(self, game_status: GameStatus, _dir: Point):
-        return round(self._get_wall_distance(game_status, _dir) / (game_status.size - 1), 2)
+    def _get_normalize_distance(self, game_status: GameStatus, distance: int):
+        return round(distance / (game_status.size - 1), 2)
 
     def _get_body_vision(self, game_status: GameStatus, _dir: Point, snake_set) -> bool:
         """
@@ -87,7 +90,7 @@ class AdvanceTrainingDataGenerator:
             distance += 1
         return distance
 
-    def _get_tail_dir(self, game_status: GameStatus):
+    def get_tail_dir(self, game_status: GameStatus):
         len_s = len(game_status.snake)
         tail_dir = game_status.snake[len_s - 2] - game_status.snake[len_s - 1]
         return AdvanceTrainingDataGenerator.DIR_TO_VECTOR[tail_dir]

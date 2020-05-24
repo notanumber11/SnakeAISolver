@@ -1,4 +1,6 @@
 from solvers.genetic.advance_genetic_algorithm import AdvanceGeneticAlgorithm
+from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
+from solvers.training.full_body_vision_training_data_generator import FullBodyVisionTrainingDataGenerator
 from utils import aws_snake_utils
 from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 
@@ -8,7 +10,8 @@ def train_basic_genetic():
 
 
 def train_advance_genetic():
-    ga = AdvanceGeneticAlgorithm([28, 20, 12, 4])
+    # ga = AdvanceGeneticAlgorithm([28, 20, 12, 4], AdvanceTrainingDataGenerator())
+    ga = AdvanceGeneticAlgorithm([28, 20, 12, 4], FullBodyVisionTrainingDataGenerator())
     _start_training(ga)
 
 

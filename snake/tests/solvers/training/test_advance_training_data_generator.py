@@ -69,28 +69,30 @@ class TestAdvanceTrainingDataGenerator(unittest.TestCase):
         snake = [[2, 2], [3, 2]]
         game_status = GameStatus(size, snake)
         for _dir in self.advance_training.VISION:
-            self.assertEqual(2, self.advance_training._get_wall_distance(game_status, _dir))
+            distance_to_wall = self.advance_training._get_wall_distance(game_status, _dir)
+            self.assertEqual(2, distance_to_wall)
         for _dir in self.advance_training.VISION:
-            self.assertEqual(0.5, self.advance_training._get_size_normalize_wall_distance(game_status, _dir))
+            distance_to_wall = self.advance_training._get_wall_distance(game_status, _dir)
+            self.assertEqual(0.5, self.advance_training._get_normalize_distance(game_status, distance_to_wall))
 
     def test_get_tail_dir_horizontal(self):
         size = 5
         snake = [[x, 0] for x in range(size)]
         game_status = GameStatus(size, snake)
-        tail_dir = self.advance_training._get_tail_dir(game_status)
+        tail_dir = self.advance_training.get_tail_dir(game_status)
         self.assertEqual(tail_dir, aT.DIR_TO_VECTOR[aT.LEFT])
         game_status.snake.reverse()
-        tail_dir = self.advance_training._get_tail_dir(game_status)
+        tail_dir = self.advance_training.get_tail_dir(game_status)
         self.assertEqual(tail_dir, aT.DIR_TO_VECTOR[aT.RIGHT])
 
     def test_get_tail_dir_vertically(self):
         size = 5
         snake = [[0, x] for x in range(size)]
         game_status = GameStatus(size, snake)
-        tail_dir = self.advance_training._get_tail_dir(game_status)
+        tail_dir = self.advance_training.get_tail_dir(game_status)
         self.assertEqual(tail_dir, aT.DIR_TO_VECTOR[aT.UP])
         game_status.snake.reverse()
-        tail_dir = self.advance_training._get_tail_dir(game_status)
+        tail_dir = self.advance_training.get_tail_dir(game_status)
         self.assertEqual(tail_dir, aT.DIR_TO_VECTOR[aT.DOWN])
 
     def test_get_apple_vision(self):

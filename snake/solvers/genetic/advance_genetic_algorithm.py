@@ -6,15 +6,14 @@ import tensorflow as tf
 from game.game_status import GameStatus
 from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
 from solvers.genetic.genetic_algorithm import GeneticAlgorithm
-from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
 from utils import aws_snake_utils
 
 
 class AdvanceGeneticAlgorithm(GeneticAlgorithm):
 
-    def __init__(self, layers_size: List[int]):
+    def  __init__(self, layers_size: List[int], training_data_generator):
         super().__init__(layers_size)
-        self.training_generator = AdvanceTrainingDataGenerator()
+        self.training_generator = training_data_generator
         if layers_size[-1] < 2:
             raise ValueError("AdvanceGeneticAlgorithm expects the output layer to be >1 since it uses classification {}"
                              .format(layers_size))

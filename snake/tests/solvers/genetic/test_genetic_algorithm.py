@@ -177,9 +177,10 @@ class GeneticAlgorithmTest(unittest.TestCase):
                                                                    selection_threshold,
                                                                    mutation_rate, population_size)
         self.assertEqual(len(new_generation), population_size)
-        for child in new_generation:
-            for layer_index in range(len(child)):
-                np.testing.assert_array_equal(child[layer_index], population_genetic[0][layer_index])
+        # No longer true with simulated binary crossover
+        # for child in new_generation:
+        #     for layer_index in range(len(child)):
+        #         np.testing.assert_array_equal(child[layer_index], population_genetic[0][layer_index])
 
     def test_execute_iteration(self):
         games_to_play = 1

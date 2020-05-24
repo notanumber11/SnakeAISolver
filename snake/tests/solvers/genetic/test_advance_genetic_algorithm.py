@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from game import game_seed_creator
 from game.game_seed_creator import create_default_game_seed, create_random_game_seed
 from solvers.genetic.advance_genetic_algorithm import AdvanceGeneticAlgorithm
+from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
 from tests.solvers.genetic.test_genetic_algorithm import GeneticAlgorithmTest
 
 
@@ -10,7 +11,7 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
 
     def setUp(self):
         self.layers_size = [28, 20, 12, 4]
-        self.ga = AdvanceGeneticAlgorithm(self.layers_size)
+        self.ga = AdvanceGeneticAlgorithm(self.layers_size, AdvanceTrainingDataGenerator())
 
     def test_max_number_of_movements(self):
         game_status = game_seed_creator.create_default_game_seed()
@@ -60,9 +61,6 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
         pass
 
     def direction_as_input(self):
-        pass
-
-    def no_binary_vission(self):
         pass
 
     def use_hyperparemeters_as_setting_and_track_experiments(self):
