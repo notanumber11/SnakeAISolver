@@ -46,5 +46,5 @@ if __name__ == '__main__':
     if args.type == "best":
         from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
         from gui.gui_starter import show_solver
-        solver = AdvanceGeneticSolver(get_last_model_from_path(r"models/experiments/"))
-        show_solver(solver, 6, 2, 6)
+        solver = AdvanceGeneticSolver(get_last_model_from_path(r"/home/denis/Escritorio/SnakeIA/snake/models/experiments/pop=1001_sel=0.25_mut_0.05_it_10000_games_1_game_size_8/"))
+        show_solver(solver, 8, 2, 6)

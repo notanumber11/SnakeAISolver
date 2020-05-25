@@ -10,7 +10,8 @@ LOGGER = get_module_logger(__name__)
 
 def get_last_model_from_path(path):
     subfolders = [str(f.path) for f in os.scandir(path) if f.is_dir()]
-    subfolders.sort(key=lambda folder: float(folder.split("\\")[-1].split("_")[0]))
+    subfolders.sort(key=lambda folder: float(folder.split("/")[-1].split("_")[0]))
+    print("The last model is: " + subfolders[-1])
     return subfolders[-1]
 
 

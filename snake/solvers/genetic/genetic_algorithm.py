@@ -65,7 +65,7 @@ class GeneticAlgorithm:
 
     def play_one_game(self, current_game_status: GameStatus, model, training_generator):
         game_statuses = [current_game_status]
-        movements_left = current_game_status.get_number_of_holes()
+        movements_left = current_game_status.size**2 * 2
         while current_game_status.is_valid_game() and movements_left > 0:
             _input = [training_generator.get_input_from_game_status(current_game_status)]
             _dir = self.get_best_movement(_input, model)
@@ -74,7 +74,7 @@ class GeneticAlgorithm:
             # Continue iteration
             movements_left -= 1
             if current_game_status.apple != new_game_status.apple:
-                movements_left = new_game_status.get_number_of_holes()
+                movements_left = current_game_status.size**2 * 2
             current_game_status = new_game_status
 
         # The game was in a loop

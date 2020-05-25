@@ -19,7 +19,7 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
         game_status.move = MagicMock(return_value=game_status)
         game = self.ga.play_one_game(game_status, self.ga.model, self.ga.training_generator)
         self.assertTrue(game.was_stack_in_loop)
-        self.assertEqual(len(game.game_statuses), game_status.get_number_of_holes() + 1)
+        self.assertEqual(len(game.game_statuses), game_status.size**2 * 2 + 1)
 
     def test_evaluate_best_movement_with_different_model(self):
         game_status = create_default_game_seed()
