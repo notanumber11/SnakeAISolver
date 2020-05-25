@@ -145,6 +145,9 @@ class GameStatus:
         angle = math.atan2(head.y - apple.y, head.x - apple.x)
         return angle
 
+    def get_movements_left(self):
+        return self.size ** 2 + len(self.snake)
+
     def __str__(self):
         board = [["0" for x in range(self.size)] for y in range(self.size)]
         for row in range(self.size):

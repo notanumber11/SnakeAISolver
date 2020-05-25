@@ -20,7 +20,7 @@ class AdvanceGeneticSolver:
 
     def solve(self, current_game_status: GameStatus):
         game_statuses = [current_game_status]
-        movements_left = current_game_status.size**2 * 2
+        movements_left = current_game_status.get_movements_left()
         while current_game_status.is_valid_game() and movements_left > 0:
             movements_left -= 1
             input = [self.ag.get_input_from_game_status(current_game_status)]
@@ -28,7 +28,7 @@ class AdvanceGeneticSolver:
             new_game_status = current_game_status.move(_dir)
             game_statuses.append(new_game_status)
             if current_game_status.apple != new_game_status.apple:
-                movements_left = current_game_status.size**2 * 2
+                movements_left = current_game_status.get_movements_left()
             if movements_left == 0:
                 print("loop time !")
             current_game_status = new_game_status
