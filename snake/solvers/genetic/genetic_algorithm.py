@@ -250,6 +250,6 @@ class GeneticAlgorithm:
             model = load_model(path)
             model_weights = model.get_weights()
             for j in range(len(model_weights)):
-                model_genetic.append(model_weights)
+                model_genetic = model_weights
             population_genetic.append(model_genetic)
         return population_genetic

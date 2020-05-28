@@ -1,7 +1,7 @@
 import os
 import sys
 
-from gui.gui_starter import get_last_model_from_path, game
+from gui.gui_starter import get_models_from_path, game
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
@@ -22,9 +22,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('type', choices=['game', 'train_basic_dnn', 'train_basic_genetic', 'train_advanced_genetic', 'best'],
                         type=str.lower)
+    parser.add_argument('-p', '--path', action='store',
+                        help="if path is supplied the model is loaded from there")
     # To not fail with the default argument train provided by AWS
     # https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-training-algo-dockerfile.html
     args, unknown = parser.parse_known_args()
+    path = args.path
+    if path is not None:
+        path = os.path.normpath(path)
+
     if args.type == "game":
         game()
     if args.type == "train_basic_dnn":
@@ -35,16 +41,17 @@ if __name__ == '__main__':
     if args.type == "train_basic_genetic":
         LOGGER.info("Running train_basic_genetic ...")
         from train_genetic_algorithm import train_basic_genetic
-        train_basic_genetic()
+        model_paths = get_models_from_path(path)
+        train_basic_genetic(model_paths)
 
     if args.type == "train_advanced_genetic":
         LOGGER.info("Running train_advance_genetic ...")
         from train_genetic_algorithm import train_advance_genetic
-
-        train_advance_genetic()
+        model_paths = get_models_from_path(path)
+        train_advance_genetic(model_paths)
 
     if args.type == "best":
         from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
         from gui.gui_starter import show_solver
-        solver = AdvanceGeneticSolver(get_last_model_from_path(r"/home/denis/Escritorio/SnakeIA/snake/models/experiments/pop=1001_sel=0.25_mut_0.05_it_10000_games_1_game_size_8/"))
-        show_solver(solver, 8, 2, 6)
+        solver = AdvanceGeneticSolver(get_models_from_path(path)[-1])
+        show_solver(solver, 8, 4, 6)
