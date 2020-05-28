@@ -13,10 +13,12 @@ from solvers.genetic.crossover import random_crossover, simulated_binary_crossov
 from solvers.genetic.mutation import uniform_mutation, gaussian_mutation
 from solvers.genetic.basic_genetic_solver import BasicGeneticSolver
 from solvers.training import basic_training_data_generator as training_generator, training_utils
+from solvers.training.training_utils import load_model
 from utils import aws_snake_utils
 from utils.snake_logger import get_module_logger
 from utils.timing import timeit
 import tensorflow as tf
+
 LOGGER = get_module_logger(__name__)
 
 
@@ -87,13 +89,15 @@ class GeneticAlgorithm:
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
 
-    def elitism_selection(self, percentage: float, population_evaluated: List[AdvanceModelGeneticEvaluated]) -> List[AdvanceModelGeneticEvaluated]:
+    def elitism_selection(self, percentage: float, population_evaluated: List[AdvanceModelGeneticEvaluated]) -> List[
+        AdvanceModelGeneticEvaluated]:
         population_evaluated.sort(key=lambda x: x.fitness(), reverse=True)
         number_of_top_performers = int(percentage * len(population_evaluated))
         top_performers = population_evaluated[0:number_of_top_performers]
         return top_performers
 
-    def _pair(self, parents: List[AdvanceModelGeneticEvaluated], total_fitness: float) -> List[AdvanceModelGeneticEvaluated]:
+    def _pair(self, parents: List[AdvanceModelGeneticEvaluated], total_fitness: float) -> List[
+        AdvanceModelGeneticEvaluated]:
         """
 
         :param parents: List of all the model_genetics with fitness
@@ -105,7 +109,8 @@ class GeneticAlgorithm:
         pick_2 = random.uniform(0, total_fitness)
         return [self._roulette_selection(parents, pick_1), self._roulette_selection(parents, pick_2)]
 
-    def _roulette_selection(self, parents: List[AdvanceModelGeneticEvaluated], pick: float) -> AdvanceModelGeneticEvaluated:
+    def _roulette_selection(self, parents: List[AdvanceModelGeneticEvaluated],
+                            pick: float) -> AdvanceModelGeneticEvaluated:
         current = 0
         for parent in parents:
             current += parent.fitness()
@@ -137,7 +142,7 @@ class GeneticAlgorithm:
         return children[:number_of_children]
 
     def run(self, population_size, selection_threshold, mutation_rate, iterations, games_to_play_per_individual=1,
-            game_size=6):
+            game_size=6, model_paths: List[str] = None):
         model_description = "pop={}_sel={}_mut_{}_it_{}_games_{}_game_size_{}/".format(population_size,
                                                                                        selection_threshold,
                                                                                        mutation_rate, iterations,
@@ -145,7 +150,11 @@ class GeneticAlgorithm:
                                                                                        game_size)
         LOGGER.info("Running game: {}".format(model_description))
         dir_path = aws_snake_utils.get_training_output_folder() + model_description
-        population_genetic = self.get_initial_population_genetic(population_size)
+        if model_paths is None:
+            population_genetic = self.get_initial_population_genetic(population_size)
+        else:
+            population_genetic = self.load_initial_population_genetic(model_paths, population_size, mutation_rate,
+                                                                      games_to_play_per_individual, game_size)
         # Iterate
         for i in range(iterations):
             LOGGER.info("Running iteration: {}".format(i))
@@ -168,12 +177,6 @@ class GeneticAlgorithm:
 
             population_genetic = new_population_genetic
 
-
-    def show_current_best_model(self, iteration, path, game_size):
-        if aws_snake_utils.is_local_run() and iteration % 25 == 0:
-            from gui.gui_starter import show_solver
-            show_solver(BasicGeneticSolver(path), game_size, 3, 6)
-
     @timeit
     def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate,
                           population_size,
@@ -192,6 +195,11 @@ class GeneticAlgorithm:
 
         new_generation_models = children + top_population_models
         return new_generation_models, top_population
+
+    def show_current_best_model(self, iteration, path, game_size):
+        if aws_snake_utils.is_local_run() and iteration % 25 == 0:
+            from gui.gui_starter import show_solver
+            show_solver(BasicGeneticSolver(path), game_size, 3, 6)
 
     def mutate(self, children, mutation_rate):
         mut_type = {
@@ -217,3 +225,31 @@ class GeneticAlgorithm:
             layer_lst.append(layers.Dense(self.layers_size[i]))
         model = keras.Sequential(layer_lst)
         return model
+
+    def load_initial_population_genetic(self, model_paths: List[str], population_size,
+                                        mutation_rate, games_to_play_per_individual,
+                                       game_size):
+        top_population_models = self.load_from_path(model_paths)
+        # Reproduce them
+        number_of_children = population_size - len(top_population_models)
+        game_statuses = [create_random_game_seed(game_size, 4) for j in range(games_to_play_per_individual)]
+        # Evaluate population
+        population_evaluated = self.evaluate_population(top_population_models, game_statuses)
+
+        children = self.crossover(population_evaluated, number_of_children)
+        # Introduce mutations
+        self.mutate(children, mutation_rate)
+
+        new_generation_models = children + top_population_models
+        return new_generation_models
+
+    def load_from_path(self, model_paths:List[str]):
+        population_genetic = []
+        for path in model_paths:
+            model_genetic = []
+            model = load_model(path)
+            model_weights = model.get_weights()
+            for j in range(len(model_weights)):
+                model_genetic.append(model_weights)
+            population_genetic.append(model_genetic)
+        return population_genetic

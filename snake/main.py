@@ -30,13 +30,13 @@ if __name__ == '__main__':
     if args.type == "train_basic_dnn":
         LOGGER.info("Running train_basic_dnn ...")
         from train_basic_dnn import train_basic_dnn
-
         train_basic_dnn()
+
     if args.type == "train_basic_genetic":
         LOGGER.info("Running train_basic_genetic ...")
         from train_genetic_algorithm import train_basic_genetic
-
         train_basic_genetic()
+
     if args.type == "train_advanced_genetic":
         LOGGER.info("Running train_advance_genetic ...")
         from train_genetic_algorithm import train_advance_genetic

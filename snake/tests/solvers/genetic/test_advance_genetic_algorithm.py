@@ -63,5 +63,15 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
     def direction_as_input(self):
         pass
 
-    def use_hyperparemeters_as_setting_and_track_experiments(self):
+    def use_hyperparemeters_as_setting(self):
+        pass
+
+    def checkout_points(self):
+        pass
+
+    def hyperparameter_search_hyperparameters(self):
+        pass
+
+    def make_basic_genetic_algorithm_classification(self):
+        # this will allow to remove having two different classes for advance and basic genetic
         pass
