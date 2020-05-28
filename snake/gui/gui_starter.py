@@ -23,8 +23,8 @@ def show_solver(solver, board_size, snake_size, number_of_games=6):
     from gui.window import Window
     LOGGER.info("Showing solver...")
     game_provider = GameProvider()
-    games = game_provider.get_random_games(solver, number_of_games * 10, board_size, snake_size)
-    games = game_provider.get_n_best(games, 3)
+    games = game_provider.get_random_games(solver, number_of_games, board_size, snake_size)
+    # games = game_provider.get_n_best(games, 3)
     LOGGER.info("Creating window...")
     window = Window(games)
     window.should_close_automatically = 3000
