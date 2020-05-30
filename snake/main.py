@@ -54,4 +54,4 @@ if __name__ == '__main__':
         from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
         from gui.gui_starter import show_solver
         solver = AdvanceGeneticSolver(get_models_from_path(path)[-1])
-        show_solver(solver, board_size=16, snake_size=6, number_of_games=2, number_of_tries=30)
+        show_solver(solver, board_size=16, snake_size=4, number_of_games=2, number_of_tries=30)

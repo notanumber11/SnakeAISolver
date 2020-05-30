@@ -2,6 +2,7 @@ import os
 
 from game import game_provider
 from game.game_provider import GameProvider
+from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
 from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
 from utils.snake_logger import get_module_logger
 
@@ -26,8 +27,10 @@ def show_solver(solver, board_size, snake_size, number_of_games=6, number_of_tri
     if number_of_tries == None:
         number_of_tries = number_of_games
     games = game_provider.get_random_games(solver, number_of_tries, board_size, snake_size)
-
-    games = game_provider.get_n_best(games, number_of_games                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             )
+    games = game_provider.get_n_best(games, number_of_games)
+    for game in games:
+        ga = AdvanceModelGeneticEvaluated([game], None)
+        print("The snake reached: {}".format(len(game.game_statuses[-1].snake)) + "with fitness: {} ".format(ga.fitness()))
     LOGGER.info("Creating window...")
     window = Window(games)
     window.should_close_automatically = 3000
