@@ -6,7 +6,6 @@ from game.game import Game
 
 class AdvanceModelGeneticEvaluated:
     def __init__(self, games: List[Game], model_genetic):
-        self.games = games
         self.model_genetic = model_genetic
         self.snake_length = 0
         self.movements = 0

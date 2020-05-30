@@ -64,7 +64,11 @@ class GeneticAlgorithm:
         for game_status in game_status_seeds:
             game = self.play_one_game(game_status, model, self.training_generator)
             games.append(game)
-        return AdvanceModelGeneticEvaluated(games, model_genetic)
+
+        advance_model = AdvanceModelGeneticEvaluated(games, model_genetic)
+        for game in games:
+            del game.game_statuses
+        return advance_model
 
     def play_one_game(self, current_game_status: GameStatus, model, training_generator):
         game_statuses = [current_game_status]
