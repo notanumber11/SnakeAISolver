@@ -19,12 +19,15 @@ def get_models_from_path(path):
     return subfolders
 
 
-def show_solver(solver, board_size, snake_size, number_of_games=6):
+def show_solver(solver, board_size, snake_size, number_of_games=6, number_of_tries=None):
     from gui.window import Window
     LOGGER.info("Showing solver...")
     game_provider = GameProvider()
-    games = game_provider.get_random_games(solver, number_of_games, board_size, snake_size)
-    # games = game_provider.get_n_best(games, 3)
+    if number_of_tries == None:
+        number_of_tries = number_of_games
+    games = game_provider.get_random_games(solver, number_of_tries, board_size, snake_size)
+
+    games = game_provider.get_n_best(games, number_of_games                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             )
     LOGGER.info("Creating window...")
     window = Window(games)
     window.should_close_automatically = 3000

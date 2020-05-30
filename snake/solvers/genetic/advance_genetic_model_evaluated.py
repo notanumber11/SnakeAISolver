@@ -35,7 +35,7 @@ class AdvanceModelGeneticEvaluated:
     def fitness(self):
         movements = self.movements / self.size**2 * 100
         apples = self.apples / self.size**2 * 100
-        fitness = movements + apples**2/movements + apples**2.5 - (0.1 * movements)**2
+        fitness = movements + apples**2/movements + apples**2.5 - (0.01 * movements)**2
         return fitness
 
     def basic_fitness(self):

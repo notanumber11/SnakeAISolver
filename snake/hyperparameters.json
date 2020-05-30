@@ -1,7 +1,7 @@
 {"iterations": "10000",
   "population_size": "1000",
-  "mutation_rate": "0.05",
+  "mutation_rate": "0.06",
   "games_to_play": "1",
   "selection_threshold": "0.1",
-  "game_size": 8
+  "game_size": 20
 }

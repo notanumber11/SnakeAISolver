@@ -18,6 +18,7 @@ from utils import aws_snake_utils
 from utils.snake_logger import get_module_logger
 from utils.timing import timeit
 import tensorflow as tf
+import gc
 
 LOGGER = get_module_logger(__name__)
 
@@ -157,31 +158,37 @@ class GeneticAlgorithm:
                                                                       games_to_play_per_individual, game_size)
         # Iterate
         for i in range(iterations):
-            LOGGER.info("Running iteration: {}".format(i))
+            # game_size = random.randint(6, 18)
+            # game_size = 20
+            snake_size = 4
+            LOGGER.info("Running iteration: {}    with game_size: {}".format(i, game_size))
             new_population_genetic, population_evaluated = self.execute_iteration(population_genetic,
                                                                                   games_to_play_per_individual,
                                                                                   selection_threshold, mutation_rate,
                                                                                   population_size,
-                                                                                  game_size
+                                                                                  game_size,
+                                                                                  snake_size
                                                                                   )
             best = population_evaluated[0]
             LOGGER.info(best)
-            file_name = "{:.2f}_iterations_fitness_{:.2f}_snake_length_{:.2f}_movements_{:.2f}" \
+            fraction = "{:.1f}_{:.1f}___{:.2f}".format(best.apples +snake_size, game_size**2, (best.apples +snake_size)/game_size**2)
+            file_name = "{}_____completion_{}_____movements_{:.1f}" \
                 .format(i,
-                        best.fitness(),
-                        best.snake_length,
+                        fraction,
                         best.movements)
             self._set_model_weights(self.model, best.model_genetic)
             path = training_utils.save_model(self.model, dir_path, file_name)
             self.show_current_best_model(i, path, game_size)
 
             population_genetic = new_population_genetic
+            gc.collect()
 
     @timeit
     def execute_iteration(self, population_genetic, games_to_play_per_individual, selection_threshold, mutation_rate,
                           population_size,
-                          game_size=6):
-        game_statuses = [create_random_game_seed(game_size, 4) for j in range(games_to_play_per_individual)]
+                          game_size=6,
+                          snake_size=4):
+        game_statuses = [create_random_game_seed(game_size, snake_size) for j in range(games_to_play_per_individual)]
         # Evaluate population
         population_evaluated = self.evaluate_population(population_genetic, game_statuses)
         # Select the best

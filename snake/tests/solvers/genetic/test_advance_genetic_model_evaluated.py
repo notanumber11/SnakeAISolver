@@ -53,3 +53,15 @@ class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
         me.movements = 20
         ten_apples_twenty_movements = me.fitness()
         self.assertGreater(ten_apples_ten_movements, ten_apples_twenty_movements)
+
+    def test_fitness_value(self):
+        snake = [[1, 0], [2, 0]]
+        apple = [0, 0]
+        game_status = GameStatus(11, snake, apple)
+        new_game_status = game_status.move(GameStatus.LEFT)
+        game = Game([game_status, new_game_status])
+        me = AdvanceModelGeneticEvaluated([game], None)
+        me.movements = 2000
+        me.apples = 19
+        print(me.fitness())
+
