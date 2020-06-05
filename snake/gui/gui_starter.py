@@ -32,6 +32,7 @@ def show_solver(solver, board_size, snake_size, number_of_games=6, number_of_tri
         ga = AdvanceModelGeneticEvaluated([game], None)
         print("The snake reached: {}".format(len(game.game_statuses[-1].snake)) + "with fitness: {} ".format(ga.fitness()))
     LOGGER.info("Creating window...")
+    input("Press Enter to continue...")
     window = Window(games)
     window.should_close_automatically = 3000
     window.start()

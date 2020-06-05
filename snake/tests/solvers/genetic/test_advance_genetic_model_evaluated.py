@@ -48,9 +48,9 @@ class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
         self.assertGreater(one_apple_five_movements, one_apple_one_movement)
         # Taking the same number of apples with lower movements is better when you already have some apples
         me.movements = 10
-        me.apples = 10
+        me.apples = 20
         ten_apples_ten_movements = me.fitness()
-        me.movements = 20
+        me.movements = 30
         ten_apples_twenty_movements = me.fitness()
         self.assertGreater(ten_apples_ten_movements, ten_apples_twenty_movements)
 
