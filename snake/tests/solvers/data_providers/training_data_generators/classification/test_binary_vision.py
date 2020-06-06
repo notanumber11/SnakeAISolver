@@ -1,7 +1,7 @@
 import unittest
 
 from game.game_status import GameStatus
-from solvers.data_providers.binary_vision_training_data_generator import BinaryVisionTrainingDataGenerator as aT
+from solvers.training_data_generators.classification.binary_vision import BinaryVision as aT
 
 
 class TestBinaryVisionTrainingDataGenerator(unittest.TestCase):

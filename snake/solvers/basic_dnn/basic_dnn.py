@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from solvers.data_providers.dnn_training_data_generator import LABELS, DATA_DIR
+from solvers.training_data_generators.regression.short_vision_regression import LABELS, DATA_DIR
 
 
 def get_data(dataset_path):

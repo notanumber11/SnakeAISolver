@@ -7,8 +7,8 @@ from tensorflow import keras
 from tensorflow.keras import layers
 
 from game.game_seed_creator import create_random_game_seed
-from solvers.data_providers import dnn_training_data_generator as training_generator, data_utils
-from solvers.data_providers.data_utils import load_model
+from solvers.training_data_generators import data_utils
+from solvers.training_data_generators.data_utils import load_model
 from solvers.genetic.crossover import crossover
 from solvers.genetic.evaluation import evaluate_population, set_model_weights
 from solvers.genetic.mutation import mutate
@@ -121,11 +121,11 @@ class GeneticAlgorithm:
         game_statuses = [create_random_game_seed(game_size, 4) for j in range(games_to_play_per_individual)]
         # Evaluate population
         population_evaluated = evaluate_population(top_population_models, game_statuses, self.model, self.training_generator)
-
+        # Crossover
         children = crossover(population_evaluated, number_of_children)
         # Introduce mutations
         mutate(children, mutation_rate)
-
+        # New generation
         new_generation_models = children + top_population_models
         return new_generation_models
 

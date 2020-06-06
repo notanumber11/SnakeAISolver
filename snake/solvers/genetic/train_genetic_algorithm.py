@@ -1,18 +1,18 @@
 from typing import List
 
-from solvers.data_providers import dnn_training_data_generator
+from solvers.training_data_generators.classification.short_vision import ShortVision
 from solvers.genetic.genetic_algorithm import GeneticAlgorithm
-from solvers.data_providers.distance_vision_training_data_generator import DistanceVisionTrainingDataGenerator
+from solvers.training_data_generators.classification.distance_vision import DistanceVision
 from utils import aws_snake_utils
 
 
 def train_basic_genetic(model_paths: List[str] = None):
-    ga = GeneticAlgorithm([5, 125, 4], dnn_training_data_generator)
+    ga = GeneticAlgorithm([5, 125, 4], ShortVision())
     _start_training(ga, model_paths)
 
 
 def train_advance_genetic(model_paths: List[str] = None):
-    ga = GeneticAlgorithm([28, 20, 12, 4], DistanceVisionTrainingDataGenerator())
+    ga = GeneticAlgorithm([28, 20, 12, 4], DistanceVision())
     _start_training(ga, model_paths)
 
 

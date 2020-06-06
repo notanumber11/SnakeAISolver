@@ -4,14 +4,15 @@ import numpy as np
 
 from game.game_status import GameStatus
 from game.point import Point
-from solvers.data_providers.binary_vision_training_data_generator import BinaryVisionTrainingDataGenerator
+from solvers.training_data_generators.classification.binary_vision import BinaryVision
+from solvers.training_data_generators.training_data_generator import TrainingDataGenerator
 
 
-class DistanceVisionTrainingDataGenerator:
-    VISION = BinaryVisionTrainingDataGenerator.VISION
+class DistanceVision(TrainingDataGenerator):
+    VISION = BinaryVision.VISION
 
     def __init__(self):
-        self.ag = BinaryVisionTrainingDataGenerator()
+        self.ag = BinaryVision()
         pass
 
     def get_input_from_game_status(self, game_status: GameStatus) -> List[float]:

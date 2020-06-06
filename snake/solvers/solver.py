@@ -10,6 +10,11 @@ class Solver(metaclass=abc.ABCMeta):
         print("{} finished".format(self))
 
     def __str__(self):
+        """
+        if type is <class 'solvers.genetic.genetic_algorithm.random_solver'> it
+        returns random_solver.
+        :return: instance type
+        """
         val = str(type(self))
         s = val.rfind(".")
         e = val.rfind(">")

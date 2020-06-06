@@ -58,4 +58,4 @@ def get_training_output_folder() -> str:
         return "/opt/ml/model/"
     elif _is_container_not_in_aws():
         return "/opt/ml/code/"
-    raise ValueError("Could not find valid path for data_providers output folder")
+    raise ValueError("Could not find valid path for training_data_generators output folder")

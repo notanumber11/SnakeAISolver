@@ -2,9 +2,10 @@ from typing import List
 
 from game.game_status import GameStatus
 from game.point import Point
+from solvers.training_data_generators.training_data_generator import TrainingDataGenerator
 
 
-class BinaryVisionTrainingDataGenerator:
+class BinaryVision(TrainingDataGenerator):
     """
     To understand the data generated please check AdvanceTrainingDataGeneratorTest
     """
@@ -93,7 +94,7 @@ class BinaryVisionTrainingDataGenerator:
     def get_tail_dir(self, game_status: GameStatus):
         len_s = len(game_status.snake)
         tail_dir = game_status.snake[len_s - 2] - game_status.snake[len_s - 1]
-        return BinaryVisionTrainingDataGenerator.DIR_TO_VECTOR[tail_dir]
+        return BinaryVision.DIR_TO_VECTOR[tail_dir]
 
     def _get_apple_vision(self, game_status: GameStatus, _dir: Point):
         new_pos = game_status.snake[0] + _dir

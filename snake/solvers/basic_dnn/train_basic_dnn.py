@@ -1,12 +1,14 @@
 import solvers.basic_dnn.basic_dnn as basic_dnn
-from solvers.data_providers.data_utils import load_model
-from solvers.data_providers.dnn_training_data_generator import generate_random_training_data, DATA_DIR, \
+from solvers.training_data_generators.data_utils import load_model
+from solvers.training_data_generators.regression.short_vision_regression import ShortVisionRegression, DATA_DIR, \
     TRAINING_DATA_BASIC_DNN
+
+short_vision_regression = ShortVisionRegression()
 
 
 def create_basic_dnn_model():
     samples = 10000
-    generate_random_training_data(6, 5, samples)
+    short_vision_regression.generate_random_training_data(6, 5, samples)
     path_ = "{}{}_samples_{}.csv".format(DATA_DIR,
                                          TRAINING_DATA_BASIC_DNN,
                                          samples)

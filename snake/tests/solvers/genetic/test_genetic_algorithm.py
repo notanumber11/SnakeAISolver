@@ -7,9 +7,9 @@ from numpy.testing import assert_raises
 
 from game import game_seed_creator
 from game.game_seed_creator import create_default_game_seed, create_random_game_seed
-from solvers.data_providers.binary_vision_training_data_generator import BinaryVisionTrainingDataGenerator
+from solvers.training_data_generators.classification.binary_vision import BinaryVision
 from solvers.genetic.crossover import pair
-from solvers.genetic.evaluation import evaluate_population, evaluate_model, set_model_weights, play_one_game, \
+from solvers.genetic.evaluation import evaluate_population, set_model_weights, play_one_game, \
     get_best_movement
 from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 from solvers.genetic.mutation import mutate
@@ -21,7 +21,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
     def setUp(self):
         #self.layers_size = [9, 125, 1]
         self.layers_size = [28, 20, 12, 4]
-        self.ga = GeneticAlgorithm(self.layers_size, BinaryVisionTrainingDataGenerator())
+        self.ga = GeneticAlgorithm(self.layers_size, BinaryVision())
 
     def test_generate_initial_population_layer_sizes(self):
         # Arrange

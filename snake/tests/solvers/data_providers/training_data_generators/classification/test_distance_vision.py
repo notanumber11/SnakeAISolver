@@ -1,13 +1,13 @@
 import unittest
 
 from game.game_status import GameStatus
-from solvers.data_providers.distance_vision_training_data_generator import DistanceVisionTrainingDataGenerator
+from solvers.training_data_generators.classification.distance_vision import DistanceVision
 
 
 class TestBinaryVisionTrainingDataGenerator(unittest.TestCase):
 
     def setUp(self):
-        self.advance_training = DistanceVisionTrainingDataGenerator()
+        self.advance_training = DistanceVision()
 
     def test_get_input_from_game_status_long_snake_circle(self):
         size = 5
