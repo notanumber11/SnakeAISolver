@@ -24,6 +24,7 @@ class RandomSolver(Solver):
                 result.append(game_status)
                 prev_dir = dir_
                 break
+        self.finished()
         return result
 
     def get_opposite_dir(self, dir_: Point):

@@ -2,11 +2,11 @@ from typing import List
 
 import numpy as np
 
-# Based on: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.85.7460&rep=rep1&type=pdf
-# https://github.com/Chrispresso/SnakeAI/blob/f1c6659a216bfc623c99a8cf225f8ae114893d87/genetic_algorithm/crossover.py
 from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
 
 
+# Based on: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.85.7460&rep=rep1&type=pdf
+# https://github.com/Chrispresso/SnakeAI/blob/f1c6659a216bfc623c99a8cf225f8ae114893d87/genetic_algorithm/crossover.py
 def simulated_binary_crossover(model_genetic_father, model_genetic_mother, eta=100):
     child_a, child_b = [], []
     for i in range(len(model_genetic_father)):
@@ -42,7 +42,7 @@ def single_point_binary_crossover(model_genetic_father, model_genetic_mother):
     child_a, child_b = [], []
     for i in range(len(model_genetic_father)):
         layer_father, layer_mother = model_genetic_father[i], model_genetic_mother[i]
-        # Guarantees that if the vector will have 2 dimensions
+        # Guarantees that if the vector will have 2 dimensions.
         # By default numpy if you use a single row vector return
         # as shape a single number
         layer_father, layer_mother = np.atleast_2d(layer_father), np.atleast_2d(layer_mother)

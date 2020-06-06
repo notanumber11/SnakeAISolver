@@ -12,6 +12,7 @@ class HamiltonSolver(Solver):
         if not is_hamilton_path_found:
             print("Hamilton could not find a valid path")
             return [game_status]
+        self.finished()
         return self.apply_hamilton_path_until_finish_game(game_statuses, 0)
 
     def apply_hamilton_path_until_finish_game(self, statuses: List[GameStatus], pos: int) -> List[GameStatus]:
@@ -43,5 +44,3 @@ class HamiltonSolver(Solver):
         game_statuses.pop()
         return False
 
-    def __str__(self):
-        return "HamiltonSolver"

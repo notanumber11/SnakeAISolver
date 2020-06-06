@@ -27,6 +27,7 @@ class DFSSolver(Solver):
             game_statuses += games[1:]
             current_game_status = game_statuses[-1]
             games = []
+        self.finished()
         print("{} dfs calls required to finish the game.".format(self.total_counter))
         return game_statuses
 

@@ -11,6 +11,7 @@ class BasicSolver(Solver):
         while game.is_valid_game():
             game = game.move(self.next_dir(game))
             games.append(game)
+        self.finished()
         return games
 
     def next_dir(self, game_status: GameStatus):
@@ -19,6 +20,3 @@ class BasicSolver(Solver):
             if game_status.can_move_to_dir(dir):
                 return dir
         return dirs[0]
-
-    def __str__(self):
-        return "BasicSolver"

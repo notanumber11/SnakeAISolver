@@ -1,14 +1,14 @@
 import solvers.basic_dnn.basic_dnn as basic_dnn
-import solvers.training.basic_training_data_generator
-import solvers.training.training_utils
-from solvers.training import training_utils
+from solvers.data_providers.data_utils import load_model
+from solvers.data_providers.dnn_training_data_generator import generate_random_training_data, DATA_DIR, \
+    TRAINING_DATA_BASIC_DNN
 
 
 def create_basic_dnn_model():
     samples = 1000
-    solvers.training.basic_training_data_generator.generate_random_training_data(6, 5, samples)
-    path_ = "{}{}_samples_{}.csv".format(solvers.training.basic_training_data_generator.DATA_DIR,
-                                         solvers.training.basic_training_data_generator.TRAINING_DATA_BASIC_DNN,
+    generate_random_training_data(6, 5, samples)
+    path_ = "{}{}_samples_{}.csv".format(DATA_DIR,
+                                         TRAINING_DATA_BASIC_DNN,
                                          samples)
     train_dataset, test_dataset, train_labels, test_labels = basic_dnn.get_data(path_)
     model = basic_dnn.build_model(test_dataset)
@@ -24,7 +24,7 @@ def load_basic_dnn_model():
     path_model = r"../data/basic_dnn/mode_basic_dnn_mse_7.12E-03_samples_10000"
     training_path = r"../data/basic_dnn/training_data_basic_dnn_samples_10000.csv"
     train_dataset, test_dataset, train_labels, test_labels = basic_dnn.get_data(training_path)
-    model = training_utils.load_model(path_model)
+    model = load_model(path_model)
     # game.summary()
     # test_model(game, test_dataset, test_labels)
     return model

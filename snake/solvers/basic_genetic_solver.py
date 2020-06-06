@@ -1,7 +1,7 @@
 import numpy as np
 
 from game.game_status import GameStatus
-from solvers.data_providers import basic_training_data_generator, data_utils
+from solvers.data_providers import dnn_training_data_generator, data_utils
 from solvers.solver import Solver
 
 
@@ -18,11 +18,11 @@ class BasicGeneticSolver(Solver):
         max_movements = game_status.size ** 4
         while game_status.is_valid_game() and max_movements > 0:
             max_movements -= 1
-            inputs = basic_training_data_generator.get_input_from_game_status(game_status)
+            inputs = dnn_training_data_generator.get_inputs_from_game_status(game_status)
             dir = self.get_best_movement(inputs)
             game_status = game_status.move(dir)
             game_statuses.append(game_status)
-        print("basic genetic game solved")
+        self.finished()
         return game_statuses
 
     def get_best_movement(self, inputs):

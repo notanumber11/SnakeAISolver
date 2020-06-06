@@ -36,20 +36,20 @@ if __name__ == '__main__':
         game()
     if args.type == "train_basic_dnn":
         LOGGER.info("Running train_basic_dnn ...")
-        from train_basic_dnn import train_basic_dnn
+        from solvers.basic_dnn.train_basic_dnn import train_basic_dnn
 
         train_basic_dnn()
 
     if args.type == "train_basic_genetic":
         LOGGER.info("Running train_basic_genetic ...")
-        from train_genetic_algorithm import train_basic_genetic
+        from solvers.genetic.train_genetic_algorithm import train_basic_genetic
 
         model_paths = get_models_from_path(path)
         train_basic_genetic(model_paths)
 
     if args.type == "train_advanced_genetic":
         LOGGER.info("Running train_advance_genetic ...")
-        from train_genetic_algorithm import train_advance_genetic
+        from solvers.genetic.train_genetic_algorithm import train_advance_genetic
 
         model_paths = get_models_from_path(path)
         train_advance_genetic(model_paths)

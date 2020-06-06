@@ -4,7 +4,7 @@ from game.game_status import GameStatus
 from game.point import Point
 
 
-class AdvanceTrainingDataGenerator:
+class BinaryVisionTrainingDataGenerator:
     """
     To understand the data generated please check AdvanceTrainingDataGeneratorTest
     """
@@ -93,7 +93,7 @@ class AdvanceTrainingDataGenerator:
     def get_tail_dir(self, game_status: GameStatus):
         len_s = len(game_status.snake)
         tail_dir = game_status.snake[len_s - 2] - game_status.snake[len_s - 1]
-        return AdvanceTrainingDataGenerator.DIR_TO_VECTOR[tail_dir]
+        return BinaryVisionTrainingDataGenerator.DIR_TO_VECTOR[tail_dir]
 
     def _get_apple_vision(self, game_status: GameStatus, _dir: Point):
         new_pos = game_status.snake[0] + _dir

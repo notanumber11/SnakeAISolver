@@ -1,10 +1,10 @@
 import unittest
 
 from game.game_status import GameStatus
-from solvers.data_providers.advance_training_data_generator import AdvanceTrainingDataGenerator as aT
+from solvers.data_providers.binary_vision_training_data_generator import BinaryVisionTrainingDataGenerator as aT
 
 
-class TestAdvanceTrainingDataGenerator(unittest.TestCase):
+class TestBinaryVisionTrainingDataGenerator(unittest.TestCase):
 
     def setUp(self):
         self.advance_training = aT()

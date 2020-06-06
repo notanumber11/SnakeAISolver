@@ -19,7 +19,6 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
     [1, 0, 0, 0, 1, 1, 0, 0, 0.8, 0.7]
     """
     solver = RandomSolver()
-    # game_provider = GameProvider()
     training_data = []
     enough_samples = False
     game_provider = game.game_provider.GameProvider()
@@ -55,7 +54,7 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
                                                  TRAINING_DATA_BASIC_DNN)
 
 
-def get_input_from_game_status(game_status: GameStatus):
+def get_inputs_from_game_status(game_status: GameStatus):
     """
     The goal of this method is to create 4 inputs (one per direction) with the following data
     ["up", "down", "left", "right", "up available", "down available", "left available", "right available", "angle to apple"]
@@ -76,6 +75,10 @@ def get_input_from_game_status(game_status: GameStatus):
         _input.append(angle)
     return inputs
 
+def get_input_from_game_status(game_status: GameStatus):
+    input = get_inputs_from_game_status(game_status)[0]
+    input = input[4:]
+    return input
 
 def _is_apple_closer(current: GameStatus, next: GameStatus):
     dist_curr = math.sqrt((current.head.x - current.apple.x) ** 2 + (current.head.y - current.apple.y) ** 2)
