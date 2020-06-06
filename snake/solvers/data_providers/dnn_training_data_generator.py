@@ -5,7 +5,7 @@ import solvers.data_providers.data_utils
 from game.game_status import GameStatus
 from solvers.random_solver import RandomSolver
 
-DATA_DIR = "../data/basic_dnn/"
+DATA_DIR = "models/basic_dnn/"
 TRAINING_DATA_BASIC_DNN = "training_data_basic_dnn"
 LABELS = ["up", "down", "left", "right", "up available", "down available", "left available", "right available",
           "angle to apple", "reward"]
@@ -33,7 +33,8 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
             down_available = 1.0 if current.can_move_to_dir(GameStatus.DOWN) else 0.0
             left_available = 1.0 if current.can_move_to_dir(GameStatus.LEFT) else 0.0
             right_available = 1.0 if current.can_move_to_dir(GameStatus.RIGHT) else 0.0
-            angle = solvers.data_providers.data_utils.normalize_rad_angle(current.get_angle(current.apple, current.head))
+            angle = solvers.data_providers.data_utils.normalize_rad_angle(
+                current.get_angle(current.apple, current.head))
 
             # Computations based on decision taken
             next_ = _game.game_statuses[i]
@@ -75,10 +76,12 @@ def get_inputs_from_game_status(game_status: GameStatus):
         _input.append(angle)
     return inputs
 
+
 def get_input_from_game_status(game_status: GameStatus):
     input = get_inputs_from_game_status(game_status)[0]
     input = input[4:]
     return input
+
 
 def _is_apple_closer(current: GameStatus, next: GameStatus):
     dist_curr = math.sqrt((current.head.x - current.apple.x) ** 2 + (current.head.y - current.apple.y) ** 2)

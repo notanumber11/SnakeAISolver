@@ -4,14 +4,12 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-import solvers.training.basic_training_data_generator
-
-print(tf.__version__)
+from solvers.data_providers.dnn_training_data_generator import LABELS, DATA_DIR
 
 
 def get_data(dataset_path):
     # Read data
-    raw_dataset = pd.read_csv(dataset_path, names=solvers.training.basic_training_data_generator.LABELS,
+    raw_dataset = pd.read_csv(dataset_path, names=LABELS,
                               na_values="?", header=0,
                               sep='\t', skipinitialspace=True)
 
@@ -20,8 +18,6 @@ def get_data(dataset_path):
     test_dataset = dataset_.drop(train_dataset.index)
     train_labels = train_dataset.pop("reward")
     test_labels = test_dataset.pop("reward")
-    last5elements = train_dataset.tail()
-    print(last5elements)
     return train_dataset, test_dataset, train_labels, test_labels
 
 
@@ -80,7 +76,7 @@ def plot_training_validation(history):
 def save_model(model, name: str, samples: int):
     mse = model.history.history["val_mse"][-1]
     mse = '{:.2E}'.format(mse)
-    path = "{}{}_mse_{}_samples_{}".format(solvers.training.basic_training_data_generator.DATA_DIR.replace("/", "\\"),
+    path = "{}{}_mse_{}_samples_{}".format(DATA_DIR.replace("/", "\\"),
                                            name, mse, samples)
     model.save(path)
 

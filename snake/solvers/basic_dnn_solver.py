@@ -9,7 +9,7 @@ from solvers.solver import Solver
 class BasicDnnSolver(Solver):
 
     def __init__(self):
-        path_model = r"models/basic_dnn/mode_basic_dnn_mse_7.12E-03_samples_10000"
+        path_model = r"models/basic_dnn/model_basic_dnn_mse_8.20E-03_samples_10000"
         self.model = data_utils.load_model(path_model)
 
     def solve(self, game_status: GameStatus):

@@ -37,7 +37,6 @@ if __name__ == '__main__':
     if args.type == "train_basic_dnn":
         LOGGER.info("Running train_basic_dnn ...")
         from solvers.basic_dnn.train_basic_dnn import train_basic_dnn
-
         train_basic_dnn()
 
     if args.type == "train_basic_genetic":

@@ -16,16 +16,17 @@ class GameProvider:
 
     def __init__(self):
         self.dfs_solver = DFSSolver()
-        self.hamilton_solver = HamiltonSolver()
+        # self.hamilton_solver = HamiltonSolver()
         self.random_solver = RandomSolver()
         self.basic_solver = solvers.basic_solver.BasicSolver()
-        self.basic_dnn = solvers.basic_dnn_solver.BasicDnnSolver()
+        # self.basic_dnn = solvers.basic_dnn_solver.BasicDnnSolver()
         self.basic_genetic = solvers.basic_genetic_solver.BasicGeneticSolver()
         self.advance_genetic = ag.AdvanceGeneticSolver()
         self.all_solvers = [self.random_solver,
                             self.basic_solver,
                             self.dfs_solver,
-                            self.basic_dnn,
+                            # self.basic_dnn,
+                            # self.hamilton_solver,
                             self.basic_genetic,
                             self.advance_genetic]
 
