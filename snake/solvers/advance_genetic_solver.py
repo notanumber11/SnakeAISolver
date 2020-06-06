@@ -3,9 +3,10 @@ import numpy as np
 from game.game_status import GameStatus
 from solvers.data_providers import data_utils
 from solvers.data_providers.full_body_vision_training_data_generator import FullBodyVisionTrainingDataGenerator
+from solvers.solver import Solver
 
 
-class AdvanceGeneticSolver:
+class AdvanceGeneticSolver(Solver):
 
     def __init__(self, path_model=None):
         if path_model is None:

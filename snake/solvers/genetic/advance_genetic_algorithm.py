@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 
 from game.game_status import GameStatus
-from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
+from solvers.advance_genetic_solver import AdvanceGeneticSolver
 from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 from utils import aws_snake_utils
 
@@ -22,12 +22,6 @@ class AdvanceGeneticAlgorithm(GeneticAlgorithm):
         model = super().build_model()
         tf.keras.Sequential([model, tf.keras.layers.Softmax()])
         return model
-
-    def get_best_movement(self, _input, model):
-        test_predictions = model.__call__(np.array(_input))
-        max_index = np.argmax(test_predictions[0])
-        result = GameStatus.DIRS[max_index]
-        return result
 
     def show_current_best_model(self, iteration, path, game_size):
         if aws_snake_utils.is_local_run() and iteration % 25 == 0:

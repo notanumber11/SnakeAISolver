@@ -1,7 +1,7 @@
 import os
 
 from game.game_provider import GameProvider
-from solvers.genetic.model_evaluated import ModelGeneticEvaluated
+from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)

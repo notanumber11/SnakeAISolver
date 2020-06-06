@@ -1,10 +1,10 @@
 from typing import List
 
 import game.game_seed_creator
-import solvers.basic_dnn.basic_dnn_solver
+import solvers.basic_dnn_solver
 import solvers.basic_solver
-import solvers.genetic.advance_genetic_solver as ag
-import solvers.genetic.basic_genetic_solver
+import solvers.advance_genetic_solver as ag
+import solvers.basic_genetic_solver
 import utils.timing
 from game.game import Game
 from solvers.dfs_solver import DFSSolver
@@ -19,8 +19,8 @@ class GameProvider:
         self.hamilton_solver = HamiltonSolver()
         self.random_solver = RandomSolver()
         self.basic_solver = solvers.basic_solver.BasicSolver()
-        self.basic_dnn = solvers.basic_dnn.basic_dnn_solver.BasicDnnSolver()
-        self.basic_genetic = solvers.genetic.basic_genetic_solver.BasicGeneticSolver()
+        self.basic_dnn = solvers.basic_dnn_solver.BasicDnnSolver()
+        self.basic_genetic = solvers.basic_genetic_solver.BasicGeneticSolver()
         self.advance_genetic = ag.AdvanceGeneticSolver()
         self.all_solvers = [self.random_solver,
                             self.basic_solver,

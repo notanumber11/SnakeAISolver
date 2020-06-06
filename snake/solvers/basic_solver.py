@@ -1,9 +1,10 @@
 import random
 
 from game.game_status import GameStatus
+from solvers.solver import Solver
 
 
-class BasicSolver:
+class BasicSolver(Solver):
 
     def solve(self, game: GameStatus):
         games = [game]

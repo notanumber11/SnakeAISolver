@@ -3,9 +3,10 @@ import numpy as np
 import solvers.data_providers.basic_training_data_generator
 from game.game_status import GameStatus
 from solvers.data_providers import data_utils
+from solvers.solver import Solver
 
 
-class BasicDnnSolver:
+class BasicDnnSolver(Solver):
 
     def __init__(self):
         path_model = r"models/basic_dnn/mode_basic_dnn_mse_7.12E-03_samples_10000"

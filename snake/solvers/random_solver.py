@@ -3,9 +3,10 @@ from typing import List
 
 from game.game_status import GameStatus
 from game.point import Point
+from solvers.solver import Solver
 
 
-class RandomSolver:
+class RandomSolver(Solver):
     def __init__(self):
         pass
 

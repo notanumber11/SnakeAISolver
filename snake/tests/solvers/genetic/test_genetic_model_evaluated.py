@@ -2,7 +2,7 @@ import unittest
 
 from game.game import Game
 from game.game_status import GameStatus
-from solvers.genetic.model_evaluated import ModelGeneticEvaluated
+from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
 
 
 class TestAdvanceGeneticModelEvaluated(unittest.TestCase):

@@ -55,7 +55,7 @@ if __name__ == '__main__':
         train_advance_genetic(model_paths)
 
     if args.type == "best":
-        from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
+        from solvers.advance_genetic_solver import AdvanceGeneticSolver
         from gui.gui_starter import show_solver
 
         solver = AdvanceGeneticSolver(get_models_from_path(path)[-1])

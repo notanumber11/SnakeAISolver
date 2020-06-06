@@ -1,10 +1,10 @@
 import unittest
 
-import solvers.basic_dnn.basic_dnn_solver
+import solvers.basic_dnn_solver
 
 
 class TestBasicDnnSolver(unittest.TestCase):
 
     def test_next_dir(self):
-        a = solvers.basic_dnn.basic_dnn_solver.BasicDnnSolver()
+        a = solvers.basic_dnn_solver.BasicDnnSolver()
         self.assertEqual(1, 1)

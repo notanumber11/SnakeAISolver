@@ -1,8 +1,12 @@
-import numpy as np
+from typing import List
 
+import numpy as np
 
 # Based on: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.85.7460&rep=rep1&type=pdf
 # https://github.com/Chrispresso/SnakeAI/blob/f1c6659a216bfc623c99a8cf225f8ae114893d87/genetic_algorithm/crossover.py
+from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
+
+
 def simulated_binary_crossover(model_genetic_father, model_genetic_mother, eta=100):
     child_a, child_b = [], []
     for i in range(len(model_genetic_father)):
@@ -60,3 +64,44 @@ def single_point_binary_crossover(model_genetic_father, model_genetic_mother):
         child_a.append(chromosome_a)
         child_b.append(chromosome_b)
     return [child_a, child_b]
+
+
+def crossover(top_performers: List[ModelGeneticEvaluated], number_of_children):
+    total_fitness = sum([x.fitness() for x in top_performers])
+    children = []
+    cross_type = {
+        "random": 0.25,
+        "single_point_binary": 0.25,
+        "simulated_binary": 0.5
+    }
+
+    cross_functions = {
+        "random": random_crossover,
+        "single_point_binary": single_point_binary_crossover,
+        "simulated_binary": simulated_binary_crossover
+    }
+    options = list(cross_type.keys())
+    probabilities = list(cross_type.values())
+    while len(children) <= number_of_children:
+        parents = pair(top_performers, total_fitness)
+        choice = np.random.choice(options, p=probabilities)
+        children += cross_functions[choice](parents[0].model_genetic, parents[1].model_genetic)
+
+    return children[:number_of_children]
+
+
+def pair(parents: List[ModelGeneticEvaluated], total_fitness: float) -> List[
+    ModelGeneticEvaluated]:
+    pick_1 = np.random.uniform(0, total_fitness)
+    pick_2 = np.random.uniform(0, total_fitness)
+    return [roulette_selection(parents, pick_1), roulette_selection(parents, pick_2)]
+
+
+def roulette_selection(parents: List[ModelGeneticEvaluated],
+                       pick: float) -> ModelGeneticEvaluated:
+    current = 0
+    for parent in parents:
+        current += parent.fitness()
+        if current >= pick:
+            return parent
+    raise ValueError("Error performing roulette selection with pick={} and parents={}".format(pick, parents))

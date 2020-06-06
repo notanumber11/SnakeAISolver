@@ -2,9 +2,10 @@ import numpy as np
 
 from game.game_status import GameStatus
 from solvers.data_providers import basic_training_data_generator, data_utils
+from solvers.solver import Solver
 
 
-class BasicGeneticSolver:
+class BasicGeneticSolver(Solver):
 
     def __init__(self, path_model=None):
         if path_model == None:
