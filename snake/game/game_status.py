@@ -6,6 +6,7 @@ from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
 
+
 class GameStatus:
     UP = Point(0, -1)
     DOWN = Point(0, 1)
@@ -157,7 +158,7 @@ class GameStatus:
         board[self.apple.y][self.apple.x] = "X"
         board[self.head.y][self.head.x] = "H"
         board = "{}".format(board).replace("],", "]\n")
-        board = board.replace(","," ").replace('\''," ")
+        board = board.replace(",", " ").replace('\'', " ")
         return board
 
     def __repr__(self):

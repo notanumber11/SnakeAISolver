@@ -38,7 +38,7 @@ class HyperParameters:
             d = self.__dict__.get(f)
             full_d = h.__dict__.get(f)
             if type(d) == dict:
-                none_values += ["{}[{}]".format(f,k) for k in full_d.keys() if d.get(k) is None]
+                none_values += ["{}[{}]".format(f, k) for k in full_d.keys() if d.get(k) is None]
         if none_values:
             raise ValueError("Some properties of hyperparameters are None" + str(none_values))
         # Check that the sum of the dictionaries is 1
@@ -51,6 +51,7 @@ class HyperParameters:
             acum += self.mut_type[key]
         if acum != 1:
             raise ValueError("mut_type values do not sum 1 " + str(self.mut_type))
+
 
 if __name__ == '__main__':
     hyperparameters = HyperParameters.load("hyperparameters_2.json")

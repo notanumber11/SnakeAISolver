@@ -4,7 +4,7 @@ from game.game_status import GameStatus
 
 
 class Game:
-    def __init__(self, game_statuses: List[GameStatus], loop= False):
+    def __init__(self, game_statuses: List[GameStatus], loop=False):
         self.solved = False
         self.game_statuses = game_statuses
         self.was_stack_in_loop = loop

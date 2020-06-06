@@ -1,4 +1,5 @@
 import unittest
+
 import numpy as np
 
 from solvers.genetic.mutation import gaussian_mutation, uniform_mutation
@@ -30,7 +31,7 @@ class TestMutation(unittest.TestCase):
             for i in range(size):
                 if model_genetic[layer_index][i] == 1:
                     equal_count += 1
-        self.assertGreaterEqual(equal_count,  70)
+        self.assertGreaterEqual(equal_count, 70)
         self.assertLessEqual(equal_count, 99)
 
     def test_zero_mutation_rate(self):

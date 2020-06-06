@@ -1,9 +1,7 @@
 import os
 
-from game import game_provider
 from game.game_provider import GameProvider
-from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
-from solvers.genetic.advance_genetic_solver import AdvanceGeneticSolver
+from solvers.genetic.model_evaluated import ModelGeneticEvaluated
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
@@ -29,20 +27,22 @@ def show_solver(solver, board_size, snake_size, number_of_games=6, number_of_tri
     games = game_provider.get_random_games(solver, number_of_tries, board_size, snake_size)
     games = game_provider.get_n_best(games, number_of_games)
     for game in games:
-        ga = AdvanceModelGeneticEvaluated([game], None)
-        print("The snake reached: {}".format(len(game.game_statuses[-1].snake)) + "with fitness: {} ".format(ga.fitness()))
+        ga = ModelGeneticEvaluated([game], None)
+        print("The snake reached: {}".format(len(game.game_statuses[-1].snake)) + "with fitness: {} ".format(
+            ga.fitness()))
     LOGGER.info("Creating window...")
     input("Press Enter to continue...")
     window = Window(games)
     window.should_close_automatically = 3000
     window.start()
 
+
 def game():
     from gui.window import Window
     from game.game_provider import GameProvider
     LOGGER.info("Solving games...")
     game_provider = GameProvider()
-    games = game_provider.get_all_game_types()
+    games = game_provider.get_all_game_types(1, 8, 4)
 
     input("Press Enter to continue...")
     LOGGER.info("Creating window...")

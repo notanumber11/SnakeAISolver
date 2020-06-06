@@ -11,7 +11,7 @@ from utils import aws_snake_utils
 
 class AdvanceGeneticAlgorithm(GeneticAlgorithm):
 
-    def  __init__(self, layers_size: List[int], training_data_generator):
+    def __init__(self, layers_size: List[int], training_data_generator):
         super().__init__(layers_size)
         self.training_generator = training_data_generator
         if layers_size[-1] < 2:

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from game import game_seed_creator
 from game.game_seed_creator import create_default_game_seed, create_random_game_seed
 from solvers.genetic.advance_genetic_algorithm import AdvanceGeneticAlgorithm
-from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
+from solvers.data_providers.advance_training_data_generator import AdvanceTrainingDataGenerator
 from tests.solvers.genetic.test_genetic_algorithm import GeneticAlgorithmTest
 
 
@@ -19,7 +19,7 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
         game_status.move = MagicMock(return_value=game_status)
         game = self.ga.play_one_game(game_status, self.ga.model, self.ga.training_generator)
         self.assertTrue(game.was_stack_in_loop)
-        self.assertEqual(len(game.game_statuses), game_status.size**2 + len(game_status.snake)+1)
+        self.assertEqual(len(game.game_statuses), game_status.size ** 2 + len(game_status.snake) + 1)
 
     def test_evaluate_best_movement_with_different_model(self):
         game_status = create_default_game_seed()
@@ -55,7 +55,6 @@ class TestAdvanceGeneticAlgorithm(GeneticAlgorithmTest):
         self.assertFalse(all(x == predictions[0] for x in predictions))
         prediction_set = set(predictions)
         print(prediction_set)
-
 
     def test_absolute_distances(self):
         pass

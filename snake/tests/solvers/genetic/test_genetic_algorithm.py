@@ -5,8 +5,8 @@ import numpy
 import numpy as np
 from numpy.testing import assert_raises
 
-from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 from game.game_seed_creator import create_default_game_seed
+from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 
 
 class GeneticAlgorithmTest(unittest.TestCase):
@@ -191,7 +191,6 @@ class GeneticAlgorithmTest(unittest.TestCase):
         mutation_rate = 1
         children, evaluation_result = self.ga.execute_iteration(population_genetic, games_to_play, selection_threshold,
                                                                 mutation_rate, population_size)
-
 
     def test_mutate(self):
         population_genetic = [[np.ones(10)] for i in range(10)]

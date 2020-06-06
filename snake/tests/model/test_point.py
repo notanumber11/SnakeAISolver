@@ -38,10 +38,10 @@ class TestPoint(unittest.TestCase):
         p1 = Point(2, 3)
         p2 = Point(10, 20)
         p3 = Point(p1.x + p2.x, p1.y + p2.y)
-        self.assertEqual(p1+p2, p3)
+        self.assertEqual(p1 + p2, p3)
 
     def test_substraction(self):
         p1 = Point(2, 3)
         p2 = Point(10, 20)
         p3 = Point(p1.x - p2.x, p1.y - p2.y)
-        self.assertEqual(p1-p2, p3)
+        self.assertEqual(p1 - p2, p3)

@@ -1,14 +1,15 @@
-from typing import List, Union, Any, Tuple
+from typing import List
 
 import numpy as np
+
 from game.game_status import GameStatus
 from game.point import Point
-from solvers.training.advance_training_data_generator import AdvanceTrainingDataGenerator
+from solvers.data_providers.advance_training_data_generator import AdvanceTrainingDataGenerator
 
 
-class FullBodyVisionTrainingDataGenerator():
-
+class FullBodyVisionTrainingDataGenerator:
     VISION = AdvanceTrainingDataGenerator.VISION
+
     def __init__(self):
         self.ag = AdvanceTrainingDataGenerator()
         pass
@@ -25,13 +26,12 @@ class FullBodyVisionTrainingDataGenerator():
         training_data += tail_dir
         return training_data
 
-
     def _get_distances(self, game_status: GameStatus, _dir: Point, snake_set) -> List[float]:
         """
         :param _dir:
         :param snake_set: set with snake points
         :return: distance to wall, distance to apple and distance to snake
-            The distance follows the following pattern:
+            The distance follows the following pattern: d = 1/number of cells distance
                 distance infinite -> 0
                 distance 100 -> 0.01
                 distance 10 -> 0.1
@@ -59,7 +59,7 @@ class FullBodyVisionTrainingDataGenerator():
             # Advance loop
             new_pos = new_pos + _dir
 
-        wall_distance = round(1.0/distance, 2)
-        apple_distance = round(1.0/apple_distance, 2)
-        snake_distance = round(1.0/snake_distance, 2)
+        wall_distance = round(1.0 / distance, 2)
+        apple_distance = round(1.0 / apple_distance, 2)
+        snake_distance = round(1.0 / snake_distance, 2)
         return [wall_distance, apple_distance, snake_distance]

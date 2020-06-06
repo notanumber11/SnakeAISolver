@@ -1,10 +1,11 @@
-import numpy as np
 from typing import List
+
+import numpy as np
 
 from game.game import Game
 
 
-class AdvanceModelGeneticEvaluated:
+class ModelGeneticEvaluated:
     def __init__(self, games: List[Game], model_genetic):
         self.model_genetic = model_genetic
         self.snake_length = 0
@@ -32,9 +33,9 @@ class AdvanceModelGeneticEvaluated:
         return all(np.array_equal(a[i], b[i]) for i in range(len(a)))
 
     def fitness(self):
-        movements = self.movements / self.size**2 * 100
-        apples = self.apples / self.size**2 * 100
-        fitness = movements + apples**2/movements + apples**2.5 - (0.01 * movements)**2
+        movements = self.movements / self.size ** 2 * 100
+        apples = self.apples / self.size ** 2 * 100
+        fitness = movements + apples ** 2 / movements + apples ** 2.5 - (0.01 * movements) ** 2
         return fitness
 
     def basic_fitness(self):
@@ -44,7 +45,8 @@ class AdvanceModelGeneticEvaluated:
         return fitness
 
     def other_fitness(self):
-        fitness = self.movements + (2**self.apples + 500*self.apples**2.1) - (0.25 * self.movements**1.3 * self.apples**1.2)
+        fitness = self.movements + (2 ** self.apples + 500 * self.apples ** 2.1) - (
+                    0.25 * self.movements ** 1.3 * self.apples ** 1.2)
         return fitness
 
     def __str__(self):

@@ -1,22 +1,18 @@
-import os
-
 import numpy as np
 
 from game.game_status import GameStatus
-from solvers.training import training_utils
-import solvers.training.advance_training_data_generator
-from solvers.training.full_body_vision_training_data_generator import FullBodyVisionTrainingDataGenerator
+from solvers.data_providers import data_utils
+from solvers.data_providers.full_body_vision_training_data_generator import FullBodyVisionTrainingDataGenerator
 
 
 class AdvanceGeneticSolver:
 
     def __init__(self, path_model=None):
         if path_model is None:
-            path_model = r"models/advance_genetic/1682.00_iterations_fitness_7490.47_snake_length_26.00_mov"
+            path_model = r"models/advance_genetic/pop=1000_sel=0.1_mut_0.05_it_10000_games_1_game_size_16/176_____completion_256.0_256.0___1.00_____movements_12396.0"
         print("advanced path model is: " + path_model)
-        self.model = training_utils.load_model(path_model)
+        self.model = data_utils.load_model(path_model)
         self.ag = FullBodyVisionTrainingDataGenerator()
-
 
     def solve(self, current_game_status: GameStatus):
         game_statuses = [current_game_status]

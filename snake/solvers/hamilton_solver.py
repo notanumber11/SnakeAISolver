@@ -6,12 +6,12 @@ from game.point import Point
 
 class HamiltonSolver:
     def solve(self, game_status: GameStatus) -> List[GameStatus]:
-        games = []
-        is_hamilton_path_found = self.hamilton(game_status, games, [], game_status.head)
+        game_statuses = []
+        is_hamilton_path_found = self.hamilton(game_status, game_statuses, [], game_status.head)
         if not is_hamilton_path_found:
             print("Hamilton could not find a valid path")
             return [game_status]
-        return self.apply_hamilton_path_until_finish_game(games, 0)
+        return self.apply_hamilton_path_until_finish_game(game_statuses, 0)
 
     def apply_hamilton_path_until_finish_game(self, statuses: List[GameStatus], pos: int) -> List[GameStatus]:
         last_status = statuses[-1]
@@ -25,22 +25,21 @@ class HamiltonSolver:
             pos += 1
         return statuses
 
-    def hamilton(self, game_status: GameStatus, games: list, visited: list, goal: Point):
+    def hamilton(self, game_status: GameStatus, game_statuses: List[GameStatus], visited: List[GameStatus], goal: Point):
         visited.append(game_status.head)
-        games.append(game_status)
+        game_statuses.append(game_status)
 
-        for dir in GameStatus.DIRS:
-            # Is a valid direction move
-            new_pos = Point(game_status.head.x + dir.x, game_status.head.y + dir.y)
+        for _dir in GameStatus.DIRS:
+            new_pos = Point(game_status.head.x + _dir.x, game_status.head.y + _dir.y)
             # If the new pos is the end
             if new_pos == goal and len(visited) == game_status.size * game_status.size:
                 return True
             if new_pos not in visited and game_status.can_move_to_pos(new_pos):
-                new_game = game_status.move(dir)
-                if self.hamilton(new_game, games, visited, goal):
+                new_game_status = game_status.move(_dir)
+                if self.hamilton(new_game_status, game_statuses, visited, goal):
                     return True
         visited.pop()
-        games.pop()
+        game_statuses.pop()
         return False
 
     def __str__(self):

@@ -60,4 +60,3 @@ def single_point_binary_crossover(model_genetic_father, model_genetic_mother):
         child_a.append(chromosome_a)
         child_b.append(chromosome_b)
     return [child_a, child_b]
-

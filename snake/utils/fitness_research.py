@@ -3,9 +3,9 @@ import pandas as pd
 
 from game.game import Game
 from game.game_status import GameStatus
-from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
+from solvers.genetic.model_evaluated import ModelGeneticEvaluated
 
-
+# The goal of this class is to research the best fitness values for the AdvanceModelGeneticEvaluated
 class FitnessResearch:
 
     def __init__(self):
@@ -16,13 +16,13 @@ class FitnessResearch:
         apple = [0, 0]
         game_status = GameStatus(6, snake, apple)
         game = Game([game_status])
-        advance_model_evaluated = AdvanceModelGeneticEvaluated([game], None)
+        advance_model_evaluated = ModelGeneticEvaluated([game], None)
         apples = [1, 2, 5, 10, 15, 20]
         movements = [1, 5, 10, 20, 30]
         self.fitness_grow(apples, movements, len(game_status.snake), advance_model_evaluated)
 
     def fitness_grow(self, apples, movements, initial_size,
-                     advance_model: AdvanceModelGeneticEvaluated):
+                     advance_model: ModelGeneticEvaluated):
 
         apples = apples
         advance_fitness_dict = {}
@@ -66,6 +66,7 @@ class FitnessResearch:
         ax = dataframe.plot.line(logy=True, title=title)
         ax.set_xticks(x_axis)
         plt.show()
+
 
 if __name__ == '__main__':
     research_fitness = FitnessResearch()

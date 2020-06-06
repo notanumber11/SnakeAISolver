@@ -1,8 +1,7 @@
 import math
 
-import solvers.training.training_utils
-
 import game.game_provider
+import solvers.data_providers.data_utils
 from game.game_status import GameStatus
 from solvers.random_solver import RandomSolver
 
@@ -14,7 +13,7 @@ LABELS = ["up", "down", "left", "right", "up available", "down available", "left
 
 def generate_random_training_data(grid_size, snake_size, samples: int = 100):
     """
-    Generate number of samples for training with the following format:
+    Generate number of samples for data_providers with the following format:
     ["up", "down", "left", "right", "up available", "down available", "left available", "right available", "angle to apple", "reward"]
     Example value when decision is go up and we eat the apple in that movement:
     [1, 0, 0, 0, 1, 1, 0, 0, 0.8, 0.7]
@@ -35,7 +34,7 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
             down_available = 1.0 if current.can_move_to_dir(GameStatus.DOWN) else 0.0
             left_available = 1.0 if current.can_move_to_dir(GameStatus.LEFT) else 0.0
             right_available = 1.0 if current.can_move_to_dir(GameStatus.RIGHT) else 0.0
-            angle = solvers.training.training_utils.normalize_rad_angle(current.get_angle(current.apple, current.head))
+            angle = solvers.data_providers.data_utils.normalize_rad_angle(current.get_angle(current.apple, current.head))
 
             # Computations based on decision taken
             next_ = _game.game_statuses[i]
@@ -52,8 +51,8 @@ def generate_random_training_data(grid_size, snake_size, samples: int = 100):
                 break
 
     print("Training data has been generated...")
-    solvers.training.training_utils.create_csv(LABELS, training_data,
-                                               TRAINING_DATA_BASIC_DNN)
+    solvers.data_providers.data_utils.create_csv(LABELS, training_data,
+                                                 TRAINING_DATA_BASIC_DNN)
 
 
 def get_input_from_game_status(game_status: GameStatus):
@@ -63,7 +62,7 @@ def get_input_from_game_status(game_status: GameStatus):
     Example for up:
     [1, 0, 0, 0, 1, 1, 0, 0, 0.8]
     """
-    angle = solvers.training.training_utils.normalize_rad_angle(
+    angle = solvers.data_providers.data_utils.normalize_rad_angle(
         game_status.get_angle(game_status.apple, game_status.head))
     angle = round(angle, 2)
     available = [1 if game_status.can_move_to_dir(d) else 0 for d in GameStatus.DIRS]

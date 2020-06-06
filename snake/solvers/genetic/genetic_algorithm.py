@@ -1,24 +1,24 @@
+import gc
 import random
 from typing import List
 
 import numpy as np
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
 from game.game import Game
 from game.game_seed_creator import create_random_game_seed
 from game.game_status import GameStatus
-from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
+from solvers.genetic.model_evaluated import ModelGeneticEvaluated
+from solvers.genetic.basic_genetic_solver import BasicGeneticSolver
 from solvers.genetic.crossover import random_crossover, simulated_binary_crossover, single_point_binary_crossover
 from solvers.genetic.mutation import uniform_mutation, gaussian_mutation
-from solvers.genetic.basic_genetic_solver import BasicGeneticSolver
-from solvers.training import basic_training_data_generator as training_generator, training_utils
-from solvers.training.training_utils import load_model
+from solvers.data_providers import basic_training_data_generator as training_generator, data_utils
+from solvers.data_providers.data_utils import load_model
 from utils import aws_snake_utils
 from utils.snake_logger import get_module_logger
 from utils.timing import timeit
-import tensorflow as tf
-import gc
 
 LOGGER = get_module_logger(__name__)
 
@@ -50,7 +50,7 @@ class GeneticAlgorithm:
         model.set_weights(weights)
 
     def evaluate_population(self, population_genetic: List, game_status_seeds: List[GameStatus]) \
-            -> List[AdvanceModelGeneticEvaluated]:
+            -> List[ModelGeneticEvaluated]:
         population_evaluated = []
         # For each game genetic we need to perform artificial games and see the performance
         for model_genetic in population_genetic:
@@ -58,14 +58,14 @@ class GeneticAlgorithm:
             population_evaluated.append(model_evaluated)
         return population_evaluated
 
-    def evaluate_model(self, game_status_seeds: List[GameStatus], model, model_genetic) -> AdvanceModelGeneticEvaluated:
+    def evaluate_model(self, game_status_seeds: List[GameStatus], model, model_genetic) -> ModelGeneticEvaluated:
         self._set_model_weights(self.model, model_genetic)
         games = []
         for game_status in game_status_seeds:
             game = self.play_one_game(game_status, model, self.training_generator)
             games.append(game)
 
-        advance_model = AdvanceModelGeneticEvaluated(games, model_genetic)
+        advance_model = ModelGeneticEvaluated(games, model_genetic)
         for game in games:
             del game.game_statuses
         return advance_model
@@ -94,15 +94,15 @@ class GeneticAlgorithm:
         max_index = np.argmax(test_predictions)
         return GameStatus.DIRS[max_index]
 
-    def elitism_selection(self, percentage: float, population_evaluated: List[AdvanceModelGeneticEvaluated]) -> List[
-        AdvanceModelGeneticEvaluated]:
+    def elitism_selection(self, percentage: float, population_evaluated: List[ModelGeneticEvaluated]) -> List[
+        ModelGeneticEvaluated]:
         population_evaluated.sort(key=lambda x: x.fitness(), reverse=True)
         number_of_top_performers = int(percentage * len(population_evaluated))
         top_performers = population_evaluated[0:number_of_top_performers]
         return top_performers
 
-    def _pair(self, parents: List[AdvanceModelGeneticEvaluated], total_fitness: float) -> List[
-        AdvanceModelGeneticEvaluated]:
+    def _pair(self, parents: List[ModelGeneticEvaluated], total_fitness: float) -> List[
+        ModelGeneticEvaluated]:
         """
 
         :param parents: List of all the model_genetics with fitness
@@ -114,8 +114,8 @@ class GeneticAlgorithm:
         pick_2 = random.uniform(0, total_fitness)
         return [self._roulette_selection(parents, pick_1), self._roulette_selection(parents, pick_2)]
 
-    def _roulette_selection(self, parents: List[AdvanceModelGeneticEvaluated],
-                            pick: float) -> AdvanceModelGeneticEvaluated:
+    def _roulette_selection(self, parents: List[ModelGeneticEvaluated],
+                            pick: float) -> ModelGeneticEvaluated:
         current = 0
         for parent in parents:
             current += parent.fitness()
@@ -123,7 +123,7 @@ class GeneticAlgorithm:
                 return parent
         raise ValueError("Error performing roulette selection with pick={} and parents={}".format(pick, parents))
 
-    def crossover(self, top_performers: List[AdvanceModelGeneticEvaluated], number_of_children):
+    def crossover(self, top_performers: List[ModelGeneticEvaluated], number_of_children):
         total_fitness = sum([x.fitness() for x in top_performers])
         children = []
         cross_type = {
@@ -175,13 +175,14 @@ class GeneticAlgorithm:
                                                                                   )
             best = population_evaluated[0]
             LOGGER.info(best)
-            fraction = "{:.1f}_{:.1f}___{:.2f}".format(best.apples +snake_size, game_size**2, (best.apples +snake_size)/game_size**2)
+            fraction = "{:.1f}_{:.1f}___{:.2f}".format(best.apples + snake_size, game_size ** 2,
+                                                       (best.apples + snake_size) / game_size ** 2)
             file_name = "{}_____completion_{}_____movements_{:.1f}" \
                 .format(i,
                         fraction,
                         best.movements)
             self._set_model_weights(self.model, best.model_genetic)
-            path = training_utils.save_model(self.model, dir_path, file_name)
+            path = data_utils.save_model(self.model, dir_path, file_name)
             self.show_current_best_model(i, path, game_size)
 
             population_genetic = new_population_genetic
@@ -239,7 +240,7 @@ class GeneticAlgorithm:
 
     def load_initial_population_genetic(self, model_paths: List[str], population_size,
                                         mutation_rate, games_to_play_per_individual,
-                                       game_size):
+                                        game_size):
         top_population_models = self.load_from_path(model_paths)
         # Reproduce them
         number_of_children = population_size - len(top_population_models)
@@ -254,7 +255,7 @@ class GeneticAlgorithm:
         new_generation_models = children + top_population_models
         return new_generation_models
 
-    def load_from_path(self, model_paths:List[str]):
+    def load_from_path(self, model_paths: List[str]):
         population_genetic = []
         for path in model_paths:
             model_genetic = []

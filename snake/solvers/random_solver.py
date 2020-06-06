@@ -9,7 +9,7 @@ class RandomSolver:
     def __init__(self):
         pass
 
-    def solve(self, game_seed: GameStatus)-> List[GameStatus]:
+    def solve(self, game_seed: GameStatus) -> List[GameStatus]:
         game_status = game_seed
         result = [game_status]
         prev_dir = game_status.prev_dir

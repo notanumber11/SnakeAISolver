@@ -1,15 +1,15 @@
 from typing import List
 
-import utils.timing
 import game.game_seed_creator
-import solvers.basic_solver
 import solvers.basic_dnn.basic_dnn_solver
-from game.game import Game
+import solvers.basic_solver
 import solvers.genetic.advance_genetic_solver as ag
+import solvers.genetic.basic_genetic_solver
+import utils.timing
+from game.game import Game
 from solvers.dfs_solver import DFSSolver
 from solvers.hamilton_solver import HamiltonSolver
 from solvers.random_solver import RandomSolver
-import solvers.genetic.basic_genetic_solver
 
 
 class GameProvider:
@@ -27,15 +27,14 @@ class GameProvider:
                             self.dfs_solver,
                             self.basic_dnn,
                             self.basic_genetic,
-                            self.advance_genetic,
-                            self.hamilton_solver]
+                            self.advance_genetic]
 
     def get_n_best(self, games: List[Game], n: int):
         result = sorted(games, key=lambda x: len(x.game_statuses[-1].snake), reverse=True)
         return result[0:n]
 
-    def get_all_game_types(self, n=1):
-        return [self.get_random_game(solver, 6, 4) for i in range(n) for solver in self.all_solvers]
+    def get_all_game_types(self, n=1, board_size=6, snake_size=4):
+        return [self.get_random_game(solver, board_size, snake_size) for i in range(n) for solver in self.all_solvers]
 
     def get_all_game_types_default(self, n=1):
         return [self._get_default_game(solver) for i in range(n) for solver in self.all_solvers]

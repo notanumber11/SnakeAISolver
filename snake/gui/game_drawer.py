@@ -13,11 +13,13 @@ class GameDrawer:
         game_status = game.next()
         # Draw apple
         if game_status.apple:
-            canvas_shapes.draw_rectangle(canvas, tile_size, game_status.apple.x, game_status.apple.y, offset_x, offset_y,
-                               "red")
+            canvas_shapes.draw_rectangle(canvas, tile_size, game_status.apple.x, game_status.apple.y, offset_x,
+                                         offset_y,
+                                         "red")
         # Draw snake
         for el in game_status.snake:
             id = canvas_shapes.draw_rectangle(canvas, tile_size, el.x, el.y, offset_x, offset_y, "green")
-        canvas_shapes.draw_rectangle(canvas, tile_size, game_status.snake[0].x, game_status.snake[0].y, offset_x, offset_y,
-                           "yellow")
+        canvas_shapes.draw_rectangle(canvas, tile_size, game_status.snake[0].x, game_status.snake[0].y, offset_x,
+                                     offset_y,
+                                     "yellow")
         # canvas.tag_bind(id, "<Button-1>", lambda u: rectangle_clicked())

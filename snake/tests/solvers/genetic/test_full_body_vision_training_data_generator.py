@@ -1,7 +1,7 @@
 import unittest
 
 from game.game_status import GameStatus
-from solvers.training.full_body_vision_training_data_generator import FullBodyVisionTrainingDataGenerator
+from solvers.data_providers.full_body_vision_training_data_generator import FullBodyVisionTrainingDataGenerator
 
 
 class TestFullBodyVisionTrainingDataGenerator(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestFullBodyVisionTrainingDataGenerator(unittest.TestCase):
         snake = [[1, x] for x in range(1, size)]  # Vertical left
         snake += [[2, 4], [2, 4], [3, 4], [4, 4]]  # Horizontal bottom
         snake += [[4, 3], [4, 2], [4, 1], [4, 0]]  # Vertical right
-        snake += [[3,0], [2, 0]]
+        snake += [[3, 0], [2, 0]]
         apple = [2, 1]
         game_status = GameStatus(size, snake, apple)
         input = self.advance_training.get_input_from_game_status(game_status)

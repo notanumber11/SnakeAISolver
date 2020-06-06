@@ -1,10 +1,8 @@
 import unittest
-import matplotlib.pyplot as plt
-import pandas as pd
 
 from game.game import Game
 from game.game_status import GameStatus
-from solvers.genetic.advance_genetic_model_evaluated import AdvanceModelGeneticEvaluated
+from solvers.genetic.model_evaluated import ModelGeneticEvaluated
 
 
 class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
@@ -15,7 +13,7 @@ class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
         game_status = GameStatus(6, snake, apple)
         new_game_status = game_status.move(GameStatus.LEFT)
         game = Game([game_status, new_game_status])
-        me = AdvanceModelGeneticEvaluated([game], None)
+        me = ModelGeneticEvaluated([game], None)
         self.assertEqual(1, me.movements)
         self.assertEqual(3, me.snake_length)
         self.assertEqual(1, me.apples)
@@ -27,7 +25,7 @@ class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
         new_game_status = game_status.move(GameStatus.LEFT)
         game = Game([game_status, new_game_status])
         game.was_stack_in_loop = True
-        me = AdvanceModelGeneticEvaluated([game], None)
+        me = ModelGeneticEvaluated([game], None)
         self.assertEqual(1, me.movements)
         self.assertEqual(0, me.snake_length)
         self.assertEqual(0, me.apples)
@@ -40,7 +38,7 @@ class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
         game_status = GameStatus(6, snake, apple)
         new_game_status = game_status.move(GameStatus.LEFT)
         game = Game([game_status, new_game_status])
-        me = AdvanceModelGeneticEvaluated([game], None)
+        me = ModelGeneticEvaluated([game], None)
         # At the beginning is more important to move a bit without die than to take apples
         one_apple_one_movement = me.fitness()
         me.movements = 5
@@ -60,5 +58,5 @@ class TestAdvanceGeneticModelEvaluated(unittest.TestCase):
         game_status = GameStatus(16, snake, apple)
         new_game_status = game_status.move(GameStatus.LEFT)
         game = Game([game_status, new_game_status])
-        me = AdvanceModelGeneticEvaluated([game], None)
+        me = ModelGeneticEvaluated([game], None)
         print(me.fitness())
