@@ -1,4 +1,5 @@
 import gc
+import time
 from typing import List
 
 import numpy as np
@@ -11,8 +12,8 @@ from gui.gui_starter import get_models_from_path
 from solvers.genetic.crossover import crossover
 from solvers.genetic.evaluation import evaluate_population, set_model_weights
 from solvers.genetic.hyperparameters import HyperParameters
-from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
 from solvers.genetic.mutation import mutate
+from solvers.genetic.report import Report
 from solvers.genetic.selection import elitism_selection
 from solvers.training_data_generators import data_utils
 from solvers.training_data_generators.data_utils import load_model
@@ -23,18 +24,6 @@ from utils.timing import timeit
 LOGGER = get_module_logger(__name__)
 
 
-def generate_report(previous_top_population: List[ModelGeneticEvaluated]):
-    hyperparameters = None
-    iteration = 0
-    time = 0
-    # Average and best
-    completion = 0
-    apples = 0
-    fitness = 0
-    movements = 0
-
-    # Moving average of average and best for previous parameters
-
 class GeneticAlgorithm:
 
     def __init__(self, layers_size: List[int], training_data_generator):
@@ -43,7 +32,7 @@ class GeneticAlgorithm:
         self.model = self.build_model()
         self.training_generator = training_data_generator
         if layers_size[-1] < 2:
-            raise ValueError("AdvanceGeneticAlgorithm expects the output layer to be >1 since it uses classification {}"
+            raise ValueError("GeneticAlgorithm expects the output layer to be >1 since it uses classification {}"
                              .format(layers_size))
 
     def get_random_initial_population_genetic(self, population_size: int) -> List:
@@ -68,30 +57,31 @@ class GeneticAlgorithm:
                     h.game_size)
         dir_path = aws_snake_utils.get_training_output_folder() + hyperparameters_description
         LOGGER.info("Saving output on: " + dir_path)
+        report = Report(dir_path, h)
         if checkpoint_path is None:
             population_genetic = self.get_random_initial_population_genetic(h.population_size)
         else:
             population_genetic = self.load_from_checkpoint(checkpoint_path, h)
         # Iterate
         for i in range(h.iterations):
-            snake_size = h.snake_size
             LOGGER.info("Running iteration: {}".format(i))
+            s = time.time()
             new_population_genetic, previous_top_population = self.execute_iteration(population_genetic, h)
+            e = time.time()
+            iteration_time = (e-s) * 1000
             best = previous_top_population[0]
-            report = generate_report(previous_top_population)
             LOGGER.info(best)
-            fraction = "{:.1f}_{:.1f}___{:.2f}".format(best.apples + snake_size, h.game_size ** 2,
-                                                       (best.apples + snake_size) / h.game_size ** 2)
-            file_name = "{}_____completion_{}_____movements_{:.1f}" \
+            file_name = "{:.1f}_apples_{:.1f}_size_{:.1f}_movements_{:.1f}" \
                 .format(i,
-                        fraction,
+                        best.apples,
+                        best.size**2,
                         best.movements)
             set_model_weights(self.model, best.model_genetic)
             data_utils.save_model(self.model, dir_path, file_name)
+            report.generate_report(i, previous_top_population, iteration_time)
             population_genetic = new_population_genetic
             gc.collect()
 
-    @timeit
     def execute_iteration(self, population_genetic, h: HyperParameters):
         games_to_play_per_individual = h.games_to_play
 
