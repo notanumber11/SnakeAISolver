@@ -23,14 +23,14 @@ if __name__ == '__main__':
     parser.add_argument('type',
                         choices=['game', 'train_basic_dnn', 'train_basic_genetic', 'train_advanced_genetic', 'best'],
                         type=str.lower)
-    parser.add_argument('-p', '--path', action='store',
+    parser.add_argument('-p', '--checkpoint_path', action='store',
                         help="if path is supplied the model is loaded from there")
     # To not fail with the default argument train provided by AWS
     # https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-training-algo-dockerfile.html
     args, unknown = parser.parse_known_args()
-    path = args.path
-    if path is not None:
-        path = os.path.normpath(path)
+    checkpoint_path = args.checkpoint_path
+    if checkpoint_path is not None:
+        checkpoint_path = os.path.normpath(checkpoint_path)
 
     if args.type == "game":
         game()
@@ -42,20 +42,16 @@ if __name__ == '__main__':
     if args.type == "train_basic_genetic":
         LOGGER.info("Running train_basic_genetic ...")
         from solvers.genetic.train_genetic_algorithm import train_basic_genetic
-
-        model_paths = get_models_from_path(path)
-        train_basic_genetic(model_paths)
+        train_basic_genetic(checkpoint_path)
 
     if args.type == "train_advanced_genetic":
         LOGGER.info("Running train_advance_genetic ...")
         from solvers.genetic.train_genetic_algorithm import train_advance_genetic
-
-        model_paths = get_models_from_path(path)
-        train_advance_genetic(model_paths)
+        train_advance_genetic(checkpoint_path)
 
     if args.type == "best":
         from solvers.advance_genetic_solver import AdvanceGeneticSolver
         from gui.gui_starter import show_solver
 
-        solver = AdvanceGeneticSolver(get_models_from_path(path)[-1])
+        solver = AdvanceGeneticSolver(get_models_from_path(checkpoint_path)[-1])
         show_solver(solver, board_size=16, snake_size=6, number_of_games=1, number_of_tries=100)

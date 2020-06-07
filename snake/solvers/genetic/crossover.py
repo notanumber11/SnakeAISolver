@@ -2,6 +2,7 @@ from typing import List
 
 import numpy as np
 
+from solvers.genetic.hyperparameters import HyperParameters
 from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
 
 
@@ -66,14 +67,11 @@ def single_point_binary_crossover(model_genetic_father, model_genetic_mother):
     return [child_a, child_b]
 
 
-def crossover(top_performers: List[ModelGeneticEvaluated], number_of_children):
+def crossover(top_performers: List[ModelGeneticEvaluated], number_of_children, h: HyperParameters):
     total_fitness = sum([x.fitness() for x in top_performers])
     children = []
-    cross_type = {
-        "random": 0.25,
-        "single_point_binary": 0.25,
-        "simulated_binary": 0.5
-    }
+
+    cross_type = h.cross_type
 
     cross_functions = {
         "random": random_crossover,

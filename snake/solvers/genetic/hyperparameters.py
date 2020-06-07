@@ -21,6 +21,12 @@ class HyperParameters:
             "simulated_binary": None
         }
 
+    def __str__(self):
+        return json.dumps(self.__dict__, indent=4, sort_keys=True)
+
+    def __repr__(self):
+        return self.__str__()
+
     @staticmethod
     def load(path):
         with open(path) as f:
@@ -28,6 +34,12 @@ class HyperParameters:
             hyperparameters = HyperParameters()
             hyperparameters.__dict__ = data
         hyperparameters.self_validate()
+        return hyperparameters
+
+    @staticmethod
+    def save(path, hyperparameters):
+        with open(path, "w") as f:
+            f.write(hyperparameters.__str__())
 
     def self_validate(self):
         h = HyperParameters()
@@ -45,13 +57,11 @@ class HyperParameters:
         acum = 0
         for key in self.cross_type.keys():
             acum += self.cross_type[key]
-        if acum != 1:
+        if acum != 1.0:
             raise ValueError("cross_type values do not sum 1 " + str(self.cross_type))
+        acum = 0
         for key in self.mut_type.keys():
             acum += self.mut_type[key]
-        if acum != 1:
+        if acum != 1.0:
             raise ValueError("mut_type values do not sum 1 " + str(self.mut_type))
 
-
-if __name__ == '__main__':
-    hyperparameters = HyperParameters.load("hyperparameters_2.json")

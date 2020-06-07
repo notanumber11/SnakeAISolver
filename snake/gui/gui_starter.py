@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from game.game_provider import GameProvider
 from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
@@ -7,7 +8,7 @@ from utils.snake_logger import get_module_logger
 LOGGER = get_module_logger(__name__)
 
 
-def get_models_from_path(path):
+def get_models_from_path(path) -> List[str]:
     if path is None:
         return None
     path = os.path.normpath(path)
@@ -42,7 +43,7 @@ def game():
     from game.game_provider import GameProvider
     LOGGER.info("Solving games...")
     game_provider = GameProvider()
-    games = game_provider.get_all_game_types(1, 8, 4)
+    games = game_provider.get_all_game_types(1, 6, 4)
 
     input("Press Enter to continue...")
     LOGGER.info("Creating window...")

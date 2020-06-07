@@ -2,6 +2,8 @@ import json
 import os
 from typing import Dict
 
+from solvers.genetic.hyperparameters import HyperParameters
+
 
 def _is_aws() -> bool:
     running_in_aws = True
@@ -22,12 +24,11 @@ def get_running_environment():
     raise ValueError("Unknown running environment")
 
 
-def _get_hyperparameters(path: str) -> Dict:
+def _get_hyperparameters(path: str) -> HyperParameters:
     print("The hyperparameters read from {} are:".format(path))
-    with open(path) as f:
-        data = json.load(f)
-    print("Hyperparameters: {}".format(data))
-    return data
+    hyperparameters = HyperParameters.load(path)
+    print(hyperparameters)
+    return hyperparameters
 
 
 def is_local_run():
@@ -41,7 +42,7 @@ def _is_container_not_in_aws():
     return not _is_aws() and not is_local_run()
 
 
-def get_hyperparameters() -> Dict:
+def get_hyperparameters() -> HyperParameters:
     if is_local_run():
         return _get_hyperparameters("hyperparameters.json")
     elif _is_aws():

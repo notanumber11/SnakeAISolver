@@ -7,6 +7,7 @@ from numpy.testing import assert_raises
 
 from game import game_seed_creator
 from game.game_seed_creator import create_default_game_seed, create_random_game_seed
+from solvers.genetic.hyperparameters import HyperParameters
 from solvers.training_data_generators.classification.binary_vision import BinaryVision
 from solvers.genetic.crossover import pair
 from solvers.genetic.evaluation import evaluate_population, set_model_weights, play_one_game, \
@@ -186,53 +187,50 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.assertTrue(all(el in result for el in population_with_fitness))
 
     def test_execute_iteration_with_single_element(self):
-        games_to_play = 2
-        population_size = 6
+        h = HyperParameters.load("tests/solvers/genetic/test_hyperparameters.json")
+        h.games_to_play = 2
+        h.population_size = 6
         # Create a population genetic with the same element repeated
-        population_genetic = self.ga.get_random_initial_population_genetic(1) * population_size
-        selection_threshold = 0.5
+        population_genetic = self.ga.get_random_initial_population_genetic(1) * h.population_size
+        h.selection_threshold = 0.5
         # Do not mutate
-        mutation_rate = 0
-        new_generation, top_population = self.ga.execute_iteration(population_genetic, games_to_play,
-                                                                   selection_threshold,
-                                                                   mutation_rate, population_size)
-        self.assertEqual(len(new_generation), population_size)
+        h.mutation_rate = 0
+        new_generation, top_population = self.ga.execute_iteration(population_genetic, h)
+        self.assertEqual(len(new_generation), h.population_size)
 
     def test_execute_iteration(self):
-        games_to_play = 1
-        population_size = 10
-        # Create a population genetic with the same element
-        population_genetic = self.ga.get_random_initial_population_genetic(population_size)
-        selection_threshold = 0.2
-        mutation_rate = 1
-        children, evaluation_result = self.ga.execute_iteration(population_genetic, games_to_play, selection_threshold,
-                                                                mutation_rate, population_size)
+        h = HyperParameters.load("tests/solvers/genetic/test_hyperparameters.json")
+        h.population_size = 10
+        population_genetic = self.ga.get_random_initial_population_genetic(h.population_size)
+        self.ga.execute_iteration(population_genetic, h)
 
     def test_mutate(self):
         population_genetic = [[np.ones(10)] for i in range(10)]
-        mutate(population_genetic, 1)
+        h = HyperParameters.load("tests/solvers/genetic/test_hyperparameters.json")
+        h.mutation_rate = 1
+        mutate(population_genetic, h)
         for model_genetic in population_genetic:
             for chromosome in model_genetic:
                 equal = np.array_equal(chromosome, np.ones(10))
                 self.assertFalse(equal, msg="Some chromosomes did not change")
         population_genetic = [[np.ones(10)] for i in range(10)]
-        mutate(population_genetic, 0)
+        h.mutation_rate = 0
+        mutate(population_genetic, h)
         for model_genetic in population_genetic:
             for chromosome in model_genetic:
                 equal = np.array_equal(chromosome, np.ones(10))
                 self.assertTrue(equal, msg="Chromosomes change with 0 mutation rate")
 
     def test_with_plus_parents(self):
-        games_to_play = 1
-        population_size = 10
-        selection_threshold = 0.1
-        mutation_rate = 0.05
+        h = HyperParameters.load("tests/solvers/genetic/test_hyperparameters.json")
+        h.games_to_play = 1
+        h.population_size = 10
+        h.selection_threshold = 0.1
+        h.mutation_rate = 0.05
         # Create a population genetic with the same element
-        population_genetic = self.ga.get_random_initial_population_genetic(population_size)
+        population_genetic = self.ga.get_random_initial_population_genetic(h.population_size)
 
-        new_generation_models, top_population = self.ga.execute_iteration(population_genetic, games_to_play,
-                                                                          selection_threshold,
-                                                                          mutation_rate, population_size)
+        new_generation_models, top_population = self.ga.execute_iteration(population_genetic, h)
         top_population_models = [modelEvaluated.model_genetic for modelEvaluated in top_population]
 
         for top in top_population_models:
@@ -249,21 +247,11 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.assertTrue(game.was_stack_in_loop)
         self.assertEqual(len(game.game_statuses), game_status.size ** 2 + len(game_status.snake) + 1)
 
-    def test_absolute_distances(self):
-        pass
-
-    def direction_as_input(self):
-        pass
-
-    def use_hyperparemeters_as_setting(self):
-        pass
-
     def checkout_points(self):
         pass
 
     def hyperparameter_search_hyperparameters(self):
         pass
 
-    def make_basic_genetic_algorithm_classification(self):
-        # this will allow to remove having two different classes for advance and basic genetic
+    def reports(self):
         pass

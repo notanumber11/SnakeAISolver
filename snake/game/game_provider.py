@@ -29,7 +29,7 @@ class GameProvider:
                             self.basic_dnn,
                             self.basic_genetic,
                             self.advance_genetic,
-                            # self.hamilton_solver,
+                            self.hamilton_solver,
         ]
 
     def get_n_best(self, games: List[Game], n: int):

@@ -2,6 +2,8 @@ from typing import List
 
 import numpy as np
 
+from solvers.genetic.hyperparameters import HyperParameters
+
 
 def gaussian_mutation(model_genetic: List[np.array], mutation_rate, mu=0, sigma=0.2) -> List[np.array]:
     for i in range(len(model_genetic)):
@@ -21,11 +23,8 @@ def uniform_mutation(model_genetic, mutation_rate, low=-1, high=1):
     return model_genetic
 
 
-def mutate(children, mutation_rate):
-    mut_type = {
-        "uniform": 0.33,
-        "gaussian": 0.67
-    }
+def mutate(children, h: HyperParameters):
+    mut_type = h.mut_type
     mut_function = {
         "uniform": uniform_mutation,
         "gaussian": gaussian_mutation
@@ -34,4 +33,4 @@ def mutate(children, mutation_rate):
     probabilities = list(mut_type.values())
     for i in range(len(children)):
         choice = np.random.choice(options, p=probabilities)
-        mut_function[choice](children[i], mutation_rate)
+        mut_function[choice](children[i], h.mutation_rate)
