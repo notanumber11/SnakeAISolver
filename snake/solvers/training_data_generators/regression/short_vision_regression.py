@@ -56,10 +56,10 @@ class ShortVisionRegression(TrainingDataGenerator):
                     break
 
         print("Training data has been generated...")
-        solvers.training_data_generators.data_utils.create_csv(LABELS, training_data,
+        solvers.training_data_generators.data_utils.create_csv(DATA_DIR, LABELS, training_data,
                                                                TRAINING_DATA_BASIC_DNN)
 
-    def get_input_from_game_status(self, game_status: GameStatus) -> List[float]:
+    def get_input_from_game_status(self, game_status: GameStatus) -> List[List[float]]:
         """
         The goal of this method is to create 4 inputs (one per direction) with the following data
         ["up", "down", "left", "right", "up available", "down available", "left available", "right available", "angle to apple"]

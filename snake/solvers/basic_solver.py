@@ -6,15 +6,18 @@ from solvers.solver import Solver
 
 class BasicSolver(Solver):
 
-    def solve(self, game: GameStatus):
-        games = [game]
-        while game.is_valid_game():
-            game = game.move(self.next_dir(game))
-            games.append(game)
+    def solve(self, prev: GameStatus):
+        games = [prev]
+        while prev.is_valid_game():
+            new = prev.move(self.get_best_movement(prev))
+            games.append(prev)
+            if self.is_loop(prev, new):
+                break
+            prev = new
         self.finished()
         return games
 
-    def next_dir(self, game_status: GameStatus):
+    def get_best_movement(self, game_status: GameStatus):
         dirs = random.sample(game_status.DIRS, len(GameStatus.DIRS))
         for dir in dirs:
             if game_status.can_move_to_dir(dir):

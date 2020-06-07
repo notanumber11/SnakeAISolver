@@ -16,5 +16,5 @@ class TestGame(unittest.TestCase):
         expected_dir = GameStatus.LEFT
         # Solve the game
         basic_solver = BasicSolver()
-        next_dir = basic_solver.next_dir(game)
+        next_dir = basic_solver.get_best_movement(game)
         # self.assertEqual(expected_dir, next_dir)

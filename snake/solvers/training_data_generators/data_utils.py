@@ -4,17 +4,16 @@ from typing import List
 
 import tensorflow as tf
 
-import solvers.training_data_generators.regression.short_vision_regression
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
 
 
-def create_csv(labels: List[str], data: List, name: str) -> None:
+def create_csv(data_dir, labels: List[str], data: List, name: str) -> None:
     """
     Creates a csv file with the name name_x being x the number of samples
     """
-    path = "{}{}_samples_{}.csv".format(solvers.training_data_generators.regression.short_vision_regression.DATA_DIR, name, len(data))
+    path = "{}{}_samples_{}.csv".format(data_dir, name, len(data))
     with open(path, 'w', newline='') as file:
         writer = csv.writer(file, delimiter="\t")
         writer.writerows([labels])

@@ -6,6 +6,7 @@ from solvers.solver import Solver
 
 
 class HamiltonSolver(Solver):
+
     def solve(self, game_status: GameStatus) -> List[GameStatus]:
         game_statuses = []
         is_hamilton_path_found = self.hamilton(game_status, game_statuses, [], game_status.head)

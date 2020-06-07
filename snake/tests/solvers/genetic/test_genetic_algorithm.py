@@ -69,7 +69,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
     def test_evaluate_best_movement_with_different_model(self):
         game_status = create_default_game_seed()
         predictions = []
-        _input = [self.ga.training_generator.get_input_from_game_status(game_status)]
+        _input = self.ga.training_generator.get_input_from_game_status(game_status)
         for i in range(100):
             model_genetic = self.ga.get_random_initial_population_genetic(1)[0]
             set_model_weights(self.ga.model, model_genetic)
@@ -80,7 +80,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
     def test_evaluate_best_movement_with_same_model(self):
         game_status = create_default_game_seed()
         predictions = []
-        _input = [self.ga.training_generator.get_input_from_game_status(game_status)]
+        _input = self.ga.training_generator.get_input_from_game_status(game_status)
         model_genetic = self.ga.get_random_initial_population_genetic(1)[0]
         set_model_weights(self.ga.model, model_genetic)
         for i in range(100):
@@ -94,7 +94,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
         set_model_weights(self.ga.model, model_genetic)
         for i in range(100):
             game_status = create_random_game_seed(6, 2)
-            _input = [self.ga.training_generator.get_input_from_game_status(game_status)]
+            _input = self.ga.training_generator.get_input_from_game_status(game_status)
             predictions.append(get_best_movement(_input, self.ga.model))
         # Not all predictions are the same since the input is different
         self.assertFalse(all(x == predictions[0] for x in predictions))

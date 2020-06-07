@@ -42,7 +42,7 @@ def play_one_game(current_game_status: GameStatus, model, training_generator):
     game_statuses = [current_game_status]
     movements_left = current_game_status.get_movements_left()
     while current_game_status.is_valid_game() and movements_left > 0:
-        _input = [training_generator.get_input_from_game_status(current_game_status)]
+        _input = training_generator.get_input_from_game_status(current_game_status)
         _dir = get_best_movement(_input, model)
         new_game_status = current_game_status.move(_dir)
         game_statuses.append(new_game_status)

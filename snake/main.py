@@ -21,7 +21,7 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('type',
-                        choices=['game', 'train_basic_dnn', 'train_basic_genetic', 'train_advanced_genetic', 'best'],
+                        choices=['game', 'train_basic_dnn', 'train_genetic', 'best'],
                         type=str.lower)
     parser.add_argument('-p', '--checkpoint_path', action='store',
                         help="if path is supplied the model is loaded from there")
@@ -39,19 +39,14 @@ if __name__ == '__main__':
         from solvers.basic_dnn.train_basic_dnn import train_basic_dnn
         train_basic_dnn()
 
-    if args.type == "train_basic_genetic":
-        LOGGER.info("Running train_basic_genetic ...")
-        from solvers.genetic.train_genetic_algorithm import train_basic_genetic
-        train_basic_genetic(checkpoint_path)
-
-    if args.type == "train_advanced_genetic":
-        LOGGER.info("Running train_advance_genetic ...")
-        from solvers.genetic.train_genetic_algorithm import train_advance_genetic
-        train_advance_genetic(checkpoint_path)
+    if args.type == "train_genetic":
+        LOGGER.info("Running genetic train ...")
+        from solvers.genetic.train_genetic_algorithm import train_genetic
+        train_genetic(checkpoint_path)
 
     if args.type == "best":
-        from solvers.advance_genetic_solver import AdvanceGeneticSolver
+        from solvers.distance_vision_genetic_solver import DistanceVisionGeneticSolver
         from gui.gui_starter import show_solver
 
-        solver = AdvanceGeneticSolver(get_models_from_path(checkpoint_path)[-1])
+        solver = DistanceVisionGeneticSolver(get_models_from_path(checkpoint_path)[-1])
         show_solver(solver, board_size=16, snake_size=6, number_of_games=1, number_of_tries=100)

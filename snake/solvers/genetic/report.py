@@ -20,6 +20,7 @@ class Report:
         self.save_hyperparameters(h, path)
         self.report_path = self.start_report(path)
         self.h = h
+        self.results = []
 
     def start_report(self, path):
         report_path = os.path.normpath(path + Report.REPORT_NAME)
@@ -64,6 +65,7 @@ class Report:
         avg_completion = (avg_apples + self.h.snake_size) / self.h.game_size ** 2
         vals = [iteration, best_completion, avg_completion, best_apples, avg_apples, best_movs, avg_movs, best_fitness, avg_fitness, time]
         vals = [round(x, 2) for x in vals]
+        self.results.append(vals)
         assert(len(vals) == len(Report.LABELS))
         with open(self.report_path, 'a', newline='') as file:
             writer = csv.writer(file, delimiter="\t")

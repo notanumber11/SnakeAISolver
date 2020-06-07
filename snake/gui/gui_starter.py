@@ -43,7 +43,7 @@ def game():
     from game.game_provider import GameProvider
     LOGGER.info("Solving games...")
     game_provider = GameProvider()
-    games = game_provider.get_all_game_types(1, 6, 4)
+    games = game_provider.get_all_game_types(1, 8, 4)
 
     input("Press Enter to continue...")
     LOGGER.info("Creating window...")

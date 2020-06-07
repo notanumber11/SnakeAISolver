@@ -9,6 +9,7 @@ from solvers.solver import Solver
 class DFSSolver(Solver):
 
     def __init__(self):
+        super().__init__()
         self.counter = 0
         self.total_counter = 0
         self.dirs = {}

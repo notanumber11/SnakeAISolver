@@ -29,7 +29,7 @@ class BinaryVision(TrainingDataGenerator):
         RIGHT: [0, 0, 0, 1]
     }
 
-    def get_input_from_game_status(self, game_status: GameStatus) -> List[float]:
+    def get_input_from_game_status(self, game_status: GameStatus) -> List[List[float]]:
         """
         The goal of this method is to create the following input data:
         A vector of dimension 28 that includes 24 inputs for vision and  4 inputs for the direction of the tail of the snake
@@ -60,7 +60,7 @@ class BinaryVision(TrainingDataGenerator):
 
         tail_dir = self.get_tail_dir(game_status)
         training_data += tail_dir
-        return training_data
+        return [training_data]
 
     def _get_normalize_distance(self, game_status: GameStatus, distance: int):
         return round(distance / (game_status.size - 1), 2)

@@ -1,5 +1,6 @@
 import json
 
+VALID_TRAINING_DATA_GENERATORS = ["short_vision", "binary_vision", "distance_vision"]
 
 class HyperParameters:
 
@@ -20,6 +21,8 @@ class HyperParameters:
             "single_point_binary": None,
             "simulated_binary": None
         }
+        self.training_data = None
+        self.layers = None
 
     def __str__(self):
         return json.dumps(self.__dict__, indent=4, sort_keys=True)
@@ -64,4 +67,5 @@ class HyperParameters:
             acum += self.mut_type[key]
         if acum != 1.0:
             raise ValueError("mut_type values do not sum 1 " + str(self.mut_type))
-
+        if self.training_data not in VALID_TRAINING_DATA_GENERATORS:
+            raise ValueError("Type is not valid: " + str(self.training_data))

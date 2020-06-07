@@ -10,7 +10,7 @@ class ShortVision(TrainingDataGenerator):
     def __init__(self):
         self._short_vision_regression = solvers.training_data_generators.regression.short_vision_regression.ShortVisionRegression()
 
-    def get_input_from_game_status(self, game_status: GameStatus) -> List[float]:
+    def get_input_from_game_status(self, game_status: GameStatus) -> List[List[int]]:
         input = self._short_vision_regression.get_input_from_game_status(game_status)[0]
         input = input[4:]
-        return input
+        return [input]

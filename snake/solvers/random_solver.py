@@ -7,8 +7,6 @@ from solvers.solver import Solver
 
 
 class RandomSolver(Solver):
-    def __init__(self):
-        pass
 
     def solve(self, game_seed: GameStatus) -> List[GameStatus]:
         game_status = game_seed

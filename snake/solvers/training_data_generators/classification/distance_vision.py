@@ -15,7 +15,7 @@ class DistanceVision(TrainingDataGenerator):
         self.ag = BinaryVision()
         pass
 
-    def get_input_from_game_status(self, game_status: GameStatus) -> List[float]:
+    def get_input_from_game_status(self, game_status: GameStatus) -> List[list]:
         training_data = []
         snake_set = set(game_status.snake)
 
@@ -25,7 +25,7 @@ class DistanceVision(TrainingDataGenerator):
 
         tail_dir = self.ag.get_tail_dir(game_status)
         training_data += tail_dir
-        return training_data
+        return [training_data]
 
     def _get_distances(self, game_status: GameStatus, _dir: Point, snake_set) -> List[float]:
         """

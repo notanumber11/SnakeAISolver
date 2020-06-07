@@ -110,7 +110,7 @@ class TestBinaryVisionTrainingDataGenerator(unittest.TestCase):
         snake = [[1, x] for x in range(size - 1)]
         apple = [0, 1]
         game_status = GameStatus(size, snake, apple)
-        input = self.advance_training.get_input_from_game_status(game_status)
+        input = self.advance_training.get_input_from_game_status(game_status)[0]
         print(game_status)
         # The game looks as follows:
         """[[ 0    H    0    0    0 ]
@@ -139,7 +139,7 @@ class TestBinaryVisionTrainingDataGenerator(unittest.TestCase):
         snake += [[4, 3], [4, 2], [4, 1], [4, 0]]  # Vertical right
         apple = [2, 1]
         game_status = GameStatus(size, snake, apple)
-        input = self.advance_training.get_input_from_game_status(game_status)
+        input = self.advance_training.get_input_from_game_status(game_status)[0]
         print(game_status)
         # Distance to wall, apple vision, body vision
         expected_input = [0.0, 0, 0,  # UP
@@ -163,7 +163,7 @@ class TestBinaryVisionTrainingDataGenerator(unittest.TestCase):
         snake += [[3, 0], [2, 0]]
         apple = [2, 1]
         game_status = GameStatus(size, snake, apple)
-        input = self.advance_training.get_input_from_game_status(game_status)
+        input = self.advance_training.get_input_from_game_status(game_status)[0]
         print(game_status)
         # Distance to wall, apple vision, body vision
         expected_input = [0.25, 0, 0,  # UP

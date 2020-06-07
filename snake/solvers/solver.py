@@ -6,6 +6,19 @@ from game.game_status import GameStatus
 
 class Solver(metaclass=abc.ABCMeta):
 
+    def __init__(self):
+        self.movements_left = None
+
+    def is_loop(self, prev : GameStatus, new: GameStatus):
+        self.movements_left = prev.get_movements_left() if self.movements_left is None else self.movements_left
+        self.movements_left -= 1
+        if prev.apple != new.apple:
+            self.movements_left = new.get_movements_left()
+        if self.movements_left == 0:
+            print("Loop has been found !")
+            return True
+        return False
+
     def finished(self):
         print("{} finished".format(self))
 
@@ -23,3 +36,4 @@ class Solver(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def solve(self, game_seed: GameStatus) -> List[GameStatus]:
         pass
+

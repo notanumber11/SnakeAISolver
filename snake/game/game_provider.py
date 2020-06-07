@@ -3,8 +3,8 @@ from typing import List
 import game.game_seed_creator
 import solvers.basic_dnn_solver
 import solvers.basic_solver
-import solvers.advance_genetic_solver as ag
-import solvers.basic_genetic_solver
+import solvers.distance_vision_genetic_solver as ag
+import solvers.short_vision_genetic_solver
 import utils.timing
 from game.game import Game
 from solvers.dfs_solver import DFSSolver
@@ -20,8 +20,8 @@ class GameProvider:
         self.random_solver = RandomSolver()
         self.basic_solver = solvers.basic_solver.BasicSolver()
         self.basic_dnn = solvers.basic_dnn_solver.BasicDnnSolver()
-        self.basic_genetic = solvers.basic_genetic_solver.BasicGeneticSolver()
-        self.advance_genetic = ag.AdvanceGeneticSolver()
+        self.basic_genetic = solvers.short_vision_genetic_solver.ShortVisionGeneticSolver()
+        self.advance_genetic = ag.DistanceVisionGeneticSolver()
         self.all_solvers = [
                             self.random_solver,
                             self.basic_solver,
@@ -29,7 +29,7 @@ class GameProvider:
                             self.basic_dnn,
                             self.basic_genetic,
                             self.advance_genetic,
-                            self.hamilton_solver,
+                            # self.hamilton_solver,
         ]
 
     def get_n_best(self, games: List[Game], n: int):
