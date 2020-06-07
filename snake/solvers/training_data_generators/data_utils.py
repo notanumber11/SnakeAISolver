@@ -3,7 +3,6 @@ import os
 from typing import List
 
 import tensorflow as tf
-
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
@@ -33,8 +32,7 @@ def load_model(path: str):
 
 
 def save_model(model, folder_path: str, file_name):
-    full_file_path = folder_path + file_name
-    full_file_path = os.path.normpath(full_file_path)
-    LOGGER.info("Saving game on: {}".format(full_file_path))
+    folder_path = os.path.normpath(folder_path)
+    full_file_path = os.path.join(folder_path, file_name)
     model.save(full_file_path)
     return full_file_path

@@ -13,7 +13,7 @@
     },
     "mutation_rate": 0.05,
     "population_size": 1000,
-    "selection_threshold": 0.25,
+    "selection_threshold": 0.1,
     "snake_size": 2,
     "training_data": "short_vision",
     "layers": [5, 125]

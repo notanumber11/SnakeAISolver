@@ -1,4 +1,5 @@
 import gc
+import os
 import time
 from typing import List
 
@@ -12,6 +13,7 @@ from gui.gui_starter import get_models_from_path
 from solvers.genetic.crossover import crossover
 from solvers.genetic.evaluation import evaluate_population, set_model_weights
 from solvers.genetic.hyperparameters import HyperParameters
+from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
 from solvers.genetic.mutation import mutate
 from solvers.genetic.report import Report
 from solvers.genetic.selection import elitism_selection
@@ -49,14 +51,14 @@ class GeneticAlgorithm:
 
     def run(self, h: HyperParameters, checkpoint_path):
         LOGGER.info("Running game: {}".format(h))
-        hyperparameters_description = "training_data={}_pop={}_sel={}_mut_{}_it_{}_game_size_{}/" \
+        hyperparameters_description = "training={}_pop={}_sel={}_mut_{}_it_{}_game_size_{}/" \
             .format(
-                    h.training_data,
-                    h.population_size,
-                    h.selection_threshold,
-                    h.mutation_rate,
-                    h.iterations,
-                    h.game_size)
+            h.training_data,
+            h.population_size,
+            h.selection_threshold,
+            h.mutation_rate,
+            h.iterations,
+            h.game_size)
         dir_path = aws_snake_utils.get_training_output_folder() + hyperparameters_description
         LOGGER.info("Saving output on: " + dir_path)
         report = Report(dir_path, h)
@@ -70,18 +72,12 @@ class GeneticAlgorithm:
             s = time.time()
             new_population_genetic, previous_top_population = self.execute_iteration(population_genetic, h)
             e = time.time()
-            iteration_time = (e-s) * 1000
+            iteration_time = (e - s) * 1000
             best = previous_top_population[0]
             LOGGER.info(best)
-            file_name = "{:.1f}_apples_{:.1f}_size_{:.1f}_movements_{:.1f}" \
-                .format(i,
-                        best.apples,
-                        best.size**2,
-                        best.movements)
-            set_model_weights(self.model, best.model_genetic)
-            data_utils.save_model(self.model, dir_path, file_name)
             report.generate_report(i, previous_top_population, iteration_time)
             population_genetic = new_population_genetic
+            self.save(i, dir_path, previous_top_population)
             gc.collect()
 
     def execute_iteration(self, population_genetic, h: HyperParameters):
@@ -142,3 +138,21 @@ class GeneticAlgorithm:
                 model_genetic = model_weights
             population_genetic.append(model_genetic)
         return population_genetic
+
+    def save(self, iteration, path: str, models_evaluated: List[ModelGeneticEvaluated]):
+        # For each iteration save the best model
+        best = models_evaluated[0]
+        file_name = "{:.1f}_apples_{:.1f}_size_{:.1f}_movements_{:.1f}" \
+            .format(iteration,
+                    best.apples,
+                    best.size ** 2,
+                    best.movements)
+        set_model_weights(self.model, best.model_genetic)
+        data_utils.save_model(self.model, path, file_name)
+        # Save top population each 50 iterations as checkpoint
+        if iteration % 50 == 0:
+            checkpoint_path = os.path.normpath(path + "checkpoint_{}".format(iteration))
+            for i in range(len(models_evaluated)):
+                model_evaluated = models_evaluated[i]
+                set_model_weights(self.model, model_evaluated.model_genetic)
+                data_utils.save_model(self.model, checkpoint_path, "{}_{}".format(i,model_evaluated.summary()))

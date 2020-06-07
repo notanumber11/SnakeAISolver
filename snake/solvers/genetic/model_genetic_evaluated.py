@@ -46,7 +46,7 @@ class ModelGeneticEvaluated:
 
     def other_fitness(self):
         fitness = self.movements + (2 ** self.apples + 500 * self.apples ** 2.1) - (
-                    0.25 * self.movements ** 1.3 * self.apples ** 1.2)
+                0.25 * self.movements ** 1.3 * self.apples ** 1.2)
         return fitness
 
     def __str__(self):
@@ -71,3 +71,9 @@ class ModelGeneticEvaluated:
         for l in self.model_genetic:
             result += np.sum(l)
         return int(self.snake_length * self.movements + self.size + result * self.apples)
+
+    def summary(self) -> str:
+        return "apples_{:.1f}_size_{:.1f}_movements_{:.1f}" \
+            .format(self.apples,
+                    self.size ** 2,
+                    self.movements)
