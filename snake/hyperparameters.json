@@ -4,7 +4,7 @@
         "simulated_binary": 0.5,
         "single_point_binary": 0.25
     },
-    "game_size": 6,
+    "game_size": 8,
     "games_to_play": 1,
     "iterations": 10000,
     "mut_type": {

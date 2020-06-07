@@ -249,9 +249,3 @@ class GeneticAlgorithmTest(unittest.TestCase):
 
     def checkout_points(self):
         pass
-
-    def hyperparameter_search_hyperparameters(self):
-        pass
-
-    def reports(self):
-        pass

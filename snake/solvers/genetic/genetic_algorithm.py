@@ -49,8 +49,10 @@ class GeneticAlgorithm:
 
     def run(self, h: HyperParameters, checkpoint_path):
         LOGGER.info("Running game: {}".format(h))
-        hyperparameters_description = "pop={}_sel={}_mut_{}_it_{}_game_size_{}/" \
-            .format(h.population_size,
+        hyperparameters_description = "training_data={}_pop={}_sel={}_mut_{}_it_{}_game_size_{}/" \
+            .format(
+                    h.training_data,
+                    h.population_size,
                     h.selection_threshold,
                     h.mutation_rate,
                     h.iterations,
