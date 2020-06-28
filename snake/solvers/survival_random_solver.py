@@ -4,7 +4,7 @@ from game.game_status import GameStatus
 from solvers.solver import Solver
 
 
-class BasicSolver(Solver):
+class SurvivalRandomSolver(Solver):
 
     def solve(self, prev: GameStatus):
         games = [prev]

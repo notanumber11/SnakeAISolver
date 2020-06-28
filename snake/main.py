@@ -49,4 +49,4 @@ if __name__ == '__main__':
         from gui.gui_starter import show_solver
 
         solver = DistanceVisionGeneticSolver(get_models_from_path(checkpoint_path)[-1])
-        show_solver(solver, board_size=16, snake_size=6, number_of_games=1, number_of_tries=100)
+        show_solver(solver, board_size=10, snake_size=6, number_of_games=1, number_of_tries=5)

@@ -1,7 +1,7 @@
 import unittest
 
 from game.game_status import GameStatus
-from solvers.basic_solver import BasicSolver
+from solvers.survival_random_solver import SurvivalRandomSolver
 
 
 class TestGame(unittest.TestCase):
@@ -15,6 +15,6 @@ class TestGame(unittest.TestCase):
         # The right direction is left to pick the apple
         expected_dir = GameStatus.LEFT
         # Solve the game
-        basic_solver = BasicSolver()
+        basic_solver = SurvivalRandomSolver()
         next_dir = basic_solver.get_best_movement(game)
         # self.assertEqual(expected_dir, next_dir)

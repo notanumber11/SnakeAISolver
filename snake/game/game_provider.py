@@ -2,7 +2,7 @@ from typing import List
 
 import game.game_seed_creator
 import solvers.basic_dnn_solver
-import solvers.basic_solver
+import solvers.survival_random_solver
 import solvers.distance_vision_genetic_solver as ag
 import solvers.short_vision_genetic_solver
 import utils.timing
@@ -18,7 +18,7 @@ class GameProvider:
         self.dfs_solver = DFSSolver()
         self.hamilton_solver = HamiltonSolver()
         self.random_solver = RandomSolver()
-        self.basic_solver = solvers.basic_solver.BasicSolver()
+        self.basic_solver = solvers.survival_random_solver.SurvivalRandomSolver()
         self.basic_dnn = solvers.basic_dnn_solver.BasicDnnSolver()
         self.basic_genetic = solvers.short_vision_genetic_solver.ShortVisionGeneticSolver()
         self.advance_genetic = ag.DistanceVisionGeneticSolver()
