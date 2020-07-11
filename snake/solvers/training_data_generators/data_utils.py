@@ -3,6 +3,7 @@ import os
 from typing import List
 
 import tensorflow as tf
+
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)

@@ -16,6 +16,7 @@ class Window:
         self.cols = 3
         self.rows = math.ceil(len(self.games) / self.cols)
         # Derived parameters
+        self.cols = min(self.cols, len(games))
         self.grid_size = self.game_size * self.tile_size
         self.offset_x = self.tile_size // 2
         self.offset_y = self.offset_x
@@ -28,19 +29,27 @@ class Window:
         self.canvas = tk.Canvas(self.root, height=self.height, width=self.width, bg='white')
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.game_drawer = GameDrawer()
-        self.movements_per_second = int(32)
+        self.movements_per_second = 16
         self.should_close_automatically = 0
+        self.root.bind('<Return>', self.mark_as_ready)
+        self.is_ready = False
+        self.first = True
+
+    def mark_as_ready(self, event):
+        self.is_ready = True
 
     def draw(self, games: List[Game]):
+        if self.is_ready or self.first:
+            self.canvas.delete("all")
+            self.first = False
+            for pos, game in enumerate(games):
+                i = pos // self.cols
+                j = pos % self.cols
+                offset_x = self.offset_x + j * self.game_width
+                offset_y = self.offset_y + i * self.game_width
+                self.game_drawer.draw(self.canvas, game, self.game_size, self.tile_size,
+                                      offset_x, offset_y)
 
-        self.canvas.delete("all")
-        for pos, game in enumerate(games):
-            i = pos // self.cols
-            j = pos % self.cols
-            offset_x = self.offset_x + j * self.game_width
-            offset_y = self.offset_y + i * self.game_width
-            self.game_drawer.draw(self.canvas, game, self.game_size, self.tile_size,
-                                  offset_x, offset_y)
         self.root.after(int(1000 / self.movements_per_second), lambda: self.draw(self.games))
         if all(game.is_finished() for game in games) and self.should_close_automatically != 0:
             self.root.after(self.should_close_automatically, lambda: self.end())

@@ -1,74 +1,74 @@
 [
-	{
-		"Name": "games_to_play",
-		"Description": "games_to_play",
-		"Type": "Integer",
-		"Range": {
-			"IntegerParameterRangeSpecification": {
-				"MinValue": "1",
-				"MaxValue": "100"
-			}
-		},
-		"IsTunable": false,
-		"IsRequired": true,
-		"DefaultValue": "1"
-	},
-	{
-		"Name": "population_size",
-		"Description": "population_size",
-		"Type": "Integer",
-		"Range": {
-			"IntegerParameterRangeSpecification": {
-				"MinValue": "1",
-				"MaxValue": "100000"
-			}
-		},
-		"IsTunable": false,
-		"IsRequired": true,
-		"DefaultValue": "1000"
-	},
-	{
-		"Name": "iterations",
-		"Description": "iterations",
-		"Type": "Integer",
-		"Range": {
-			"IntegerParameterRangeSpecification": {
-				"MinValue": "1",
-				"MaxValue": "1000"
-			}
-		},
-		"IsTunable": false,
-		"IsRequired": true,
-		"DefaultValue": "150"
-	},
-	{
-		"Name": "selection_threshold",
-		"Description": "selection_threshold",
-		"Type": "Continuous",
-		"IsTunable": false,
-		"IsRequired": true,
-		"DefaultValue": "0.1"
-	},
-	{
-		"Name": "mutation_rate",
-		"Description": "mutation_rate",
-		"Type": "Continuous",
-		"IsTunable": false,
-		"IsRequired": true,
-		"DefaultValue": "0.01"
-	},
-	{
-		"Name": "game_size",
-		"Description": "game_size",
-		"Type": "Integer",
-		"Range": {
-			"IntegerParameterRangeSpecification": {
-				"MinValue": "4",
-				"MaxValue": "10"
-			}
-		},
-		"IsTunable": false,
-		"IsRequired": true,
-		"DefaultValue": "6"
-	}
+  {
+    "Name": "games_to_play",
+    "Description": "games_to_play",
+    "Type": "Integer",
+    "Range": {
+      "IntegerParameterRangeSpecification": {
+        "MinValue": "1",
+        "MaxValue": "100"
+      }
+    },
+    "IsTunable": false,
+    "IsRequired": true,
+    "DefaultValue": "1"
+  },
+  {
+    "Name": "population_size",
+    "Description": "population_size",
+    "Type": "Integer",
+    "Range": {
+      "IntegerParameterRangeSpecification": {
+        "MinValue": "1",
+        "MaxValue": "100000"
+      }
+    },
+    "IsTunable": false,
+    "IsRequired": true,
+    "DefaultValue": "1000"
+  },
+  {
+    "Name": "iterations",
+    "Description": "iterations",
+    "Type": "Integer",
+    "Range": {
+      "IntegerParameterRangeSpecification": {
+        "MinValue": "1",
+        "MaxValue": "1000"
+      }
+    },
+    "IsTunable": false,
+    "IsRequired": true,
+    "DefaultValue": "150"
+  },
+  {
+    "Name": "selection_threshold",
+    "Description": "selection_threshold",
+    "Type": "Continuous",
+    "IsTunable": false,
+    "IsRequired": true,
+    "DefaultValue": "0.1"
+  },
+  {
+    "Name": "mutation_rate",
+    "Description": "mutation_rate",
+    "Type": "Continuous",
+    "IsTunable": false,
+    "IsRequired": true,
+    "DefaultValue": "0.01"
+  },
+  {
+    "Name": "game_size",
+    "Description": "game_size",
+    "Type": "Integer",
+    "Range": {
+      "IntegerParameterRangeSpecification": {
+        "MinValue": "4",
+        "MaxValue": "10"
+      }
+    },
+    "IsTunable": false,
+    "IsRequired": true,
+    "DefaultValue": "6"
+  }
 ]

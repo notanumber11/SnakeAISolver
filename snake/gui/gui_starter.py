@@ -18,9 +18,16 @@ def get_models_from_path(path) -> List[str]:
     subfolders = [os.path.normpath(s) for s in subfolders]
     return subfolders
 
+def show_games(games):
+    from gui.window import Window
+    LOGGER.info("Creating window...")
+    LOGGER.info("Press intro to start the snakes...")
+    window = Window(games)
+    window.should_close_automatically = 3000
+    window.start()
+
 
 def show_solver(solver, board_size, snake_size, number_of_games=6, number_of_tries=None):
-    from gui.window import Window
     LOGGER.info("Showing solver...")
     game_provider = GameProvider()
     if number_of_tries == None:
@@ -29,23 +36,14 @@ def show_solver(solver, board_size, snake_size, number_of_games=6, number_of_tri
     games = game_provider.get_n_best(games, number_of_games)
     for game in games:
         ga = ModelGeneticEvaluated([game], None)
-        print("The snake reached: {}".format(len(game.game_statuses[-1].snake)) + "with fitness: {} ".format(
+        LOGGER.info("The snake reached: {} ".format(len(game.game_statuses[-1].snake)) + "with fitness: {} ".format(
             ga.fitness()))
-    LOGGER.info("Creating window...")
-    input("Press Enter to continue...")
-    window = Window(games)
-    window.should_close_automatically = 3000
-    window.start()
+    show_games(games)
 
 
 def game():
-    from gui.window import Window
     from game.game_provider import GameProvider
     LOGGER.info("Solving games...")
     game_provider = GameProvider()
-    games = game_provider.get_all_game_types(1, 10, 4)
-
-    input("Press Enter to continue...")
-    LOGGER.info("Creating window...")
-    window = Window(games)
-    window.start()
+    games = game_provider.get_all_game_types(1, 6, 2)
+    show_games(games)

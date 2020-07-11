@@ -1,10 +1,8 @@
-from typing import List
-
+from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 from solvers.genetic.hyperparameters import VALID_TRAINING_DATA_GENERATORS
 from solvers.training_data_generators.classification.binary_vision import BinaryVision
-from solvers.training_data_generators.classification.short_vision import ShortVision
-from solvers.genetic.genetic_algorithm import GeneticAlgorithm
 from solvers.training_data_generators.classification.distance_vision import DistanceVision
+from solvers.training_data_generators.classification.short_vision import ShortVision
 from utils import aws_snake_utils
 
 VALID_TYPES = ["short_vision", "binary_vision", "distance_vision"]

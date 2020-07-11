@@ -1,7 +1,7 @@
 import os
 import sys
 
-from gui.gui_starter import get_models_from_path, game
+from gui.gui_starter import game, show_games
 from utils.snake_logger import get_module_logger
 
 LOGGER = get_module_logger(__name__)
@@ -42,11 +42,23 @@ if __name__ == '__main__':
     if args.type == "train_genetic":
         LOGGER.info("Running genetic train ...")
         from solvers.genetic.train_genetic_algorithm import train_genetic
+
         train_genetic(checkpoint_path)
 
     if args.type == "best":
-        from solvers.distance_vision_genetic_solver import DistanceVisionGeneticSolver
-        from gui.gui_starter import show_solver
+        from game.game_provider import GameProvider
 
-        solver = DistanceVisionGeneticSolver(get_models_from_path(checkpoint_path)[-1])
-        show_solver(solver, board_size=10, snake_size=6, number_of_games=1, number_of_tries=5)
+        game_provider = GameProvider()
+        finished = False
+        snake_size = 2
+        board_size = 18
+        i = 0
+        solver = game_provider.distance_vision_genetic_with_fallback
+        while not finished:
+            i += 1
+            game = game_provider.get_random_game(solver, board_size, snake_size)
+            result = len(game.game_statuses[-1].snake)
+            print("Try number={} with result={}".format(i, result))
+            if result == board_size * board_size:
+                finished = True
+        show_games([game])

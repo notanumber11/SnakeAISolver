@@ -1,20 +1,23 @@
 {
-    "cross_type": {
-        "random": 0.25,
-        "simulated_binary": 0.5,
-        "single_point_binary": 0.25
-    },
-    "game_size": 8,
-    "games_to_play": 1,
-    "iterations": 10000,
-    "mut_type": {
-        "gaussian": 0.67,
-        "uniform": 0.33
-    },
-    "mutation_rate": 0.05,
-    "population_size": 1000,
-    "selection_threshold": 0.1,
-    "snake_size": 2,
-    "training_data": "short_vision",
-    "layers": [5, 125]
+  "cross_type": {
+    "random": 0.25,
+    "simulated_binary": 0.5,
+    "single_point_binary": 0.25
+  },
+  "game_size": 8,
+  "games_to_play": 1,
+  "iterations": 10000,
+  "mut_type": {
+    "gaussian": 0.67,
+    "uniform": 0.33
+  },
+  "mutation_rate": 0.05,
+  "population_size": 1000,
+  "selection_threshold": 0.1,
+  "snake_size": 2,
+  "training_data": "short_vision",
+  "layers": [
+    5,
+    125
+  ]
 }

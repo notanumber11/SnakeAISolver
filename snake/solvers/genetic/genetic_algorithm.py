@@ -21,7 +21,6 @@ from solvers.training_data_generators import data_utils
 from solvers.training_data_generators.data_utils import load_model
 from utils import aws_snake_utils
 from utils.snake_logger import get_module_logger
-from utils.timing import timeit
 
 LOGGER = get_module_logger(__name__)
 
@@ -155,4 +154,4 @@ class GeneticAlgorithm:
             for i in range(len(models_evaluated)):
                 model_evaluated = models_evaluated[i]
                 set_model_weights(self.model, model_evaluated.model_genetic)
-                data_utils.save_model(self.model, checkpoint_path, "{}_{}".format(i,model_evaluated.summary()))
+                data_utils.save_model(self.model, checkpoint_path, "{}_{}".format(i, model_evaluated.summary()))

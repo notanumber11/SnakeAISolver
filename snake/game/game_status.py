@@ -147,7 +147,7 @@ class GameStatus:
         return angle
 
     def get_movements_left(self):
-        return self.size ** 2 + len(self.snake)
+        return self.size ** 2 * 2 + len(self.snake)
 
     def __str__(self):
         board = [["0" for x in range(self.size)] for y in range(self.size)]

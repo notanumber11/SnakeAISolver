@@ -1,10 +1,9 @@
 import math
 from typing import List
 
-
+import game.game_provider
 import solvers.training_data_generators.data_utils
 from game.game_status import GameStatus
-import game.game_provider
 from solvers.random_solver import RandomSolver
 from solvers.training_data_generators.training_data_generator import TrainingDataGenerator
 

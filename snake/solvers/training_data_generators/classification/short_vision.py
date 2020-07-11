@@ -1,7 +1,7 @@
 from typing import List
 
-from game.game_status import GameStatus
 import solvers.training_data_generators.regression.short_vision_regression
+from game.game_status import GameStatus
 from solvers.training_data_generators.training_data_generator import TrainingDataGenerator
 
 

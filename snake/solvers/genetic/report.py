@@ -13,7 +13,8 @@ LOGGER = get_module_logger(__name__)
 class Report:
     REPORT_NAME = "report.csv"
     HYPERPARAMETERS_NAME = "hyperparameters.json"
-    LABELS = ["Iteration", "BestCompletion", "AvgCompletion", "BestApples", "AvgApples", "BestMovs", "AvgMovs", "BestFitness", "AvgFitness", "Time"]
+    LABELS = ["Iteration", "BestCompletion", "AvgCompletion", "BestApples", "AvgApples", "BestMovs", "AvgMovs",
+              "BestFitness", "AvgFitness", "Time"]
 
     def __init__(self, path: str, h: HyperParameters):
         self.create_folder(path)
@@ -63,10 +64,11 @@ class Report:
         avg_movs = avg_movs / len_
         avg_fitness = avg_fitness / len_
         avg_completion = (avg_apples + self.h.snake_size) / self.h.game_size ** 2
-        vals = [iteration, best_completion, avg_completion, best_apples, avg_apples, best_movs, avg_movs, best_fitness, avg_fitness, time]
+        vals = [iteration, best_completion, avg_completion, best_apples, avg_apples, best_movs, avg_movs, best_fitness,
+                avg_fitness, time]
         vals = [round(x, 2) for x in vals]
         self.results.append(vals)
-        assert(len(vals) == len(Report.LABELS))
+        assert (len(vals) == len(Report.LABELS))
         with open(self.report_path, 'a', newline='') as file:
             writer = csv.writer(file, delimiter="\t")
             writer.writerow(vals)

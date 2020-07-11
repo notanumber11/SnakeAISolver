@@ -7,20 +7,20 @@ from numpy.testing import assert_raises
 
 from game import game_seed_creator
 from game.game_seed_creator import create_default_game_seed, create_random_game_seed
-from solvers.genetic.hyperparameters import HyperParameters
-from solvers.training_data_generators.classification.binary_vision import BinaryVision
 from solvers.genetic.crossover import pair
 from solvers.genetic.evaluation import evaluate_population, set_model_weights, play_one_game, \
     get_best_movement
 from solvers.genetic.genetic_algorithm import GeneticAlgorithm
+from solvers.genetic.hyperparameters import HyperParameters
 from solvers.genetic.mutation import mutate
 from solvers.genetic.selection import elitism_selection
+from solvers.training_data_generators.classification.binary_vision import BinaryVision
 
 
 class GeneticAlgorithmTest(unittest.TestCase):
 
     def setUp(self):
-        #self.layers_size = [9, 125, 1]
+        # self.layers_size = [9, 125, 1]
         self.layers_size = [28, 20, 12, 4]
         self.ga = GeneticAlgorithm(self.layers_size, BinaryVision())
 
@@ -62,7 +62,8 @@ class GeneticAlgorithmTest(unittest.TestCase):
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_random_initial_population_genetic(population_size)
         # Act
-        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model, self.ga.training_generator)
+        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model,
+                                                      self.ga.training_generator)
         # Assert
         self.assertEqual(len(population_with_fitness), population_size)
 
@@ -104,7 +105,8 @@ class GeneticAlgorithmTest(unittest.TestCase):
         population_size = 10
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_random_initial_population_genetic(population_size)
-        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model, self.ga.training_generator)
+        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model,
+                                                      self.ga.training_generator)
         sorted_population_with_fitness = sorted(population_with_fitness, key=lambda x: x.fitness(), reverse=True)
         threshold = 0.2
         # Act
@@ -117,7 +119,8 @@ class GeneticAlgorithmTest(unittest.TestCase):
         population_size = 10
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_random_initial_population_genetic(population_size)
-        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model, self.ga.training_generator)
+        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model,
+                                                      self.ga.training_generator)
         sorted_population_with_fitness = sorted(population_with_fitness, key=lambda x: x.fitness(), reverse=True)
         threshold = 0.4
         number_of_top_performers = int(threshold * population_size)
@@ -146,7 +149,8 @@ class GeneticAlgorithmTest(unittest.TestCase):
         population_size = 20
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_random_initial_population_genetic(population_size)
-        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model, self.ga.training_generator)
+        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model,
+                                                      self.ga.training_generator)
         for i in range(population_size):
             population_with_fitness[i].fitness = MagicMock(return_value=1)
 
@@ -170,7 +174,8 @@ class GeneticAlgorithmTest(unittest.TestCase):
         number_of_pairs_to_generate = 50
         game_statuses = [create_default_game_seed() for i in range(1)]
         population_genetic = self.ga.get_random_initial_population_genetic(population_size)
-        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model, self.ga.training_generator)
+        population_with_fitness = evaluate_population(population_genetic, game_statuses, self.ga.model,
+                                                      self.ga.training_generator)
 
         # Each individual has 10% chances of being chosen since all of them share the same fitness
         for i in range(population_size):
@@ -245,7 +250,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
         game_status.move = MagicMock(return_value=game_status)
         game = play_one_game(game_status, self.ga.model, self.ga.training_generator)
         self.assertTrue(game.was_stack_in_loop)
-        self.assertEqual(len(game.game_statuses), game_status.size ** 2 + len(game_status.snake) + 1)
+        self.assertEqual(len(game.game_statuses), game_status.size ** 2 * 2 + len(game_status.snake) + 1)
 
     def checkout_points(self):
         pass

@@ -2,6 +2,7 @@ import json
 
 VALID_TRAINING_DATA_GENERATORS = ["short_vision", "binary_vision", "distance_vision"]
 
+
 class HyperParameters:
 
     def __init__(self):

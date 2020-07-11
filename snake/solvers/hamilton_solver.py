@@ -28,7 +28,8 @@ class HamiltonSolver(Solver):
             pos += 1
         return statuses
 
-    def hamilton(self, game_status: GameStatus, game_statuses: List[GameStatus], visited: List[GameStatus], goal: Point):
+    def hamilton(self, game_status: GameStatus, game_statuses: List[GameStatus], visited: List[GameStatus],
+                 goal: Point):
         visited.append(game_status.head)
         game_statuses.append(game_status)
 
@@ -44,4 +45,3 @@ class HamiltonSolver(Solver):
         visited.pop()
         game_statuses.pop()
         return False
-

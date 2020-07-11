@@ -11,8 +11,6 @@ class SurvivalRandomSolver(Solver):
         while prev.is_valid_game():
             new = prev.move(self.get_best_movement(prev))
             games.append(prev)
-            if self.is_loop(prev, new):
-                break
             prev = new
         self.finished()
         return games

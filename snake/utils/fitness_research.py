@@ -5,6 +5,7 @@ from game.game import Game
 from game.game_status import GameStatus
 from solvers.genetic.model_genetic_evaluated import ModelGeneticEvaluated
 
+
 # The goal of this class is to research the best fitness values for the AdvanceModelGeneticEvaluated
 class FitnessResearch:
 
