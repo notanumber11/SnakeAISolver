@@ -38,6 +38,6 @@ tensorflow==2.1.0
 #tensorflow-docs===0.0.035e8be4ffca4f37efe4326915d6a5b9b0fef6702-
 tensorflow-estimator==2.1.0
 termcolor==1.1.0
-urllib3==1.25.9
+urllib3==1.26.5
 Werkzeug==1.0.1
 wrapt==1.12.1
